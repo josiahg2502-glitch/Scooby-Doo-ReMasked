@@ -64,7 +64,7 @@ sealed class MainForm : Form
             else if (vanRect.Contains(e.Location)) { startAt["van"] = T; SystemSounds.Asterisk.Play(); }
         };
         header.MouseMove += (_, e) => header.Cursor = ghostRect.Contains(e.Location) || vanRect.Contains(e.Location) ? glassHand : glassCursor;
-        nav.MouseClick += (_, e) => { if (snackRect.Contains(e.Location) && Progress("snack", 0.8) < 0) { startAt["snack"] = T; snacks++; } };
+        nav.MouseClick += (_, e) => { if (snackRect.Contains(e.Location) && Progress("snack", 1.1) < 0) { startAt["snack"] = T; snacks++; } };
         nav.MouseMove += (_, e) => nav.Cursor = snackRect.Contains(e.Location) ? glassHand : glassCursor;
         var frame = new System.Windows.Forms.Timer { Interval = 33 };
         frame.Tick += (_, _) =>
@@ -105,14 +105,6 @@ sealed class MainForm : Form
                 g.Clear(Cream);
                 for (int i = 0; i < cursorBitmaps.Count; i++) g.DrawImageUnscaled(cursorBitmaps[i], i * S(40), 0);
                 cur.Save(Path.Combine(shotDir, "cursor.png"));
-            }
-            using (var sc = new Bitmap(900, 300))  // Scooby large: resting, mouth open, blinking
-            using (var g = Graphics.FromImage(sc))
-            {
-                g.Clear(Cream);
-                g.SmoothingMode = SmoothingMode.AntiAlias;
-                for (int i = 0; i < 3; i++) DrawScooby(g, new RectangleF(i * 300 + 10, 10, 280, 280), i == 1 ? 1 : 0, i == 2);
-                sc.Save(Path.Combine(shotDir, "scooby.png"));
             }
             Close();
         };
@@ -497,110 +489,27 @@ sealed class MainForm : Form
         g.FillRectangle(b, cx - s * 0.42f, cy - r * 0.7f, s * 0.84f, r * 1.4f);
     }
 
-    // Scooby's head in profile (facing right) with his collar, drawn on a 100x100 grid scaled into r.
-    // mouth 0..1 drops the jaw; blink closes the eye. Outlines are drawn under the fills so only outer edges show.
-    static void DrawScooby(Graphics g, RectangleF r, float mouth, bool blink)
+    // Scooby's picture (embedded scooby.png), resized once per size and kept.
+    static readonly Image? ScoobyArt = LoadArt("scooby.png");
+    static readonly PointF ScoobyMouth = new(0.43f, 0.54f);  // his open mouth, as a fraction of the picture
+    readonly Dictionary<int, Bitmap> scoobySized = new();
+
+    static Image? LoadArt(string name)
     {
-        var state = g.Save();
-        g.TranslateTransform(r.X, r.Y);
-        g.ScaleTransform(r.Width / 100f, r.Height / 100f);
-        Color fur = Hex("#B97A2E"), muzzleTan = Hex("#DDA662"), earBrown = Hex("#6B3F1A");
-        using var ink = new Pen(Ink, 5f) { LineJoin = LineJoin.Round, StartCap = LineCap.Round, EndCap = LineCap.Round };
-        using var thin = new Pen(Ink, 2.4f) { LineJoin = LineJoin.Round, StartCap = LineCap.Round, EndCap = LineCap.Round };
-        using var furBrush = new SolidBrush(fur);
-        using var black = new SolidBrush(Ink);
+        using var s = typeof(MainForm).Assembly.GetManifestResourceStream("ScoobyReMasked." + name);
+        return s == null ? null : Image.FromStream(new MemoryStream(ReadAll(s)));
+    }
 
-        // Neck, collar and diamond tag.
-        using (var neck = new GraphicsPath())
-        {
-            neck.AddBezier(32, 58, 30, 74, 26, 88, 24, 100);
-            neck.AddLine(24, 100, 68, 100);
-            neck.AddBezier(68, 100, 66, 88, 64, 76, 62, 64);
-            neck.CloseFigure();
-            g.DrawPath(ink, neck);
-            g.FillPath(furBrush, neck);
-        }
-        g.FillEllipse(black, 33, 90, 7, 5);
-        g.FillEllipse(black, 54, 93, 6, 4);
-        var collar = new[] { new PointF(27, 74), new PointF(65, 78), new PointF(66, 87), new PointF(26, 83) };
-        using (var teal = new SolidBrush(Teal)) { g.DrawPolygon(thin, collar); g.FillPolygon(teal, collar); }
-        var tag = new[] { new PointF(47, 82), new PointF(54, 89), new PointF(47, 96), new PointF(40, 89) };
-        using (var gold = new SolidBrush(Gold)) { g.FillPolygon(gold, tag); g.DrawPolygon(thin, tag); }
-        using (var sd = new Font("Segoe UI", 5.2f, FontStyle.Bold, GraphicsUnit.Pixel))
-            g.DrawString("SD", sd, black, 47, 89.3f, new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+    static byte[] ReadAll(Stream s) { using var m = new MemoryStream(); s.CopyTo(m); return m.ToArray(); }
 
-        // Head: round skull plus a long snout, outlined together.
-        using var snout = new GraphicsPath();
-        snout.AddBezier(46, 22, 64, 18, 82, 26, 90, 36);
-        snout.AddBezier(90, 36, 99, 44, 97, 58, 88, 62);
-        snout.AddLine(88, 62, 62, 66);
-        snout.AddBezier(62, 66, 50, 68, 38, 64, 32, 54);
-        snout.CloseFigure();
-        var skull = new RectangleF(12, 6, 54, 56);
-        g.DrawPath(ink, snout);
-        g.DrawEllipse(ink, skull);
-        g.FillEllipse(furBrush, skull);
-        g.FillPath(furBrush, snout);
-        // Lighter muzzle, whisker dots.
-        var clip = g.Clip;
-        g.SetClip(snout, CombineMode.Intersect);
-        using (var tan = new SolidBrush(muzzleTan)) g.FillEllipse(tan, 60, 38, 40, 34);
-        g.Clip = clip;
-        foreach (var (wx, wy) in new[] { (70f, 50f), (75f, 54f), (79f, 49f), (73f, 46f) }) g.FillEllipse(black, wx - 1.2f, wy - 1.2f, 2.4f, 2.4f);
-
-        // Mouth: a grin, or an open jaw when catching a snack.
-        if (mouth > 0.02f)
-        {
-            float drop = 14 * mouth;
-            using var cavity = new GraphicsPath();
-            cavity.AddBezier(58, 58, 68, 58, 80, 57, 90, 56);
-            cavity.AddBezier(90, 56, 88, 60 + drop, 80, 64 + drop, 66, 64 + drop);
-            cavity.AddBezier(66, 64 + drop, 60, 63 + drop, 57, 61, 58, 58);
-            cavity.CloseFigure();
-            using (var red = new SolidBrush(Hex("#7A1F1F"))) g.FillPath(red, cavity);
-            using (var tongue = new SolidBrush(Hex("#E86A7A"))) g.FillEllipse(tongue, 64, 58 + drop * 0.6f, 14, 6 + drop * 0.3f);
-            g.DrawPath(thin, cavity);
-        }
-        else
-        {
-            g.DrawBezier(thin, 60, 58, 70, 62, 80, 61, 88, 56);
-            g.DrawBezier(thin, 58, 56, 59, 58, 60, 60, 62, 60);  // cheek dimple
-        }
-
-        // Floppy ear at the back.
-        using (var ear = new GraphicsPath())
-        {
-            ear.AddBezier(26, 14, 10, 16, 4, 40, 12, 58);
-            ear.AddBezier(12, 58, 16, 66, 26, 62, 25, 52);
-            ear.AddBezier(25, 52, 26, 40, 30, 26, 34, 16);
-            ear.CloseFigure();
-            using var earFill = new SolidBrush(earBrown);
-            g.FillPath(earFill, ear);
-            g.DrawPath(thin, ear);
-        }
-        // Spots on the back of the head.
-        g.FillEllipse(black, 30, 9, 7, 5);
-        g.FillEllipse(black, 38, 6, 5, 4);
-
-        // Eye with a raised brow; a short blink now and then.
-        var eye = new RectangleF(44, 14, 15, 19);
-        if (blink)
-        {
-            g.FillEllipse(furBrush, eye);
-            g.DrawBezier(thin, 44, 25, 48, 28, 55, 28, 59, 24);
-        }
-        else
-        {
-            g.FillEllipse(Brushes.White, eye);
-            g.DrawEllipse(thin, eye);
-            g.FillEllipse(black, 51, 20, 6, 8.5f);
-            g.FillEllipse(Brushes.White, 53, 21.5f, 2, 2.4f);
-        }
-        g.DrawBezier(thin, 42, 12, 47, 7, 55, 6, 60, 9);
-        // Big black nose with a shine.
-        g.FillEllipse(black, 81, 31, 17, 13);
-        g.FillEllipse(Brushes.White, 85, 33.5f, 5, 3);
-        g.Restore(state);
+    static Bitmap SizedArt(Image art, int height)
+    {
+        var b = new Bitmap(Math.Max(1, art.Width * height / art.Height), Math.Max(1, height));
+        using var g = Graphics.FromImage(b);
+        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+        g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+        g.DrawImage(art, new Rectangle(Point.Empty, b.Size));
+        return b;
     }
 
     // Scooby waits under the menu; click the floating snack and he catches it.
@@ -612,25 +521,30 @@ sealed class MainForm : Form
         navSpriteTop = pages.Count > 0 ? pages[^1].button.Bottom + S(10) : 0;
         int bottom = nav.ClientSize.Height - S(10);
         int room = bottom - navSpriteTop - S(70);
-        if (room < S(80)) { snackRect = Rectangle.Empty; return; }
-        int size = Math.Min(S(160), room);
+        if (room < S(80) || ScoobyArt == null) { snackRect = Rectangle.Empty; return; }
+        int height = Math.Min(S(190), room);
+        if (!scoobySized.TryGetValue(height, out var art)) scoobySized[height] = art = SizedArt(ScoobyArt, height);
         int cx = (nav.Width + S(16)) / 2;
-        var face = new Rectangle(cx - size / 2, bottom - size - S(20), size, size);
+        double eat = Progress("snack", 1.1);
+        // He sways gently; once the snack lands he does a happy hop.
+        double hop = eat < 0.7 ? 0 : Math.Sin((eat - 0.7) / 0.3 * Math.PI);
+        int lift = (int)(Math.Sin(t * 1.8) * S(3) + hop * S(14));
+        var face = new Rectangle(cx - art.Width / 2, bottom - art.Height - S(22) - lift, art.Width, art.Height);
+        g.DrawImageUnscaled(art, face.Location);
         g.SmoothingMode = SmoothingMode.AntiAlias;
         float s = S(38);
-        double eat = Progress("snack", 0.8);
-        // Mouth wide open as the snack arrives, snapping shut on it; a blink every few seconds.
-        float mouth = eat < 0 ? 0 : (float)Math.Max(0, Math.Sin(Math.Min(1, eat * 1.25) * Math.PI));
-        DrawScooby(g, face, mouth, t % 4.3 < 0.13);
+        float mouthX = face.X + face.Width * ScoobyMouth.X, mouthY = face.Y + face.Height * ScoobyMouth.Y;
         float sx = cx, sy = (float)(face.Y - S(34) + Math.Sin(t * 2.4) * S(6));
-        if (eat >= 0)  // the snack arcs into his mouth and shrinks away
+        if (eat >= 0)  // the snack arcs into his mouth, then is gone
         {
-            sx = (float)(cx + (face.X + face.Width * 0.74 - cx) * eat);  // toward his mouth
-            sy = (float)(face.Y - S(34) + (face.Height * 0.62 + S(34)) * eat - Math.Sin(eat * Math.PI) * S(30));
-            s *= (float)(1 - eat * 0.8);
+            double k2 = Math.Min(1, eat / 0.7);
+            sx = (float)(cx + (mouthX - cx) * k2);
+            sy = (float)(face.Y - S(34) + (mouthY - face.Y + S(34)) * k2 - Math.Sin(k2 * Math.PI) * S(30));
+            s *= (float)(1 - k2 * 0.85);
+            if (eat >= 0.7) s = 0;
         }
         snackRect = new Rectangle(cx - S(24), face.Y - S(60), S(48), S(52));
-        DrawSnack(g, sx, sy, s);
+        if (s > 0) DrawSnack(g, sx, sy, s);
         using var f = new Font("Segoe UI", 9.5f, FontStyle.Bold);
         using var text = new SolidBrush(Ink);
         var fmt = new StringFormat { Alignment = StringAlignment.Center };
@@ -714,9 +628,11 @@ sealed class MainForm : Form
         body.Controls.Add(Note("In the game, F10 opens the settings menu (resolution, picture shape, controls, audio) and F11 switches between fullscreen and a window."));
         // Scooby's tips: click the bubble for another one.
         var tipRow = new FlowLayoutPanel { AutoSize = true, Margin = S(0, 10, 0, 6) };
-        var pic = new Bitmap(S(52), S(52));
-        using (var g = Graphics.FromImage(pic)) { g.SmoothingMode = SmoothingMode.AntiAlias; DrawScooby(g, new RectangleF(0, 0, pic.Width, pic.Height), 0, false); }
-        tipRow.Controls.Add(new PictureBox { Image = pic, Size = pic.Size, Margin = S(0, 0, 8, 0) });
+        if (ScoobyArt != null)
+        {
+            var pic = SizedArt(ScoobyArt, S(60));
+            tipRow.Controls.Add(new PictureBox { Image = pic, Size = pic.Size, Margin = S(0, 0, 8, 0) });
+        }
         tipLabel = new Label
         {
             AutoSize = true, MaximumSize = new Size(S(600), 0), BackColor = TealLight, ForeColor = Ink,

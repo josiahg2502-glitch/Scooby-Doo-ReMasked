@@ -16,4 +16,7 @@
     <DebugType>embedded</DebugType>
     <ApplicationIcon>scooby.ico</ApplicationIcon>
   </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="scooby.png" LogicalName="ScoobyReMasked.scooby.png" />
+  </ItemGroup>
 </Project>
