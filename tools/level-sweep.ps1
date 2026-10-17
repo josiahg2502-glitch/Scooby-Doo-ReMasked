@@ -1,8 +1,10 @@
 # Boots straight into each level through a temporary engine.ini mod (StartingLevelPath/StartingLevelToLoad), runs it
 # for -Seconds, saves a window capture and a one-line verdict per level. The mod is removed at the end (also on error).
-# Usage: level-sweep.ps1 [-Seconds 40] [-Levels W1L0,W1L3]   -> autotest\level-sweep-<time>\REPORT.txt + <level>.png
-param([int]$Seconds = 40, [string[]]$Levels = @())
+# Usage: level-sweep.ps1 [-Seconds 40] [-Levels W1L0,W1L3] [-Every 10]   -> autotest\level-sweep-<time>\REPORT.txt + <level>.png
+# -Every N also saves full-size captures every N seconds as <level>-<s>s.png (for looking at rendering).
+param([int]$Seconds = 40, [string[]]$Levels = @(), [int]$Every = 0)
 $ErrorActionPreference = 'Stop'
+$Levels = @($Levels | % { $_ -split "," } | ? { $_ })  # -File passes "A,B" as one string
 $root = Split-Path -Parent $PSScriptRoot
 $exe = Join-Path $root 'Play\Scooby-Doo Re-Masked.exe'
 $files = Join-Path $root 'Disc\DATA\files'
@@ -43,7 +45,22 @@ try {
         Set-Content (Join-Path $mod 'files\engine.ini') $ini -Encoding ascii
         $err = Join-Path $out "$level.err.log"
         $p = Start-Process $exe -WorkingDirectory (Split-Path $exe) -PassThru -RedirectStandardOutput (Join-Path $out "$level.out.log") -RedirectStandardError $err
-        $null = $p.WaitForExit($Seconds * 1000)
+        function Grab([string]$file, [int]$width) {
+            $h = [SweepWin]::FindFor([uint32]$p.Id); $r = New-Object SweepWin+RECT
+            if ($h -eq [IntPtr]::Zero -or -not [SweepWin]::GetClientRect($h, [ref]$r) -or $r.R -le 1) { return }
+            $b = New-Object System.Drawing.Bitmap $r.R, $r.B; $g = [System.Drawing.Graphics]::FromImage($b); $dc = $g.GetHdc()
+            [SweepWin]::PrintWindow($h, $dc, 3) | Out-Null; $g.ReleaseHdc($dc); $g.Dispose()
+            $w = if ($width -gt 0) { $width } else { $b.Width }
+            $s = New-Object System.Drawing.Bitmap $w, ([int]($w * $b.Height / $b.Width)); $g = [System.Drawing.Graphics]::FromImage($s)
+            $g.DrawImage($b, 0, 0, $s.Width, $s.Height); $g.Dispose(); $b.Dispose(); $s.Save($file); $s.Dispose()
+        }
+        if ($Every -gt 0) {
+            for ($at = $Every; $at -lt $Seconds -and -not $p.HasExited; $at += $Every) {
+                $null = $p.WaitForExit($Every * 1000)
+                if (-not $p.HasExited) { Grab (Join-Path $out "$level-$($at)s.png") 1920 }
+            }
+            $null = $p.WaitForExit(($Seconds % $Every) * 1000 + 1)
+        } else { $null = $p.WaitForExit($Seconds * 1000) }
         $png = ''
         if (-not $p.HasExited) {
             $h = [SweepWin]::FindFor([uint32]$p.Id); $r = New-Object SweepWin+RECT
