@@ -1,0 +1,431 @@
+file,line,nsmbw_addr,symbol,spm_addr,action
+include/native_cpu_calls.inc,52,801C37C0,GXSetVtxDesc,8028B638,rewritten
+include/native_cpu_calls.inc,53,801C4070,GXClearVtxDesc,8028BEC8,rewritten
+include/native_cpu_calls.inc,54,801C40B0,GXSetVtxAttrFmt,8028BEFC,rewritten
+include/native_cpu_calls.inc,55,801C47D0,GXSetTexCoordGen2,8028C610,rewritten
+include/native_cpu_calls.inc,56,801C4A20,GXSetNumTexGens,8028C838,rewritten
+include/native_cpu_calls.inc,57,801C4EA0,GXDrawDone,8028CD50,rewritten
+include/native_cpu_calls.inc,58,801C5570,GXBegin,8028D3B4,rewritten
+include/native_cpu_calls.inc,59,801C57A0,GXSetLineWidth,8028D5D8,rewritten
+include/native_cpu_calls.inc,60,801C57E0,GXSetPointSize,8028D60C,rewritten
+include/native_cpu_calls.inc,61,801C5860,GXSetCullMode,8028D67C,rewritten
+include/native_cpu_calls.inc,62,801C6AC0,GXSetNumChans,8028E778,rewritten
+include/native_cpu_calls.inc,63,801C6AF0,GXSetChanCtrl,8028E79C,rewritten
+include/native_cpu_calls.inc,64,801C6D90,GXInitTexObj,8028EA24,rewritten
+include/native_cpu_calls.inc,65,801C6FF0,GXInitTexObjLOD,8028EC78,rewritten
+include/native_cpu_calls.inc,66,801C76C0,GXInvalidateTexAll,8028F198,rewritten
+include/native_cpu_calls.inc,67,801C74C0,GXLoadTexObj,8028EF78,rewritten
+include/native_cpu_calls.inc,68,801C8110,GXSetNumIndStages,8028FD44,rewritten
+include/native_cpu_calls.inc,69,801C8130,GXSetTevDirect,8028FD64,rewritten
+include/native_cpu_calls.inc,70,801C82F0,GXSetTevColorIn,8028FEEC,rewritten
+include/native_cpu_calls.inc,71,801C8330,GXSetTevAlphaIn,8028FF2C,rewritten
+include/native_cpu_calls.inc,72,801C8370,GXSetTevColorOp,8028FF6C,rewritten
+include/native_cpu_calls.inc,73,801C83D0,GXSetTevAlphaOp,8028FFC4,rewritten
+include/native_cpu_calls.inc,74,801C8490,GXSetTevColorS10,8029007C,rewritten
+include/native_cpu_calls.inc,75,801C8500,GXSetTevKColor,802900E0,rewritten
+include/native_cpu_calls.inc,76,801C8560,GXSetTevKColorSel,8029013C,rewritten
+include/native_cpu_calls.inc,77,801C85B0,GXSetTevKAlphaSel,8029018C,rewritten
+include/native_cpu_calls.inc,78,801C8600,GXSetTevSwapMode,802901DC,rewritten
+include/native_cpu_calls.inc,79,801C8640,GXSetTevSwapModeTable,80290218,rewritten
+include/native_cpu_calls.inc,80,801C8790,GXSetTevOrder,80290358,rewritten
+include/native_cpu_calls.inc,81,801C88F0,GXSetNumTevStages,802904B4,rewritten
+include/native_cpu_calls.inc,82,801C8DC0,GXSetBlendMode,80290828,rewritten
+include/native_cpu_calls.inc,83,801C9940,GXLoadPosMtxImm,80291788,rewritten
+include/native_cpu_calls.inc,84,801C9A60,GXSetCurrentMtx,80291830,rewritten
+include/native_cpu_calls.inc,95,802B6C80,DrawQuad__Q34nw4r3lyt6detailFRCQ34nw4r4math4VEC2RCQ34nw4r3lyt4SizeUcPA4_CQ34nw4r4math4VEC2PCQ34nw4r2ut5Color,,disabled: name not in SPM
+include/native_cpu_calls.inc,96,802B71E0,DrawQuad__Q34nw4r3lyt6detailFRCQ34nw4r4math4VEC2RCQ34nw4r3lyt4SizeUcPA4_CQ34nw4r4math4VEC2PCQ34nw4r2ut5ColorUc,,disabled: name not in SPM
+src/hle/audio/audio.cpp,155,801ABF60,__AIClockInit,8026D30C,rewritten
+src/hle/audio/audio.cpp,167,801AC180,__OSInitAudioSystem,8026D52C,rewritten
+src/hle/audio/audio.cpp,182,801AC350,__OSStopAudioSystem,8026D6F4,rewritten
+src/hle/audio/audio.cpp,217,8019F1F0,AIInit,8028479C,rewritten
+src/hle/audio/audio.cpp,225,8019F1E0,AICheckInit,,disabled: name not in SPM
+src/hle/audio/audio.cpp,235,801D5740,DSPInit,80288E28,rewritten
+src/hle/audio/audio.cpp,241,801D5800,DSPCheckInit,80288EE8,rewritten
+src/hle/audio/audio.cpp,247,801D5810,DSPAddTask,80288EF0,rewritten
+src/hle/audio/audio.cpp,256,801D5F70,__DSP_boot_task,80289644,rewritten
+src/hle/audio/audio.cpp,265,801A1CE0,__AXOutInitDSP,8028670C,rewritten
+src/hle/audio/audio.cpp,278,8019F100,AIInitDMA,802846FC,rewritten
+src/hle/audio/audio.cpp,296,8019F0B0,AIRegisterDMACallback,802846B8,rewritten
+src/hle/audio/audio.cpp,315,8019F180,AIStartDMA,80284778,rewritten
+src/hle/audio/audio.cpp,322,8019F1A0,AIGetDMABytesLeft,8028478C,rewritten
+src/hle/audio/audio.cpp,329,8019F1B0,AIGetDMAStartAddr,,disabled: name not in SPM
+src/hle/audio/audio.cpp,336,8019F1D0,AIGetDMALength,,disabled: name not in SPM
+src/hle/audio/audio.cpp,345,8012409C,,,disabled: no NSMBW symbol at this address
+src/hle/audio/audio.cpp,352,801D5720,DSPSendMailToDSP,80288E14,rewritten
+src/hle/audio/audio.cpp,360,800A35E0,,,disabled: no NSMBW symbol at this address
+src/hle/audio/audio.cpp,368,801D56E0,DSPCheckMailToDSP,80288DE0,rewritten
+src/hle/audio/audio.cpp,374,801D56F0,DSPCheckMailFromDSP,80288DF0,rewritten
+src/hle/audio/audio.cpp,380,801D5700,DSPReadMailFromDSP,80288E00,rewritten
+src/hle/audio/audio.cpp,386,801D5880,DSPAssertTask,80288F60,rewritten
+src/hle/audio/ax_effects.cpp,374,801A6D30,AXFXReverbStdExpCallback,,disabled: name not in SPM
+src/hle/c_stdio.cpp,48,802E4570,__write_console,8025E220,rewritten
+src/hle/egg_decomp.cpp,73,80218C2C,,,disabled: no NSMBW symbol at this address
+src/hle/esp.cpp,57,801D6230,ESP_InitLib,,disabled: name not in SPM
+src/hle/esp.cpp,65,801D6290,ESP_CloseLib,,disabled: name not in SPM
+src/hle/esp.cpp,83,801D66E0,ESP_GetTitleId,,disabled: name not in SPM
+src/hle/esp.cpp,118,801D6640,ESP_GetDataDir,80299BF8,rewritten
+src/hle/gx/gx_copy.cpp,79,801C5920,GXSetDispCopySrc,8028D82C,rewritten
+src/hle/gx/gx_copy.cpp,82,801C59A0,GXSetDispCopyDst,8028D8AC,rewritten
+src/hle/gx/gx_copy.cpp,93,801C5960,GXSetTexCopySrc,8028D86C,rewritten
+src/hle/gx/gx_copy.cpp,100,801C59D0,GXSetTexCopyDst,8028D8D0,rewritten
+src/hle/gx/gx_copy.cpp,108,801C5F40,GXSetCopyFilter,8028DDA8,rewritten
+src/hle/gx/gx_copy.cpp,111,801C6130,GXSetDispCopyGamma,8028DF8C,rewritten
+src/hle/gx/gx_copy.cpp,137,801C6150,GXCopyDisp,8028DFA0,rewritten
+src/hle/gx/gx_copy.cpp,213,801C6290,GXCopyTex,8028E0DC,rewritten
+src/hle/gx/gx_dl.cpp,1486,801C95E0,GXCallDisplayList,80291458,rewritten
+src/hle/gx/gx_dl.cpp,1503,802B6C80,DrawQuad__Q34nw4r3lyt6detailFRCQ34nw4r4math4VEC2RCQ34nw4r3lyt4SizeUcPA4_CQ34nw4r4math4VEC2PCQ34nw4r2ut5Color,,disabled: name not in SPM
+src/hle/gx/gx_dl.cpp,1521,802B71E0,DrawQuad__Q34nw4r3lyt6detailFRCQ34nw4r4math4VEC2RCQ34nw4r3lyt4SizeUcPA4_CQ34nw4r4math4VEC2PCQ34nw4r2ut5ColorUc,,disabled: name not in SPM
+src/hle/gx/gx_egg.cpp,74,8021B344,,,disabled: no NSMBW symbol at this address
+src/hle/gx/gx_egg.cpp,77,8021B688,,,disabled: no NSMBW symbol at this address
+src/hle/gx/gx_egg.cpp,118,8022E2BC,,,disabled: no NSMBW symbol at this address
+src/hle/gx/gx_egg.cpp,131,802BB820,endRender__Q23EGG12AsyncDisplayFv,,disabled: name not in SPM
+src/hle/gx/gx_indirect.cpp,9,801C8110,GXSetNumIndStages,8028FD44,rewritten
+src/hle/gx/gx_indirect.cpp,14,801C8040,GXSetIndTexOrder,8028FC78,rewritten
+src/hle/gx/gx_indirect.cpp,19,801C7F40,GXSetIndTexCoordScale,8028FB74,rewritten
+src/hle/gx/gx_indirect.cpp,25,801C7E00,GXSetIndTexMtx,8028FA20,rewritten
+src/hle/gx/gx_indirect.cpp,32,801C8130,GXSetTevDirect,8028FD64,rewritten
+src/hle/gx/gx_indirect.cpp,38,801C8180,GXSetTevIndWarp,8028FDAC,rewritten
+src/hle/gx/gx_indirect.cpp,45,801C7D90,GXSetTevIndirect,8028F9B8,rewritten
+src/hle/gx/gx_init.cpp,86,801C1DB0,GXInit,80289CB4,rewritten
+src/hle/gx/gx_init.cpp,95,801C2E70,GXSetCPUFifo,8028ADAC,rewritten
+src/hle/gx/gx_init.cpp,98,801C3050,GXSetGPFifo,8028AF8C,rewritten
+src/hle/gx/gx_init.cpp,101,801C32E0,__GXSaveFifo,8028B21C,rewritten
+src/hle/gx/gx_init.cpp,104,801C3440,GXGetCPUFifo,8028B324,rewritten
+src/hle/gx/gx_init.cpp,162,801C5280,__GXPEInit,8028D0D8,rewritten
+src/hle/gx/gx_init.cpp,189,801C9470,GXBeginDisplayList,802912FC,rewritten
+src/hle/gx/gx_init.cpp,226,801C9530,GXEndDisplayList,802913AC,rewritten
+src/hle/gx/gx_init.cpp,233,801C4AD0,GXFlush,8028C8E8,rewritten
+src/hle/gx/gx_lighting.cpp,71,801C6880,GXLoadLightObjImm,8028E54C,rewritten
+src/hle/gx/gx_lighting.cpp,82,801C6900,GXSetChanAmbColor,8028E5C8,rewritten
+src/hle/gx/gx_lighting.cpp,89,801C69E0,GXSetChanMatColor,8028E6A0,rewritten
+src/hle/gx/gx_lighting.cpp,92,801C6AC0,GXSetNumChans,8028E778,rewritten
+src/hle/gx/gx_lighting.cpp,97,801C6AF0,GXSetChanCtrl,8028E79C,rewritten
+src/hle/gx/gx_nsmbw.cpp,26,801C5890,GXGetCullMode,8028D6A4,rewritten
+src/hle/gx/gx_nsmbw.cpp,34,801C4CE0,GXAbortFrame,8028CADC,rewritten
+src/hle/gx/gx_nsmbw.cpp,47,801C4FA0,GXPokeAlphaMode,8028CE58,rewritten
+src/hle/gx/gx_nsmbw.cpp,49,801C4FB0,GXPokeAlphaRead,8028CE68,rewritten
+src/hle/gx/gx_nsmbw.cpp,51,801C4FD0,GXPokeAlphaUpdate,8028CE80,rewritten
+src/hle/gx/gx_nsmbw.cpp,53,801C4FF0,GXPokeBlendMode,8028CE94,rewritten
+src/hle/gx/gx_nsmbw.cpp,56,801C5050,GXPokeColorUpdate,8028CEF0,rewritten
+src/hle/gx/gx_nsmbw.cpp,58,801C5070,GXPokeDstAlpha,8028CF04,rewritten
+src/hle/gx/gx_nsmbw.cpp,60,801C5090,GXPokeDither,8028CF1C,rewritten
+src/hle/gx/gx_nsmbw.cpp,63,801C50B0,GXPokeZMode,8028CF30,rewritten
+src/hle/gx/gx_pixel.cpp,12,801C8DC0,GXSetBlendMode,80290828,rewritten
+src/hle/gx/gx_pixel.cpp,17,801C8E10,GXSetColorUpdate,80290878,rewritten
+src/hle/gx/gx_pixel.cpp,22,801C8E40,GXSetAlphaUpdate,802908A4,rewritten
+src/hle/gx/gx_pixel.cpp,31,801C8E70,GXSetZMode,802908D0,rewritten
+src/hle/gx/gx_pixel.cpp,36,801C8EB0,GXSetZCompLoc,80290904,rewritten
+src/hle/gx/gx_pixel.cpp,45,801C8EE0,GXSetPixelFmt,80290934,rewritten
+src/hle/gx/gx_pixel.cpp,50,801C8F90,GXSetDither,802909DC,rewritten
+src/hle/gx/gx_pixel.cpp,55,801C8FC0,GXSetDstAlpha,80290A08,rewritten
+src/hle/gx/gx_pixel.cpp,64,801C8920,GXSetFog,802904D8,rewritten
+src/hle/gx/gx_pixel.cpp,70,801C86C0,GXSetAlphaCompare,80290294,rewritten
+src/hle/gx/gx_pixel.cpp,73,801C8700,GXSetZTexture,802902CC,rewritten
+src/hle/gx/gx_pixel.cpp,82,801C5860,GXSetCullMode,8028D67C,rewritten
+src/hle/gx/gx_pixel.cpp,85,801C58B0,GXSetCoPlanar,8028D6C0,rewritten
+src/hle/gx/gx_pixel.cpp,88,801C9D60,GXSetClipMode,80291B38,rewritten
+src/hle/gx/gx_stubs.cpp,29,8016E9FC,,,disabled: no NSMBW symbol at this address
+src/hle/gx/gx_stubs.cpp,39,801C5200,GXFinishInterruptHandler,8028D058,rewritten
+src/hle/gx/gx_stubs.cpp,45,801C4EA0,GXDrawDone,8028CD50,rewritten
+src/hle/gx/gx_stubs.cpp,51,801C4F70,GXPixModeSync,8028CE10,rewritten
+src/hle/gx/gx_stubs.cpp,58,801C1C80,__GXInitRevisionBits,80289B84,rewritten
+src/hle/gx/gx_stubs.cpp,68,801C78D0,__GXSetSUTexRegs,8028F4FC,rewritten
+src/hle/gx/gx_stubs.cpp,74,801C7A40,__GXSetTmemConfig,8028F664,rewritten
+src/hle/gx/gx_stubs.cpp,80,801C8220,__GXFlushTextureState,8028FE34,rewritten
+src/hle/gx/gx_stubs.cpp,96,801C5AE0,GXSetDispCopyFrame2Field,8028D9EC,rewritten
+src/hle/gx/gx_stubs.cpp,109,801C5B00,GXSetCopyClamp,8028DA0C,rewritten
+src/hle/gx/gx_stubs.cpp,118,801C63F0,GXClearBoundingBox,8028E234,rewritten
+src/hle/gx/gx_stubs.cpp,127,801C52F0,__GXSetDirtyState,8028D13C,rewritten
+src/hle/gx/gx_stubs.cpp,132,801C4B30,GXResetWriteGatherPipe,8028C944,rewritten
+src/hle/gx/gx_tev.cpp,36,801C88F0,GXSetNumTevStages,802904B4,rewritten
+src/hle/gx/gx_tev.cpp,42,801C8250,GXSetTevOp,8028FE58,rewritten
+src/hle/gx/gx_tev.cpp,48,801C8790,GXSetTevOrder,80290358,rewritten
+src/hle/gx/gx_tev.cpp,58,801C82F0,GXSetTevColorIn,8028FEEC,rewritten
+src/hle/gx/gx_tev.cpp,64,801C8330,GXSetTevAlphaIn,8028FF2C,rewritten
+src/hle/gx/gx_tev.cpp,74,801C8370,GXSetTevColorOp,8028FF6C,rewritten
+src/hle/gx/gx_tev.cpp,80,801C83D0,GXSetTevAlphaOp,8028FFC4,rewritten
+src/hle/gx/gx_tev.cpp,91,801C8430,GXSetTevColor,8029001C,rewritten
+src/hle/gx/gx_tev.cpp,99,801C8490,GXSetTevColorS10,8029007C,rewritten
+src/hle/gx/gx_tev.cpp,106,801C8500,GXSetTevKColor,802900E0,rewritten
+src/hle/gx/gx_tev.cpp,109,801C8560,GXSetTevKColorSel,8029013C,rewritten
+src/hle/gx/gx_tev.cpp,112,801C85B0,GXSetTevKAlphaSel,8029018C,rewritten
+src/hle/gx/gx_tev.cpp,122,801C8640,GXSetTevSwapModeTable,80290218,rewritten
+src/hle/gx/gx_tev.cpp,128,801C8600,GXSetTevSwapMode,802901DC,rewritten
+src/hle/gx/gx_texture.cpp,259,801C6D90,GXInitTexObj,8028EA24,rewritten
+src/hle/gx/gx_texture.cpp,263,80170938,,,disabled: no NSMBW symbol at this address
+src/hle/gx/gx_texture.cpp,268,8017093C,,,disabled: no NSMBW symbol at this address
+src/hle/gx/gx_texture.cpp,273,80170950,,,disabled: no NSMBW symbol at this address
+src/hle/gx/gx_texture.cpp,278,80170964,,,disabled: no NSMBW symbol at this address
+src/hle/gx/gx_texture.cpp,283,80170978,,,disabled: no NSMBW symbol at this address
+src/hle/gx/gx_texture.cpp,288,8017098C,,,disabled: no NSMBW symbol at this address
+src/hle/gx/gx_texture.cpp,293,801709A0,,,disabled: no NSMBW symbol at this address
+src/hle/gx/gx_texture.cpp,320,801C6FA0,GXInitTexObjCI,8028EC30,rewritten
+src/hle/gx/gx_texture.cpp,330,801C6FF0,GXInitTexObjLOD,8028EC78,rewritten
+src/hle/gx/gx_texture.cpp,346,801C7100,GXInitTexObjWrapMode,8028ED8C,rewritten
+src/hle/gx/gx_texture.cpp,360,801C7120,GXInitTexObjTlut,8028EDA0,rewritten
+src/hle/gx/gx_texture.cpp,388,801C7130,GXInitTexObjFilter,8028EDA8,rewritten
+src/hle/gx/gx_texture.cpp,419,80170B94,,,disabled: no NSMBW symbol at this address
+src/hle/gx/gx_texture.cpp,436,801C7160,GXInitTexObjUserData,,disabled: name not in SPM
+src/hle/gx/gx_texture.cpp,659,801C74C0,GXLoadTexObj,8028EF78,rewritten
+src/hle/gx/gx_texture.cpp,662,801C7350,GXLoadTexObjPreLoaded,8028EE14,rewritten
+src/hle/gx/gx_texture.cpp,680,801C7180,GXGetTexObjAll,,disabled: name not in SPM
+src/hle/gx/gx_texture.cpp,695,801C7260,GXGetTexObjLODAll,,disabled: name not in SPM
+src/hle/gx/gx_texture.cpp,710,801C7520,GXInitTlutObj,8028EFCC,rewritten
+src/hle/gx/gx_texture.cpp,713,801C7550,GXLoadTlut,8028EFF4,rewritten
+src/hle/gx/gx_texture.cpp,725,801C76C0,GXInvalidateTexAll,8028F198,rewritten
+src/hle/gx/gx_texture.cpp,728,801C7750,GXSetTexCoordScaleManually,,disabled: name not in SPM
+src/hle/gx/gx_texture.cpp,731,801C77D0,GXSetTexCoordBias,,disabled: name not in SPM
+src/hle/gx/gx_transform.cpp,51,801C9BD0,GXSetViewportJitter,80291994,rewritten
+src/hle/gx/gx_transform.cpp,57,801C9C10,GXSetViewport,802919D0,rewritten
+src/hle/gx/gx_transform.cpp,72,801C9C40,GXGetViewportv,802919FC,rewritten
+src/hle/gx/gx_transform.cpp,87,80173400,,,disabled: no NSMBW symbol at this address
+src/hle/gx/gx_transform.cpp,97,801C9D20,GXSetScissorBoxOffset,80291AFC,rewritten
+src/hle/gx/gx_transform.cpp,117,801C9C60,GXSetScissor,80291A4C,rewritten
+src/hle/gx/gx_transform.cpp,167,801C9840,GXSetProjection,80291698,rewritten
+src/hle/gx/gx_transform.cpp,218,801C98B0,GXSetProjectionv,802916FC,rewritten
+src/hle/gx/gx_transform.cpp,226,801C9900,GXGetProjectionv,80291748,rewritten
+src/hle/gx/gx_transform.cpp,237,801C9940,GXLoadPosMtxImm,80291788,rewritten
+src/hle/gx/gx_transform.cpp,245,801C9990,GXLoadPosMtxIndx,,disabled: name not in SPM
+src/hle/gx/gx_transform.cpp,251,801C99C0,GXLoadNrmMtxImm,802917D8,rewritten
+src/hle/gx/gx_transform.cpp,269,801C9A20,GXLoadNrmMtxIndx3x3,,disabled: name not in SPM
+src/hle/gx/gx_transform.cpp,276,801C9A80,GXLoadTexMtxImm,80291850,rewritten
+src/hle/gx/gx_transform.cpp,279,801C9A60,GXSetCurrentMtx,80291830,rewritten
+src/hle/gx/gx_vertex.cpp,45,801C4070,GXClearVtxDesc,8028BEC8,rewritten
+src/hle/gx/gx_vertex.cpp,59,801C37C0,GXSetVtxDesc,8028B638,rewritten
+src/hle/gx/gx_vertex.cpp,70,801C3A30,GXSetVtxDescv,8028B89C,rewritten
+src/hle/gx/gx_vertex.cpp,82,801C3E20,GXGetVtxDesc,8028BC84,rewritten
+src/hle/gx/gx_vertex.cpp,100,801C3FE0,GXGetVtxDescv,8028BE38,rewritten
+src/hle/gx/gx_vertex.cpp,126,801C40B0,GXSetVtxAttrFmt,8028BEFC,rewritten
+src/hle/gx/gx_vertex.cpp,137,801C4250,GXSetVtxAttrFmtv,8028C09C,rewritten
+src/hle/gx/gx_vertex.cpp,155,801C44A0,GXGetVtxAttrFmt,8028C2E0,rewritten
+src/hle/gx/gx_vertex.cpp,176,801C4700,GXGetVtxAttrFmtv,8028C54C,rewritten
+src/hle/gx/gx_vertex.cpp,186,801C4780,GXSetArray,8028C5C0,rewritten
+src/hle/gx/gx_vertex.cpp,192,801C4780,GXSetArray,8028C5C0,rewritten
+src/hle/gx/gx_vertex.cpp,202,801C4A20,GXSetNumTexGens,8028C838,rewritten
+src/hle/gx/gx_vertex.cpp,218,801C47D0,GXSetTexCoordGen2,8028C610,rewritten
+src/hle/gx/gx_vertex.cpp,225,801C5820,GXEnableTexOffsets,8028D640,rewritten
+src/hle/gx/gx_vertex.cpp,230,801C57A0,GXSetLineWidth,8028D5D8,rewritten
+src/hle/gx/gx_vertex.cpp,235,801C57E0,GXSetPointSize,8028D60C,rewritten
+src/hle/gx/gx_vertex.cpp,295,801C5570,GXBegin,8028D3B4,rewritten
+src/hle/gx/gx_vertex.cpp,298,802A35B0,GXEnd,,disabled: name not in SPM
+src/hle/gx/gx_vertex.cpp,301,802A7C90,GXEnd,,disabled: name not in SPM
+src/hle/gx/gx_vertex.cpp,406,801C90A0,GXDrawSphere,80290ADC,rewritten
+src/hle/input/kpad.cpp,289,801ED3A0,KPADRead,802DE7B4,rewritten
+src/hle/input/kpad.cpp,308,801ED3B0,KPADReadEx,,disabled: name not in SPM
+src/hle/input/kpad.cpp,335,8019812C,,,disabled: no NSMBW symbol at this address
+src/hle/input/pad.cpp,102,801AF2F0,,,disabled: no NSMBW symbol at this address
+src/hle/input/pad.cpp,136,801AF44C,,,disabled: no NSMBW symbol at this address
+src/hle/input/pad.cpp,144,801AF0DC,,,disabled: no NSMBW symbol at this address
+src/hle/input/pad.cpp,152,801AF1E4,,,disabled: no NSMBW symbol at this address
+src/hle/input/pad.cpp,163,801AF908,,,disabled: no NSMBW symbol at this address
+src/hle/input/wpad.cpp,64,801DFB30,WPADGetStatus,802CCBB4,rewritten
+src/hle/input/wpad.cpp,70,801E3890,WPADGetDpdSensitivity,802D0874,rewritten
+src/hle/input/wpad.cpp,81,801BF3B4,,,disabled: no NSMBW symbol at this address
+src/hle/input/wpad.cpp,88,801DFA50,WPADInit,802CC950,rewritten
+src/hle/input/wpad.cpp,94,801F3530,WUDGetStatus,802D97B0,rewritten
+src/hle/input/wpad.cpp,103,801E1150,WPADGetDataFormat,802CE3CC,rewritten
+src/hle/input/wpad.cpp,110,801E11A0,WPADSetDataFormat,802CE414,rewritten
+src/hle/input/wpad.cpp,157,801E0F40,WPADProbe,802CE208,rewritten
+src/hle/input/wpad.cpp,164,801E14E0,WPADControlMotor,802CE684,rewritten
+src/hle/input/wpad.cpp,175,801E12C0,WPADGetInfoAsync,802CE4C4,rewritten
+src/hle/input/wpad.cpp,186,801E1630,WPADControlLed,,disabled: name not in SPM
+src/hle/input/wpad.cpp,198,801BF634,,,disabled: no NSMBW symbol at this address
+src/hle/input/wpad.cpp,201,801BF638,,,disabled: no NSMBW symbol at this address
+src/hle/input/wpad.cpp,217,801DFAD0,WPADStopSimpleSync,802CCBA8,rewritten
+src/hle/input/wpad.cpp,226,801BF640,,,disabled: no NSMBW symbol at this address
+src/hle/ios.cpp,113,80225500,IOS_IoctlAsync,802960C4,rewritten
+src/hle/ios.cpp,131,80224B50,IOS_OpenAsync,80295834,rewritten
+src/hle/ios.cpp,146,80224DA0,IOS_CloseAsync,80295A6C,rewritten
+src/hle/ios.cpp,152,80224F10,IOS_ReadAsync,80295BD4,rewritten
+src/hle/ios.cpp,158,80225120,IOS_WriteAsync,80295DDC,rewritten
+src/hle/ios.cpp,170,80225330,IOS_SeekAsync,80295FE4,rewritten
+src/hle/ios.cpp,195,802258B0,IOS_IoctlvAsync,80296468,rewritten
+src/hle/net/network_config.cpp,75,801D8D30,,,disabled: no NSMBW symbol at this address
+src/hle/os/os_alarm.cpp,369,801AB540,OSSetAlarm,8026CB38,rewritten
+src/hle/os/os_alarm.cpp,462,801AB5B0,OSSetPeriodicAlarm,8026CBA8,rewritten
+src/hle/os/os_alarm.cpp,502,800BD860,,,disabled: no NSMBW symbol at this address
+src/hle/os/os_cache.cpp,96,801AC440,DCInvalidateRange,8026D7D4,rewritten
+src/hle/os/os_cache.cpp,97,801AC470,DCFlushRange,8026D800,rewritten
+src/hle/os/os_cache.cpp,98,801AC4A0,DCStoreRange,8026D830,rewritten
+src/hle/os/os_cache.cpp,99,801AC4D0,DCFlushRangeNoSync,8026D860,rewritten
+src/hle/os/os_cache.cpp,100,801AC500,DCStoreRangeNoSync,,disabled: name not in SPM
+src/hle/os/os_cache.cpp,223,801AC420,DCEnable,8026D7C0,rewritten
+src/hle/os/os_cache.cpp,224,801AC530,DCZeroRange,8026D88C,rewritten
+src/hle/os/os_cache.cpp,225,801AC560,ICInvalidateRange,8026D8B8,rewritten
+src/hle/os/os_cache.cpp,226,801AC5A0,ICFlashInvalidate,8026D8EC,rewritten
+src/hle/os/os_cache.cpp,227,801AC5B0,ICEnable,8026D8FC,rewritten
+src/hle/os/os_cache.cpp,228,801AC5D0,__LCEnable,,disabled: name not in SPM
+src/hle/os/os_cache.cpp,229,801AC6A0,LCEnable,,disabled: name not in SPM
+src/hle/os/os_cache.cpp,230,801AC6E0,LCDisable,8026D910,rewritten
+src/hle/os/os_cache.cpp,231,801AC710,LCLoadBlocks,,disabled: name not in SPM
+src/hle/os/os_cache.cpp,232,801AC740,LCStoreBlocks,,disabled: name not in SPM
+src/hle/os/os_cache.cpp,233,801AC770,LCStoreData,,disabled: name not in SPM
+src/hle/os/os_cache.cpp,234,801AC810,LCQueueLength,,disabled: name not in SPM
+src/hle/os/os_cache.cpp,235,801AC820,LCQueueWait,,disabled: name not in SPM
+src/hle/os/os_cache.cpp,236,801AC990,__OSCacheInit,8026DA80,rewritten
+src/hle/os/os_context.cpp,80,801ACF80,OSClearContext,8026E034,rewritten
+src/hle/os/os_context.cpp,81,801ACD40,OSSetCurrentContext,8026DE0C,rewritten
+src/hle/os/os_context.cpp,82,801B4B30,OSGetCurrentThread,802748F8,rewritten
+src/hle/os/os_context.cpp,167,801ACE30,OSLoadContext,8026DEF4,rewritten
+src/hle/os/os_font.cpp,36,801B00A0,OSGetFontEncode,80270C74,rewritten
+src/hle/os/os_font.cpp,47,801B00F0,OSSetFontEncode,80270CC8,rewritten
+src/hle/os/os_font.cpp,61,801B0D60,OSInitFont,,disabled: name not in SPM
+src/hle/os/os_font.cpp,71,801B0480,OSLoadFont,80271048,rewritten
+src/hle/os/os_init.cpp,30,801B4890,__OSThreadInit,80274664,rewritten
+src/hle/os/os_init.cpp,41,8055531C,,,disabled: no NSMBW symbol at this address
+src/hle/os/os_init.cpp,87,801AF5D0,OSFatal,80270198,rewritten
+src/hle/os/os_init.cpp,114,801F8660,GKI_delay,8029D9C0,rewritten
+src/hle/os/os_init.cpp,115,80202914,BTM_IsDeviceUp,802A83E4,rewritten
+src/hle/os/os_init.cpp,142,801BAEF0,SIInit,8026A5B0,rewritten
+src/hle/os/os_init.cpp,143,801BB840,SISetSamplingRate,8026B214,rewritten
+src/hle/os/os_init.cpp,154,801B2D50,__OSInitMemoryProtection,80273144,rewritten
+src/hle/os/os_init.cpp,175,801A9EE0,OSGetConsoleType,8026B6E0,rewritten
+src/hle/os/os_init.cpp,191,801B3C90,OSGetResetCode,80273B08,rewritten
+src/hle/os/os_init.cpp,232,801B6820,__OSInitSTM,802761C0,rewritten
+src/hle/os/os_init.cpp,240,801AB150,__OSPSInit,8026C7A0,rewritten
+src/hle/os/os_init.cpp,249,80004300,__init_hardware,800063C8,rewritten
+src/hle/os/os_init.cpp,261,801A9B40,PPCMfhid0,8026B304,rewritten
+src/hle/os/os_init.cpp,264,801A9B50,PPCMthid0,8026B30C,rewritten
+src/hle/os/os_init.cpp,277,801A9B80,PPCMtdec,8026B324,rewritten
+src/hle/os/os_init.cpp,285,801A9B90,PPCSync,8026B32C,rewritten
+src/hle/os/os_init.cpp,288,801A9BC0,PPCMtmmcr0,8026B348,rewritten
+src/hle/os/os_init.cpp,291,801A9BD0,PPCMtmmcr1,8026B350,rewritten
+src/hle/os/os_init.cpp,294,801A9BE0,PPCMtpmc1,8026B358,rewritten
+src/hle/os/os_init.cpp,297,801A9BF0,PPCMtpmc2,8026B360,rewritten
+src/hle/os/os_init.cpp,300,801A9C00,PPCMtpmc3,8026B368,rewritten
+src/hle/os/os_init.cpp,303,801A9C10,PPCMtpmc4,8026B370,rewritten
+src/hle/os/os_init.cpp,320,801A9C70,PPCMfhid2,8026B3C0,rewritten
+src/hle/os/os_init.cpp,332,801A9C80,PPCMthid2,8026B3C8,rewritten
+src/hle/os/os_init.cpp,336,801A9C90,PPCMfwpar,8026B3D0,rewritten
+src/hle/os/os_init.cpp,340,801A9CA0,PPCMtwpar,8026B3DC,rewritten
+src/hle/os/os_init.cpp,343,801A9CB0,PPCDisableSpeculation,8026B3E4,rewritten
+src/hle/os/os_init.cpp,346,801A9CF0,PPCMthid4,8026B414,rewritten
+src/hle/os/os_interrupt.cpp,236,801B1140,OSDisableInterrupts,802716B8,rewritten
+src/hle/os/os_interrupt.cpp,237,801B1160,OSEnableInterrupts,802716CC,rewritten
+src/hle/os/os_interrupt.cpp,238,801B1180,OSRestoreInterrupts,802716E0,rewritten
+src/hle/os/os_interrupt.cpp,239,801B11E0,__OSInterruptInit,80271728,rewritten
+src/hle/os/os_interrupt.cpp,240,801B12B0,SetInterruptMask,802717EC,rewritten
+src/hle/os/os_interrupt.cpp,241,801AAD60,OSExceptionInit,8026C3E0,rewritten
+src/hle/os/os_interrupt.cpp,242,801B9BA0,EXIInit,80269128,rewritten
+src/hle/os/os_interrupt.cpp,243,801B11B0,__OSSetInterruptHandler,80271704,rewritten
+src/hle/os/os_interrupt.cpp,244,801B1590,__OSUnmaskInterrupts,80271AC8,rewritten
+src/hle/os/os_interrupt.cpp,275,801B1510,__OSMaskInterrupts,80271A48,rewritten
+src/hle/os/os_interrupt.cpp,312,801B95C0,EXISelect,80268B58,rewritten
+src/hle/os/os_interrupt.cpp,313,801B96F0,EXIDeselect,80268C88,rewritten
+src/hle/os/os_interrupt.cpp,327,801B8A30,SetExiInterruptMask,80268000,rewritten
+src/hle/os/os_interrupt.cpp,444,801B6730,OSSetPowerCallback,80276104,rewritten
+src/hle/os/os_interrupt.cpp,446,801B8B20,EXIImm,802680F0,rewritten
+src/hle/os/os_interrupt.cpp,447,801B8E50,EXIDma,80268410,rewritten
+src/hle/os/os_interrupt.cpp,448,801B8F50,EXISync,80268508,rewritten
+src/hle/os/os_interrupt.cpp,449,801B9E70,EXIUnlock,802693E8,rewritten
+src/hle/os/os_interrupt.cpp,479,80224350,IPCWriteReg,802950D0,rewritten
+src/hle/os/os_interrupt.cpp,480,80224340,IPCReadReg,802950C0,rewritten
+src/hle/os/os_interrupt.cpp,506,802247D0,IPCCltInit,80295534,rewritten
+src/hle/os/os_message.cpp,42,801B2390,OSInitMessageQueue,802727DC,rewritten
+src/hle/os/os_message.cpp,168,801B23F0,OSSendMessage,8027283C,rewritten
+src/hle/os/os_message.cpp,196,801B24C0,OSReceiveMessage,80272904,rewritten
+src/hle/os/os_message.cpp,219,801A7500,,,disabled: no NSMBW symbol at this address
+src/hle/os/os_report.cpp,205,8015F730,OSReport,8026E440,rewritten
+src/hle/os/os_reset.cpp,55,801A9BA0,PPCHalt,8026B334,rewritten
+src/hle/os/os_reset.cpp,118,801AD4E0,OSPanic,8019D5B0,rewritten
+src/hle/os/os_reset.cpp,134,801B3CC0,OSResetSystem,80273B38,rewritten
+src/hle/os/os_reset.cpp,153,801B89E0,exit,80277888,rewritten
+src/hle/os/os_scheduler.cpp,415,801B4EA0,SelectThread,80274C24,rewritten
+src/hle/os/os_scheduler.cpp,502,801B5D80,OSWakeupThread,802758E0,rewritten
+src/hle/os/os_scheduler.cpp,554,801B2E60,OSLockMutex,8027322C,rewritten
+src/hle/os/os_scheduler.cpp,600,801B2F40,OSUnlockMutex,80273308,rewritten
+src/hle/os/os_sleep.cpp,352,801AACA8,,,disabled: no NSMBW symbol at this address
+src/hle/os/os_sleep.cpp,512,801B5C90,OSSleepThread,802757F4,rewritten
+src/hle/os/os_thread.cpp,398,801B5130,OSCreateThread,80274EA0,rewritten
+src/hle/os/os_thread.cpp,424,801B53A0,OSExitThread,8027510C,rewritten
+src/hle/os/os_thread.cpp,466,801B5490,OSCancelThread,802751F0,rewritten
+src/hle/os/os_thread.cpp,525,801B5670,OSJoinThread,,disabled: name not in SPM
+src/hle/os/os_thread.cpp,555,801B57C0,OSDetachThread,,disabled: name not in SPM
+src/hle/os/os_thread.cpp,611,801B5B00,OSSuspendThread,80275660,rewritten
+src/hle/os/os_thread.cpp,714,801B5860,OSResumeThread,802753C8,rewritten
+src/hle/os/os_time.cpp,64,801B5F80,OSGetTime,802759D4,rewritten
+src/hle/os/os_time.cpp,91,801B5FB0,__OSGetSystemTime,802759F4,rewritten
+src/hle/sc.cpp,50,801DB8E0,SCCheckStatus,8029A014,rewritten
+src/hle/sc.cpp,60,801DD1D0,SCGetAspectRatio,8029B8D8,rewritten
+src/hle/sc.cpp,72,801DD2B0,SCGetEuRgb60Mode,,disabled: name not in SPM
+src/hle/sc.cpp,82,801DD860,SCGetProductArea,8029BE5C,rewritten
+src/hle/sc.cpp,101,801B2424,,,disabled: no NSMBW symbol at this address
+src/hle/sc.cpp,113,801B2460,,,disabled: no NSMBW symbol at this address
+src/hle/sc.cpp,122,801DD940,SCGetProductGameRegion,,disabled: name not in SPM
+src/hle/sc.cpp,137,801AE4A0,,,disabled: no NSMBW symbol at this address
+src/hle/sc.cpp,154,801AD1D4,,,disabled: no NSMBW symbol at this address
+src/hle/storage/dvd.cpp,962,801CAD30,DVDInit,802795D8,rewritten
+src/hle/storage/dvd.cpp,1031,801CAB20,DVDReadPrio,802793F0,rewritten
+src/hle/storage/dvd.cpp,1048,801CAA30,DVDReadAsyncPrio,80279308,rewritten
+src/hle/storage/dvd.cpp,1113,801CECC0,DVDReadAbsAsyncPrio,8027CF08,rewritten
+src/hle/storage/dvd.cpp,1128,801D1230,DVDLowInit,8027E308,rewritten
+src/hle/storage/dvd.cpp,1141,801D2470,DVDLowInquiry,8027EDE8,rewritten
+src/hle/storage/dvd.cpp,1153,801D14A0,DVDLowReadDiskID,8027E56C,rewritten
+src/hle/storage/dvd.cpp,1214,801D2F20,DVDLowRead,8027F554,rewritten
+src/hle/storage/dvd.cpp,1220,801D2130,DVDLowUnencryptedRead,8027EAC0,rewritten
+src/hle/storage/dvd.cpp,1227,801D0980,__DVDCheckDevice,,disabled: name not in SPM
+src/hle/storage/dvd.cpp,1230,801D3700,DVDLowClearCoverInterrupt,8027FA14,rewritten
+src/hle/storage/nand_api.cpp,120,801DA860,NANDInit,80298CE8,rewritten
+src/hle/storage/nand_api.cpp,125,801DAA70,NANDGetCurrentDir,,disabled: name not in SPM
+src/hle/storage/nand_api.cpp,146,801DB140,NANDCheck,,disabled: name not in SPM
+src/hle/storage/nand_api.cpp,237,801D95B0,NANDOpen,80297AAC,rewritten
+src/hle/storage/nand_api.cpp,271,801D9850,NANDClose,80297D2C,rewritten
+src/hle/storage/nand_api.cpp,293,801D89F0,NANDRead,80297258,rewritten
+src/hle/storage/nand_api.cpp,316,801D8AE0,NANDWrite,80297338,rewritten
+src/hle/storage/nand_api.cpp,334,801D8BD0,NANDSeek,,disabled: name not in SPM
+src/hle/storage/nand_api.cpp,350,801D9040,NANDGetLength,,disabled: name not in SPM
+src/hle/storage/nand_api.cpp,376,801D84E0,NANDCreate,,disabled: name not in SPM
+src/hle/storage/nand_api.cpp,397,801D87E0,NANDDelete,80297010,rewritten
+src/hle/storage/nand_api.cpp,422,8019BBE0,,,disabled: no NSMBW symbol at this address
+src/hle/storage/nand_api.cpp,570,801D8FD0,NANDMove,,disabled: name not in SPM
+src/hle/storage/nand_api.cpp,593,8019C380,,,disabled: no NSMBW symbol at this address
+src/hle/storage/nand_api.cpp,614,801DAE70,NANDGetType,,disabled: name not in SPM
+src/hle/storage/nand_api.cpp,625,8015BC80,,,disabled: no NSMBW symbol at this address
+src/hle/storage/nand_api.cpp,632,8015BCF8,,,disabled: no NSMBW symbol at this address
+src/hle/storage/nand_async.cpp,127,801D96D0,NANDOpenAsync,80297BC4,rewritten
+src/hle/storage/nand_async.cpp,134,801D98C0,NANDCloseAsync,80297D98,rewritten
+src/hle/storage/nand_async.cpp,141,801D8A60,NANDReadAsync,802972C0,rewritten
+src/hle/storage/nand_async.cpp,148,801D8B50,NANDWriteAsync,802973A0,rewritten
+src/hle/storage/nand_async.cpp,155,801D8C70,NANDSeekAsync,80297418,rewritten
+src/hle/storage/nand_async.cpp,163,8019C048,,,disabled: no NSMBW symbol at this address
+src/hle/storage/nand_async.cpp,178,801D9750,NANDPrivateOpenAsync,80297C3C,rewritten
+src/hle/storage/nand_async.cpp,187,8019D104,,,disabled: no NSMBW symbol at this address
+src/hle/storage/nand_async.cpp,197,8019D720,,,disabled: no NSMBW symbol at this address
+src/hle/storage/nand_async.cpp,205,801D86E0,NANDPrivateCreateAsync,80296F98,rewritten
+src/hle/storage/nand_async.cpp,212,801D8D20,NANDPrivateCreateDirAsync,802975F4,rewritten
+src/hle/storage/nand_async.cpp,219,801D8930,NANDPrivateDeleteAsync,80297198,rewritten
+src/hle/storage/nand_async.cpp,226,801D9410,NANDPrivateGetStatusAsync,80297914,rewritten
+src/hle/storage/nand_async.cpp,233,801DAEC0,NANDPrivateGetTypeAsync,802998F0,rewritten
+src/hle/storage/nand_async.cpp,490,8019CB74,,,disabled: no NSMBW symbol at this address
+src/hle/storage/nand_async.cpp,497,801D9950,NANDSimpleSafeOpen,,disabled: name not in SPM
+src/hle/storage/nand_async.cpp,538,8019CF28,,,disabled: no NSMBW symbol at this address
+src/hle/storage/nand_async.cpp,542,801D9D10,NANDSimpleSafeClose,,disabled: name not in SPM
+src/hle/storage/nand_isfs.cpp,429,80224C70,IOS_Open,8029594C,rewritten
+src/hle/storage/nand_isfs.cpp,437,801938FC,,,disabled: no NSMBW symbol at this address
+src/hle/storage/nand_isfs.cpp,467,80224E60,IOS_Close,80295B2C,rewritten
+src/hle/storage/nand_isfs.cpp,491,80225010,IOS_Read,80295CD4,rewritten
+src/hle/storage/nand_isfs.cpp,516,80225220,IOS_Write,80295EDC,rewritten
+src/hle/storage/nand_isfs.cpp,533,80225410,IOS_Seek,,disabled: name not in SPM
+src/hle/storage/nand_isfs.cpp,822,80225640,IOS_Ioctl,802961FC,rewritten
+src/hle/storage/nand_isfs.cpp,952,80226490,ISFS_OpenLib,80293C70,rewritten
+src/hle/storage/nand_isfs.cpp,1151,802259A0,IOS_Ioctlv,8029654C,rewritten
+src/hle/strap_scene.cpp,18,800077C8,,,disabled: no NSMBW symbol at this address
+src/hle/task_thread.cpp,212,80242D7C,,,disabled: no NSMBW symbol at this address
+src/hle/trk.cpp,15,8002001C,,,disabled: no NSMBW symbol at this address
+src/hle/vi.cpp,1041,801BC7A0,VIInit,802808C4,rewritten
+src/hle/vi.cpp,1047,801BC5A0,__VIInit,802806B4,rewritten
+src/hle/vi.cpp,1059,801B9934,,,disabled: no NSMBW symbol at this address
+src/hle/vi.cpp,1068,801B993C,,,disabled: no NSMBW symbol at this address
+src/hle/vi.cpp,1077,801B9944,,,disabled: no NSMBW symbol at this address
+src/hle/vi.cpp,1096,801BC3E0,VISetPreRetraceCallback,80280524,rewritten
+src/hle/vi.cpp,1114,801BC430,VISetPostRetraceCallback,80280568,rewritten
+src/hle/vi.cpp,1124,801BE070,VIGetDTVStatus,8028217C,rewritten
+src/hle/vi.cpp,1166,801BD280,VIConfigure,802812A8,rewritten
+src/hle/vi.cpp,1203,801BDCB0,VIFlush,80281D90,rewritten
+src/hle/vi.cpp,1218,801BDDD0,VISetNextFrameBuffer,80281EA4,rewritten
+src/hle/vi.cpp,1233,801BAB24,,,disabled: no NSMBW symbol at this address
+src/hle/vi.cpp,1247,801BDE50,VISetBlack,80281F10,rewritten
+src/hle/vi.cpp,1260,801BDED0,VIGetRetraceCount,80281F88,rewritten
+src/hle/vi.cpp,1273,801BDEE0,VIGetNextField,80281F90,rewritten
+src/hle/vi.cpp,1306,801BDF80,VIGetCurrentLine,8028202C,rewritten
+src/hle/vi.cpp,1353,801BCCF0,VIWaitForRetrace,80280E0C,rewritten

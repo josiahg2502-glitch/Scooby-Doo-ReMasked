@@ -1,0 +1,31 @@
+# Scooby-Doo: Re-Masked - only sources, project files and scripts are tracked.
+# Game data (the user's own disc) and everything built or downloaded stays out.
+/Disc/
+/game/
+/toolchain/
+/autotest/
+/build-logs/
+/dist/
+/_runtime_spm_backup/
+/Play/*
+!/Play/portable.txt
+!/Play/Run with log.cmd
+
+# wiicompiled build output, downloaded dependencies and translator binaries
+/wiicompiled/generated/
+/wiicompiled/native-build/
+/wiicompiled/build/
+/wiicompiled/Dependencies/
+/wiicompiled/translator/**/bin/
+/wiicompiled/translator/**/obj/
+/wiicompiled/Launcher/**/bin/
+/wiicompiled/Launcher/**/obj/
+/launcher/bin/
+/launcher/obj/
+/launcher/publish/
+
+# written by the build from the disc (build_logic_overlay.py) / build output
+/wiicompiled/projects/scooby/MAP_all.txt
+/wiicompiled/projects/scooby/MAP_logic.txt
+__pycache__/
+*.pyc

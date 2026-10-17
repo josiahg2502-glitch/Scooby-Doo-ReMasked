@@ -1,0 +1,228 @@
+file,line,addr,spm_symbol,code
+include/abi_bridge.h,259,8014B12C,,inline constexpr uint32_t kOSLoadContextAddress = 0x8014B12Cu;
+include/gx_guest_write.h,25,81800000,,if (addr >= 0x80000000u && addr < 0x81800000u) {
+include/system_bridge.h,70,80011C1C,,inline constexpr uint32_t kDefaultEntryAddress = 0x80011C1Cu;
+src/dynamic_aspect.cpp,27,802A3EE8,,constexpr uint32_t kEggScreenRecord43 = 0x802A3EE8u;
+src/dynamic_aspect.cpp,28,802A3EF4,,constexpr uint32_t kEggScreenRecord169 = 0x802A3EF4u;
+src/dynamic_aspect.cpp,29,80386F14,,constexpr uint32_t kEggActiveScreenPtr = 0x80386F14u;
+src/dynamic_aspect.cpp,31,80386F20,,constexpr uint32_t kEggScreenProjScaleX = 0x80386F20u;
+src/dynamic_aspect.cpp,32,80386F24,,constexpr uint32_t kEggScreenProjScaleY = 0x80386F24u;
+src/dynamic_aspect.cpp,34,802D1B50,,constexpr uint32_t kEggScreenAspectHandler = 0x802D1B50u;
+src/dynamic_aspect.cpp,36,805653D0,,constexpr uint32_t kMkwUpdateAllScreens = 0x805653D0u;
+src/dynamic_aspect.cpp,37,809C1830,,constexpr uint32_t kMkwGfxDrawList = 0x809C1830u;
+src/dynamic_aspect.cpp,38,80386000,,constexpr uint32_t kSystemManagerInstance = 0x80386000u;
+src/dynamic_aspect.cpp,45,809C183C,,constexpr uint32_t kMkwGfxOffscreenList = 0x809C183Cu;
+src/dynamic_aspect.cpp,48,802A3F0C,bta_hh_sdp_cmpl,constexpr uint32_t kEggScreenVTable = 0x802A3F0Cu;
+src/dynamic_aspect.cpp,49,808B4C20,,constexpr uint32_t kMkwScreenVTable = 0x808B4C20u;
+src/fiber_manager.cpp,50,8025B078,,constexpr uint32_t kThreadQueueArrayAddr = 0x8025B078u;          // RunQueue (NSMBW)
+src/fiber_manager.cpp,51,80279C68,,constexpr uint32_t kSchedulerPendingFlagAddr = 0x80279c68u;      // RunQueueBits (NSMBW)
+src/fiber_manager.cpp,52,80279C6C,,constexpr uint32_t kSchedulerReschedCounterAddr = 0x80279c6cu;   // RunQueueHint (NSMBW)
+src/fiber_manager.cpp,53,80279C70,,constexpr uint32_t kSchedulerIdleFlagAddr = 0x80279c70u;         // Reschedule (NSMBW)
+src/fiber_manager.cpp,486,8056DBB0,,"os << ""[fiber] OS: RunQueueBits=0x"" << std::hex << std::uppercase << word(0x8056DBB0u)"
+src/fiber_manager.cpp,487,8056DBA8,,"<< "" Reschedule=0x"" << word(0x8056DBA8u) << "" retraceQueue head=0x"" << word(0x8056DD88u)"
+src/fiber_manager.cpp,487,8056DD88,,"<< "" Reschedule=0x"" << word(0x8056DBA8u) << "" retraceQueue head=0x"" << word(0x8056DD88u)"
+src/fiber_manager.cpp,488,8056DD8C,,"<< "" tail=0x"" << word(0x8056DD8Cu) << "" current=0x"" << word(kOSCurrentContextAddr)"
+src/guest_profiler.cpp,54,80011B78,,"for (const auto& [lo, hi] : {std::pair{0x80011B78u, 0x80319180u}, std::pair{0x80BF691Cu, 0x80C5A648u}}) {  // SPM main.dol text, relF text"
+src/guest_profiler.cpp,54,80319180,,"for (const auto& [lo, hi] : {std::pair{0x80011B78u, 0x80319180u}, std::pair{0x80BF691Cu, 0x80C5A648u}}) {  // SPM main.dol text, relF text"
+src/guest_profiler.cpp,54,80BF691C,rel_0,"for (const auto& [lo, hi] : {std::pair{0x80011B78u, 0x80319180u}, std::pair{0x80BF691Cu, 0x80C5A648u}}) {  // SPM main.dol text, relF text"
+src/guest_profiler.cpp,54,80C5A648,,"for (const auto& [lo, hi] : {std::pair{0x80011B78u, 0x80319180u}, std::pair{0x80BF691Cu, 0x80C5A648u}}) {  // SPM main.dol text, relF text"
+src/hle/audio/audio.cpp,26,80279B78,,constexpr uint32_t kAIInitializedAddr = 0x80279B78u;          // __AI_init_flag (NSMBW)
+src/hle/audio/audio.cpp,27,80279B7C,,constexpr uint32_t kAICallbackBusyAddr = 0x80279B7Cu;         // __AID_Active (NSMBW)
+src/hle/audio/audio.cpp,28,80279B70,,constexpr uint32_t kAICallbackStackSwitchAddr = 0x80279B70u;  // __CallbackStack (NSMBW)
+src/hle/audio/audio.cpp,29,80279B6C,,constexpr uint32_t kAIDmaCallbackAddr = 0x80279B6Cu;          // __AID_Callback (NSMBW)
+src/hle/audio/ax_effects.cpp,27,80576060,,"constexpr uint32_t kOneConstantAddr = 0x80576060u;   // 1.0f (NSMBW .sdata2, loaded by AXFXReverbStdExpCallback)"
+src/hle/audio/ax_effects.cpp,28,80576064,,constexpr uint32_t kScaleConstantAddr = 0x80576064u; // 0.6f send pre-scale (NSMBW)
+src/hle/audio/ax_internal.h,34,8050FD00,,constexpr uint32_t kAxDspTaskAddr = 0x8050FD00u;    // AX DSPTaskInfo passed to DSPAddTask by __AXOutInitDSP (NSMBW)
+src/hle/audio/ax_internal.h,35,80279F00,,constexpr uint32_t kDspInitializedAddr = 0x80279F00u;    // __DSP_init_flag (NSMBW)
+src/hle/audio/ax_internal.h,36,80279F08,,constexpr uint32_t kDspAssertPendingAddr = 0x80279F08u;  // __DSP_rude_task_pending (NSMBW)
+src/hle/audio/ax_internal.h,37,80279F0C,,constexpr uint32_t kDspAssertTaskAddr = 0x80279F0Cu;     // __DSP_rude_task (NSMBW)
+src/hle/audio/ax_internal.h,38,80279F14,,constexpr uint32_t kDspCurrentTaskAddr = 0x80279F14u;    // __DSP_last_task (offset-matched to MKW) (NSMBW)
+src/hle/audio/ax_internal.h,39,80279F18,,constexpr uint32_t kDspFirstTaskAddr = 0x80279F18u;      // __DSP_first_task (NSMBW)
+src/hle/audio/ax_internal.h,40,80279F1C,,constexpr uint32_t kDspRunningTaskAddr = 0x80279F1Cu;    // __DSP_curr_task (offset-matched to MKW) (NSMBW)
+src/hle/audio/ax_internal.h,41,801ADBE0,,constexpr uint32_t kAxIramMmemAddr = 0x801ADBE0u;   // axDspSlave microcode (NSMBW)
+src/hle/audio/ax_internal.h,42,8025FC00,,constexpr uint32_t kAxDramMmemAddr = 0x8025FC00u;   // __AXDramImage (NSMBW)
+src/hle/audio/ax_internal.h,45,8015C67C,,constexpr uint32_t kAxInitCallback = 0x8015C67Cu;
+src/hle/audio/ax_internal.h,46,8015C688,,constexpr uint32_t kAxResumeCallback = 0x8015C688u;
+src/hle/audio/ax_internal.h,47,8015C6E0,,constexpr uint32_t kAxDoneCallback = 0x8015C6E0u;    // __AXDSPDoneCallback (task+0x30 in NSMBW __AXOutInitDSP)
+src/hle/audio/ax_internal.h,48,80286708,__AXDSPRequestCallback,constexpr uint32_t kAxRequestCallback = 0x80286708u; // __AXDSPRequestCallback (task+0x34)
+src/hle/audio/ax_memory.cpp,71,80279F10,,"Memory::TryWrite32(0x80279F10u, 0);  // __DSP_tmp_task (NSMBW)"
+src/hle/gx/gx_dl.cpp,69,80808081,,const int32_t magic = static_cast<int32_t>(0x80808081u);
+src/hle/gx/gx_egg.cpp,132,802BB820,,uint32_t p = ctx->gpr[3]; ctx->gpr[3] = p; ctx->lr = 0x802BB820;
+src/hle/gx/gx_egg.cpp,133,802BAED0,,"InvokeIndirectCpu(0x802BAED0u, ctx);"
+src/hle/gx/gx_egg.cpp,134,801C51B0,,"InvokeIndirectCpu(0x801C51B0u, ctx);"
+src/hle/gx/gx_init.cpp,32,80275720,,constexpr uint32_t kFifoObjAddr = 0x80275720u;  // FifoObj (NSMBW)
+src/hle/gx/gx_init.cpp,33,802757A0,,constexpr uint32_t kGXDataAddr = 0x802757A0u;   // gxData (NSMBW)
+src/hle/gx/gx_init.cpp,112,80169E9C,,constexpr uint32_t kCpInterruptHandlerAddr = 0x80169e9cu;
+src/hle/gx/gx_init.cpp,113,80279F58,,constexpr uint32_t kGxCurrentThreadPtrAddr = 0x80279f58u;  // __GXCurrentThread (NSMBW)
+src/hle/gx/gx_init.cpp,114,80279F60,,constexpr uint32_t kGxThreadQueueAddr = 0x80279f60u;       // GXOverflowSuspendInProgress (NSMBW)
+src/hle/gx/gx_init.cpp,115,80279F50,,constexpr uint32_t kCpuFifoObjAddr = 0x80279F50u;  // CPUFifo (NSMBW)
+src/hle/gx/gx_init.cpp,116,80279F54,,constexpr uint32_t kGpFifoObjAddr = 0x80279F54u;   // GPFifo (NSMBW)
+src/hle/gx/gx_init.cpp,142,8016B900,,constexpr uint32_t kPeTokenHandlerAddr = 0x8016b900;
+src/hle/gx/gx_init.cpp,143,8016B9CC,,constexpr uint32_t kPeFinishHandlerAddr = 0x8016b9cc;
+src/hle/gx/gx_init.cpp,144,80279F7C,,constexpr uint32_t kPeThreadQueueAddr = 0x80279f7cu;  // FinishQueue (NSMBW)
+src/hle/gx/gx_init.cpp,214,80521EF0,,"if (Memory::Read8(gd + 0x5F9u)) std::memcpy(Memory::GetPointer(0x80521EF0, 0x600), Memory::GetPointer(gd, 0x600), 0x600);"
+src/hle/gx/gx_init.cpp,215,80521E74,,"Memory::Write32(0x80521E74, la + s - 4u);"
+src/hle/gx/gx_init.cpp,216,80521E8C,,"Memory::Write32(0x80521E8C, 0);"
+src/hle/gx/gx_init.cpp,217,80521E70,,"Memory::Write32(0x80521E70, la);"
+src/hle/gx/gx_init.cpp,218,80521E78,,"Memory::Write32(0x80521E78, s);"
+src/hle/gx/gx_init.cpp,219,80521E84,,"Memory::Write32(0x80521E84, la);"
+src/hle/gx/gx_init.cpp,220,80521E88,,"Memory::Write32(0x80521E88, la);"
+src/hle/gx/gx_init.cpp,239,805224F0,,GX__GetCPUFifo_8016cf10(0x805224F0);
+src/hle/gx/gx_init.cpp,240,80521E70,,GX__SetCPUFifo_8016c94c(0x80521E70);
+src/hle/gx/gx_init.cpp,284,80521E70,,GX__GetCPUFifo_8016cf10(0x80521E70);
+src/hle/gx/gx_init.cpp,286,805224F0,,GX__SetCPUFifo_8016c94c(0x805224F0);
+src/hle/gx/gx_init.cpp,294,80521EF0,,"Memory::GetPointer(0x80521EF0, 0x600),"
+src/hle/gx/gx_internal.h,57,8027D028,,constexpr uint32_t kGXDataPtrAddr = 0x8027D028;     // __GXData (NSMBW)
+src/hle/gx/gx_internal.h,58,80521E70,,constexpr uint32_t kDlFifoAddr = 0x80521E70;        // DisplayListFifo (NSMBW)
+src/hle/gx/gx_internal.h,59,80521E84,,constexpr uint32_t kDlWritePtrAddr = 0x80521E84;    // DisplayListFifo + 0x14
+src/hle/gx/gx_internal.h,60,80521E8C,,constexpr uint32_t kDlCountAddr = 0x80521E8C;       // DisplayListFifo + 0x1C
+src/hle/gx/gx_internal.h,63,80279F78,,constexpr uint32_t kGxDrawDoneFlagAddr = 0x80279F78;  // DrawDone (NSMBW)
+src/hle/gx/gx_lighting.cpp,106,8008A6AC,,if (x && x->lr == 0x8008A6ACu && ch == 0) {
+src/hle/gx/gx_pixel.cpp,91,80080000,,"if (lr >= 0x80080000u && lr < 0x8008C000u && n++ < 4000) RT_LOGF(RT_TAG_GX, ""[spmcull] mode %u lr %08X\n"", m, lr); }"
+src/hle/gx/gx_pixel.cpp,91,8008C000,,"if (lr >= 0x80080000u && lr < 0x8008C000u && n++ < 4000) RT_LOGF(RT_TAG_GX, ""[spmcull] mode %u lr %08X\n"", m, lr); }"
+src/hle/gx/gx_stubs.cpp,35,80279F30,,constexpr uint32_t kSpmPeRegPtrAddr = 0x80279F30u;  // __peReg (SPM: r13-0x6FB0 in sysWaitDrawSync)
+src/hle/gx/gx_tev.cpp,92,8004ED88,,if (x && x->lr == 0x8004ED88u) {
+src/hle/gx/gx_tev.cpp,94,8056CF80,,"Memory::TryRead32(0x8056CF80u, bg); Memory::TryRead32(0x8056D010u, mw);"
+src/hle/gx/gx_tev.cpp,94,8056D010,,"Memory::TryRead32(0x8056CF80u, bg); Memory::TryRead32(0x8056D010u, mw);"
+src/hle/gx/gx_tev.cpp,99,8056F21C,,"Memory::TryRead32(0x8056F21Cu, k0); Memory::TryRead32(0x8056F220u, k1);"
+src/hle/gx/gx_tev.cpp,99,8056F220,,"Memory::TryRead32(0x8056F21Cu, k0); Memory::TryRead32(0x8056F220u, k1);"
+src/hle/net/network_deferred.cpp,630,8025B490,,constexpr uint32_t kDefaultThreadContextAddr = 0x8025b490u;  // DefaultThread (NSMBW)
+src/hle/os/os_init.cpp,102,80557218,,constexpr uint32_t kBtmCbBase = 0x80557218u;  // btm_cb (NSMBW); BTM_IsDeviceUp reads +0x64E == 5
+src/hle/os/os_init.cpp,168,80003118,,const uint32_t physicalMem2Size = Memory::Read32(0x80003118u);
+src/hle/os/os_internal.h,28,80279C10,,constexpr uint32_t kInterruptHandlerTablePtrAddr = 0x80279c10u;  // InterruptHandlerTable
+src/hle/os/os_internal.h,40,8025B490,,constexpr uint32_t kDefaultThreadContextAddr = 0x8025b490u;  // DefaultThread
+src/hle/os/os_internal.h,41,8025B7A8,,constexpr uint32_t kIdleThreadContextAddr = 0x8025B7A8u;     // IdleContext
+src/hle/os/os_internal.h,42,80506030,,constexpr uint32_t kThreadQueueArrayAddr = 0x80506030u;      // RunQueue[32]
+src/hle/os/os_internal.h,44,80277548,,constexpr uint32_t kSwitchThreadCallbackPtrAddr = 0x80277548u;  // SwitchThreadCallback
+src/hle/os/os_internal.h,45,80279C6C,,constexpr uint32_t kSchedulerReschedCounterAddr = 0x80279c6cu;  // RunQueueHint
+src/hle/os/os_internal.h,46,80279C68,,constexpr uint32_t kSchedulerPendingFlagAddr = 0x80279c68u;     // RunQueueBits
+src/hle/os/os_internal.h,49,80279C70,,constexpr uint32_t kSchedulerIdleFlagAddr = 0x80279c70u;  // Reschedule
+src/hle/os/os_interrupt.cpp,397,80276544,__OSDefaultPowerCallback,constexpr uint32_t kDefaultCallbackAddr = 0x80276544u;
+src/hle/os/os_interrupt.cpp,498,80295074,IPCInit,"InvokeIndirectCpu(0x80295074u, ctx);"
+src/hle/os/os_reset.cpp,145,801398C0,,"RT_LOGF(RT_TAG_OS, ""exit(status=%d) called via 0x801398C0\n"", status);"
+src/hle/os/os_thread.cpp,216,8014E510,,"InvokeIndirectCpu(0x8014E510u, cpu); // __OSUnlockAllMutex"
+src/hle/os/os_thread.cpp,311,8026E058,OSInitContext,"InvokeIndirectCpu(0x8026E058u, cpu); // OSInitContext"
+src/hle/os/os_thread.cpp,325,8027510C,OSExitThread,"::Memory::Write32(threadPtr + 0x84u, 0x8027510Cu); // LR = OSExitThread"
+src/hle/os/os_thread.cpp,341,804F5270,,constexpr uint32_t kSchedulerInitFlagAddr = 0x804F5270u;  // SPM OSCreateThread 0x80274F64: __OSErrorTable + 0x40.
+src/hle/os/os_thread.cpp,342,80277530,__OSWriteNandbootInfo,constexpr uint32_t kThreadAttrSourceAddr = 0x80277530u;   // __OSFpscrEnableBits
+src/hle/sc.cpp,84,804BA998,,"return LookupProductRegion(0x804BA998u, 5, 13,  // SC area table {code, ""JPN""...} (NSMBW)"
+src/hle/sc.cpp,130,804BA9E0,,"return LookupProductRegion(0x804BA9E0u, 4, 4,  // SC game-region table {code, ""JP""...} (NSMBW)"
+src/hle/storage/dvd.cpp,898,8050B690,,constexpr uint32_t kQueueBase = 0x8050B690;  // WaitingQueue[4] (NSMBW)
+src/hle/storage/dvd.cpp,912,80279D10,,"Memory::Write32(0x80279D10, 0); // Canceling (NSMBW)"
+src/hle/storage/dvd.cpp,913,80279D18,,"Memory::Write32(0x80279D18, 0); // ResumeFromHere (NSMBW)"
+src/hle/storage/dvd.cpp,914,80279D00,,"Memory::Write32(0x80279D00, 0); // PausingFlag (NSMBW)"
+src/hle/storage/dvd.cpp,916,80279C30,,"Memory::Write32(0x80279C30, 1); // Prepared: __DVDPrepareReset polls it (NSMBW)"
+src/hle/storage/dvd.cpp,917,80279CF0,,"Memory::Write32(0x80279CF0, 0); // executing (NSMBW)"
+src/hle/storage/dvd.cpp,934,8056DCE4,,"Memory::Write8(0x8056DCE4, 1);   // dvdContextsInited (NSMBW)"
+src/hle/storage/dvd.cpp,935,8056DCE5,,"Memory::Write8(0x8056DCE5, 1);   // DVDLowInitCalled (NSMBW)"
+src/hle/storage/dvd.cpp,936,8056DCE0,,"Memory::Write32(0x8056DCE0, 0);  // freeDvdContext (NSMBW)"
+src/hle/storage/dvd.cpp,937,80279D30,,"Memory::Write8(0x80279D30, 1);   // DVDInitialized (NSMBW)"
+src/hle/storage/dvd.cpp,941,8050B8A0,,constexpr uint32_t kContextBase = 0x8050B8A0;  // dvdContexts[4] (NSMBW)
+src/hle/storage/dvd.cpp,991,801524D4,,constexpr uint32_t kDvdFsInitAddress = 0x801524D4;
+src/hle/storage/nand_api.cpp,113,80522780,,"WriteGuestNandPath(0x80522780, CurrentNandDataDir());"
+src/hle/storage/nand_api.cpp,116,8056E030,,"Memory::Write32(0x8056E030, 2);"
+src/hle/storage/nand_isfs.cpp,922,80293C70,ISFS_OpenLib,ctx->lr = 0x80293C70u;
+src/hle/storage/nand_isfs.cpp,923,802950F0,IPCSetBufferLo,InvokeDirectCpu<0x802950F0u>(ctx);  // IPCSetBufferLo
+src/hle/storage/nand_isfs.cpp,928,80293C70,ISFS_OpenLib,ctx->lr = 0x80293C70u;
+src/hle/storage/nand_isfs.cpp,929,80296710,iosCreateHeap,InvokeDirectCpu<0x80296710u>(ctx);  // iosCreateHeap
+src/hle/vi.cpp,156,80279D50,,constexpr uint32_t kViInitializedFlagAddr   = 0x80279d50;  // IsInitialized (NSMBW)
+src/hle/vi.cpp,157,80279D9C,,constexpr uint32_t kViTvFormatAddr          = 0x80279d9c;  // CurrTvMode (NSMBW)
+src/hle/vi.cpp,158,8025BD5C,,constexpr uint32_t kViRenderWidthAddr       = 0x8025bd5c;  // HorVer.DispSizeX (Scooby HorVer 0x8025BD58 + 4)
+src/hle/vi.cpp,159,8025BD5E,,constexpr uint32_t kViRenderHeightAddr      = 0x8025bd5e;  // HorVer.DispSizeY (+6)
+src/hle/vi.cpp,160,8025BD6A,,constexpr uint32_t kViXfbWidthAddr          = 0x8025bd6a;  // HorVer.FBSizeX (+0x12)
+src/hle/vi.cpp,161,8025BD74,,constexpr uint32_t kViXfbHeightAddr         = 0x8025bd74;  // HorVer+0x1C (PanSizeY)
+src/hle/vi.cpp,162,80279D54,,constexpr uint32_t kViRetraceCountAddr      = 0x80279d54;  // retraceCount (NSMBW); // matches VIWaitForRetrace/handler
+src/hle/vi.cpp,163,8056DD0C,,constexpr uint32_t kViTimingGuardAddr       = 0x8056dd0c;  // IsInitialized+0xC = __VIDimming_All_Clear in NSMBW (offset-matched; MKW name u
+src/hle/vi.cpp,164,80279D64,,constexpr uint32_t kViPreRetraceCallback    = 0x80279d64;  // PreCB (NSMBW)
+src/hle/vi.cpp,165,80279D68,,constexpr uint32_t kViPostRetraceCallback   = 0x80279d68;  // PostCB (NSMBW)
+src/hle/vi.cpp,166,80279DA4,,constexpr uint32_t kViNextFrameBufferAddr   = 0x80279da4;  // CurrBufAddr in the SDK layout (offset-matched to MKW) (NSMBW)
+src/hle/vi.cpp,167,8025BD88,,constexpr uint32_t kViNextFrameBufferHwAddr = 0x8025bd88;  // HorVer.bufAddr (+0x30)
+src/hle/vi.cpp,168,80279D5C,,constexpr uint32_t kViRetraceQueueAddr      = 0x80279d5c;  // retraceQueue (NSMBW); // Thread queue for VIWaitForRetrace
+src/hle/vi.cpp,444,80BF6840,,"{1, ""relF"", 0x80BF6840u, 0x80F12640u},  // SPM: projects/spm/tools/prelink_spm_rel.py"
+src/hle/vi.cpp,444,80F12640,,"{1, ""relF"", 0x80BF6840u, 0x80F12640u},  // SPM: projects/spm/tools/prelink_spm_rel.py"
+src/hle/vi.cpp,490,8056D0D8,,"if (!Memory::TryRead32(0x8056D0D8u, now) || !Memory::TryRead32(0x8056D0DCu, next) ||"
+src/hle/vi.cpp,490,8056D0DC,,"if (!Memory::TryRead32(0x8056D0D8u, now) || !Memory::TryRead32(0x8056D0DCu, next) ||"
+src/hle/vi.cpp,491,804CF364,,"!Memory::TryRead32(0x804CF364u, stage)) {"
+src/hle/vi.cpp,584,80279C68,,"Memory::TryRead32(0x80279C68u, runQueueBits);  // RunQueueBits (NSMBW)"
+src/hle/vi.cpp,864,80319200,,"if (addr != 0x80319200u && addr != 0x8056E280u) continue;  // .rodata, .sdata2"
+src/hle/vi.cpp,864,8056E280,,"if (addr != 0x80319200u && addr != 0x8056E280u) continue;  // .rodata, .sdata2"
+src/hle/vi.cpp,979,80428730,,"Memory::TryRead32(0x80428730u, sceneWord);"
+src/main.cpp,903,81700000,,cpu.gpr[1] = 0x81700000u;
+src/main.cpp,919,81700000,,"RT_LOG(RT_TAG_RUNTIME) << ""r1 seed: 0x81700000"" << std::endl;"
+src/memory.cpp,542,81800000,,".baseAddress = 0x81800000,"
+src/music_attenuation.cpp,31,809C2898,,constexpr uint32_t kSoundManagerPointer = 0x809C2898u;
+src/netplay/game_menus.cpp,17,80377A10,,constexpr uint32_t kTreeRoot = 0x80377A10u;
+src/netplay/game_menus.cpp,30,809953C0,,constexpr uint32_t kSpStartWait = 0x809953C0u;
+src/netplay/game_menus.cpp,31,80995400,,constexpr uint32_t kSpOnStage = 0x80995400u;
+src/netplay/game_menus.cpp,32,80995440,,constexpr uint32_t kSpInfoOnStage = 0x80995440u;
+src/netplay/game_menus.cpp,33,80995480,,constexpr uint32_t kSpButtonChange = 0x80995480u;
+src/netplay/game_menus.cpp,34,809954C0,,constexpr uint32_t kSpSelect = 0x809954C0u;
+src/netplay/game_menus.cpp,35,80995500,,constexpr uint32_t kSpMultiSelect = 0x80995500u;
+src/netplay/game_menus.cpp,36,80995540,,constexpr uint32_t kSpButtonAnime = 0x80995540u;
+src/netplay/game_menus.cpp,37,80995580,,constexpr uint32_t kSpExit = 0x80995580u;
+src/netplay/game_menus.cpp,41,80992050,,constexpr uint32_t kFsSelectWait = 0x80992050u;
+src/netplay/game_menus.cpp,213,81800000,,"if (!Memory::TryRead32(object + off, id) || id < 0x80000000u || id >= 0x81800000u ||"
+src/netplay/game_menus.cpp,214,81800000,,"!Memory::TryRead32(id + 4, namePtr) || namePtr < 0x80000000u || namePtr >= 0x81800000u) {"
+src/netplay/game_menus.cpp,295,81800000,,"if (Memory::TryRead32(id + 4, namePtr) && namePtr >= 0x80000000u && namePtr < 0x81800000u) {"
+src/netplay/netplay_ui.cpp,144,8042B084,,const float squeeze = Memory::ReadFloat32(0x8042B084u);
+src/netplay/netplay_ui.cpp,472,81800000,,return (a >= 0x80000000u && a < 0x81800000u) || (a >= 0x90000000u && a < 0x94000000u);
+src/netplay/netplay_ui.cpp,769,8042B084,,const float squeeze = Memory::ReadFloat32(0x8042B084u);
+src/netplay/world_map_nav.cpp,22,8042A18C,,constexpr uint32_t kMapInstance = 0x8042A18Cu;
+src/netplay/world_map_nav.cpp,30,8042A1A0,,constexpr uint32_t kPlayerInstance = 0x8042A1A0u;
+src/netplay/world_map_nav.cpp,35,8042A3CC,,constexpr uint32_t kScnRoot = 0x8042A3CCu;
+src/netplay/world_map_nav.cpp,41,81800000,,bool GuestPtr(uint32_t p) { return p >= 0x80000000u && p < 0x81800000u; }
+src/recomp_mod_loader.cpp,139,81800000,,} else if (start >= 0x80000000u && end <= 0x81800000u) {
+src/recomp_mod_loader.cpp,203,8000A000,,return (cpu->lr >= 0x8000A000u && cpu->lr < 0x8000A400u) ||
+src/recomp_mod_loader.cpp,203,8000A400,,return (cpu->lr >= 0x8000A000u && cpu->lr < 0x8000A400u) ||
+src/recomp_mod_loader.cpp,204,801A6000,,(cpu->lr >= 0x801A6000u && cpu->lr < 0x801A7000u);
+src/recomp_mod_loader.cpp,204,801A7000,,(cpu->lr >= 0x801A6000u && cpu->lr < 0x801A7000u);
+src/spm_map_sweep.cpp,28,801A5634,__memAlloc,"InvokeIndirectCpu(0x801A5634, &a);  // __memAlloc(HEAP_MAIN, 1024)"
+src/spm_map_sweep.cpp,61,80151244,,"call(0x80151244, base + A, base + B, base + R, 0, {});"
+src/spm_map_sweep.cpp,72,80151310,,"call(0x80151310, base + A, base + R, 0, 0, {});"
+src/spm_map_sweep.cpp,80,801514D0,,"call(0x801514D0, base + A, base + V, base + VO, 0, {});"
+src/spm_map_sweep.cpp,85,80278978,PSVECCrossProduct,"call(0x80278978, base + V, base + R, base + VO, 0, {});"
+src/spm_map_sweep.cpp,89,802788B8,PSVECNormalize,"call(0x802788B8, base + V, base + VO, 0, 0, {});"
+src/spm_map_sweep.cpp,106,80277FBC,C_MTXLookAt,"call(0x80277FBC, base + R, base + CAM, base + UP, base + TGT, {});"
+src/spm_map_sweep.cpp,111,80277E18,PSMTXTrans,"call(0x80277E18, base + R, 0, 0, 0, {12.5, -34.25, 800.0});"
+src/spm_map_sweep.cpp,114,80277E98,PSMTXScale,"call(0x80277E98, base + R, 0, 0, 0, {2.0, 3.0, 0.5});"
+src/spm_map_sweep.cpp,118,80277BC0,PSMTXRotRad,"call(0x80277BC0, base + R, 'y', 0, 0, {ang});"
+src/spm_map_sweep.cpp,125,801515C0,,"call(0x801515C0, base + M4, 0, 0, 0, {143.0, -143.0, -250.0, 250.0, 0.0, 10000.0});"
+src/spm_map_sweep.cpp,141,8056D0D8,,"constexpr uint32_t kNowSeq = 0x8056D0D8, kNextSeq = 0x8056D0DC, kGp = 0x8056D198;"
+src/spm_map_sweep.cpp,141,8056D0DC,,"constexpr uint32_t kNowSeq = 0x8056D0D8, kNextSeq = 0x8056D0DC, kGp = 0x8056D198;"
+src/spm_map_sweep.cpp,141,8056D198,,"constexpr uint32_t kNowSeq = 0x8056D0D8, kNextSeq = 0x8056D0DC, kGp = 0x8056D198;"
+src/spm_map_sweep.cpp,184,80011B78,,"if (!Memory::TryRead32(kGp, gp) || gp < 0x80011B78 || !Memory::Contains(gp, 0x64)) return {};"
+src/spm_map_sweep.cpp,196,8056CFB0,,"Memory::TryRead32(0x8056CFB0, effects);"
+src/spm_map_sweep.cpp,200,8056D804,,"Memory::TryRead32(0x8056D804, data);  // effSync's final check: r13-0x771C."
+src/spm_map_sweep.cpp,230,801A5634,__memAlloc,"InvokeIndirectCpu(0x801A5634, &call);"
+src/spm_map_sweep.cpp,253,8017B3C8,seqSetSeq,"InvokeIndirectCpu(0x8017B3C8, &call);"
+src/spm_map_sweep.cpp,276,800676E0,fadeIsFinish,"InvokeIndirectCpu(0x800676E0, &fadeCall);"
+src/spm_map_sweep.cpp,284,8056D010,,"if (Memory::TryRead32(0x8056D010u, wp) && Memory::Contains(wp, 0x6AC)) {"
+src/spm_map_sweep.cpp,320,804CF364,,"Memory::TryRead32(0x804CF364, stage);"
+src/spm_map_sweep.cpp,321,8056D1C0,,"Memory::TryRead32(0x8056D1C0, rel);  // isRelLoaded: r13-0x7D60, byte +8."
+src/spm_map_sweep.cpp,322,8056CFB0,,"Memory::TryRead32(0x8056CFB0, effects);  // effSync: r13-0x7F70, words +8/+12."
+src/system_bridge.cpp,408,8029F160,,constexpr uint32_t kMem1ArenaLoDefault = 0x8029F160u;  // Scooby __ArenaLo (ELF symbol; _stack_addr 0x8029D160 sits below)
+src/system_bridge.cpp,409,81700000,,uint32_t mem1ArenaHiDefault = 0x81700000u;  // Scooby __ArenaHi (ELF symbol)
+src/system_bridge.cpp,434,80003180,,"entries.push_back({0x80003180u, 0x47354445u, ""OS app game code""}); // G5DE"
+src/system_bridge.cpp,435,80003194,,"entries.push_back({0x80003194u, 0x47354445u, ""OS app gamename""});  // G5DE"
+src/system_bridge.cpp,439,80003188,,"entries.push_back({0x80003188u, kIos36Version, ""Title's required IOS (IOS53)""});"
+src/system_bridge.cpp,447,81800000,,reservation.end <= 0x81800000u) {
+src/system_bridge.cpp,460,80003140,,"entries.push_back({0x80003140u, kIos36Version, ""IOS36 version""});"
+src/system_bridge.cpp,461,80003144,,"entries.push_back({0x80003144u, kIos36Date, ""IOS36 date""});"
+src/system_bridge.cpp,469,80003100,,"entries.push_back({0x80003100u, mem1Size, ""Physical MEM1 size"", true});"
+src/system_bridge.cpp,470,80003104,,"entries.push_back({0x80003104u, mem1Size, ""Simulated MEM1 size"", true});"
+src/system_bridge.cpp,471,80003108,,"entries.push_back({0x80003108u, mem1End, ""MEM1 end"", true});"
+src/system_bridge.cpp,472,8000310C,,"entries.push_back({0x8000310Cu, kMem1ArenaLoDefault, ""MEM1 arena lo"", true});"
+src/system_bridge.cpp,473,80003110,,"entries.push_back({0x80003110u, mem1ArenaHiDefault, ""MEM1 arena hi"", true});"
+src/system_bridge.cpp,487,80003118,,"entries.push_back({0x80003118u, mem2Size, ""Physical MEM2 size"", true});"
+src/system_bridge.cpp,488,8000311C,,"entries.push_back({0x8000311Cu, mem2Size, ""Simulated MEM2 size"", true});"
+src/system_bridge.cpp,489,80003120,,"entries.push_back({0x80003120u, mem2End, ""MEM2 end"", true});"
+src/system_bridge.cpp,490,80003124,,"entries.push_back({0x80003124u, kMem2LoFloor, ""MEM2 arena lo"", true});"
+src/system_bridge.cpp,491,80003128,,"entries.push_back({0x80003128u, mem2ArenaHi, ""MEM2 arena hi"", true});"
+src/system_bridge.cpp,492,80003130,,"entries.push_back({0x80003130u, ipcBufLo, ""IPC Buffer lo"", true});"
+src/system_bridge.cpp,493,80003134,,"entries.push_back({0x80003134u, ipcBufHi, ""IPC Buffer hi"", true});"
+src/system_bridge.cpp,494,80003138,,"entries.push_back({0x80003138u, 0x00000002u, ""Hollywood revision"", true});"
+src/system_bridge.cpp,495,80003148,,"entries.push_back({0x80003148u, iosReservedLo, ""IOS reserved lo"", true});"
+src/system_bridge.cpp,496,8000314C,,"entries.push_back({0x8000314Cu, physicalMem2End, ""IOS reserved hi"", true});"
+src/system_bridge.cpp,520,80003124,,const uint32_t patchedLo = Memory::Read32(0x80003124u);
+src/system_bridge.cpp,521,80003128,,const uint32_t patchedHi = Memory::Read32(0x80003128u);
+src/system_bridge.cpp,522,8000311C,,const uint32_t patchedSize = Memory::Read32(0x8000311Cu);

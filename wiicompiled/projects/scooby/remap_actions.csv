@@ -1,0 +1,344 @@
+file,line,spm_addr,symbol,scooby_addr,action
+include/native_cpu_calls.inc,52,8028B638,GXSetVtxDesc,8016A5D4,rewritten
+include/native_cpu_calls.inc,53,8028BEC8,GXClearVtxDesc,8016AA20,rewritten
+include/native_cpu_calls.inc,54,8028BEFC,GXSetVtxAttrFmt,8016AA58,rewritten
+include/native_cpu_calls.inc,55,8028C610,GXSetTexCoordGen2,8016B06C,rewritten
+include/native_cpu_calls.inc,56,8028C838,GXSetNumTexGens,8016B2EC,rewritten
+include/native_cpu_calls.inc,57,8028CD50,GXDrawDone,8016B6F4,rewritten
+include/native_cpu_calls.inc,58,8028D3B4,GXBegin,8016BB40,rewritten
+include/native_cpu_calls.inc,59,8028D5D8,GXSetLineWidth,8016BC98,rewritten
+include/native_cpu_calls.inc,60,8028D60C,GXSetPointSize,8016BCD8,rewritten
+include/native_cpu_calls.inc,61,8028D67C,GXSetCullMode,8016BD60,rewritten
+include/native_cpu_calls.inc,62,8028E778,GXSetNumChans,8016CD8C,rewritten
+include/native_cpu_calls.inc,63,8028E79C,GXSetChanCtrl,8016CDC8,rewritten
+include/native_cpu_calls.inc,64,8028EA24,GXInitTexObj,8016D0A4,rewritten
+include/native_cpu_calls.inc,65,8028EC78,GXInitTexObjLOD,,disabled: name not in Scooby
+include/native_cpu_calls.inc,66,8028F198,GXInvalidateTexAll,8016D60C,rewritten
+include/native_cpu_calls.inc,67,8028EF78,GXLoadTexObj,8016D48C,rewritten
+include/native_cpu_calls.inc,68,8028FD44,GXSetNumIndStages,8016DD9C,rewritten
+include/native_cpu_calls.inc,69,8028FD64,GXSetTevDirect,8016DDC0,rewritten
+include/native_cpu_calls.inc,70,8028FEEC,GXSetTevColorIn,8016DEEC,rewritten
+include/native_cpu_calls.inc,71,8028FF2C,GXSetTevAlphaIn,8016DF30,rewritten
+include/native_cpu_calls.inc,72,8028FF6C,GXSetTevColorOp,8016DF74,rewritten
+include/native_cpu_calls.inc,73,8028FFC4,GXSetTevAlphaOp,8016DFDC,rewritten
+include/native_cpu_calls.inc,74,8029007C,GXSetTevColorS10,8016E0C0,rewritten
+include/native_cpu_calls.inc,75,802900E0,GXSetTevKColor,8016E13C,rewritten
+include/native_cpu_calls.inc,76,8029013C,GXSetTevKColorSel,8016E1B0,rewritten
+include/native_cpu_calls.inc,77,8029018C,GXSetTevKAlphaSel,8016E20C,rewritten
+include/native_cpu_calls.inc,78,802901DC,GXSetTevSwapMode,8016E268,rewritten
+include/native_cpu_calls.inc,79,80290218,GXSetTevSwapModeTable,8016E2B0,rewritten
+include/native_cpu_calls.inc,80,80290358,GXSetTevOrder,8016E400,rewritten
+include/native_cpu_calls.inc,81,802904B4,GXSetNumTevStages,8016E59C,rewritten
+include/native_cpu_calls.inc,82,80290828,GXSetBlendMode,8016E90C,rewritten
+include/native_cpu_calls.inc,83,80291788,GXLoadPosMtxImm,8016EDF4,rewritten
+include/native_cpu_calls.inc,84,80291830,GXSetCurrentMtx,8016EE94,rewritten
+src/hle/audio/audio.cpp,155,8026D30C,__AIClockInit,,disabled: name not in Scooby
+src/hle/audio/audio.cpp,167,8026D52C,__OSInitAudioSystem,8014A724,rewritten
+src/hle/audio/audio.cpp,182,8026D6F4,__OSStopAudioSystem,8014A8E0,rewritten
+src/hle/audio/audio.cpp,217,8028479C,AIInit,80148C0C,rewritten
+src/hle/audio/audio.cpp,237,80288E28,DSPInit,80161920,rewritten
+src/hle/audio/audio.cpp,243,80288EE8,DSPCheckInit,801619E4,rewritten
+src/hle/audio/audio.cpp,249,80288EF0,DSPAddTask,801619EC,rewritten
+src/hle/audio/audio.cpp,258,80289644,__DSP_boot_task,80162138,rewritten
+src/hle/audio/audio.cpp,267,8028670C,__AXOutInitDSP,8015C70C,rewritten
+src/hle/audio/audio.cpp,280,802846FC,AIInitDMA,80148854,rewritten
+src/hle/audio/audio.cpp,298,802846B8,AIRegisterDMACallback,80148810,rewritten
+src/hle/audio/audio.cpp,317,80284778,AIStartDMA,801488DC,rewritten
+src/hle/audio/audio.cpp,324,8028478C,AIGetDMABytesLeft,,disabled: name not in Scooby
+src/hle/audio/audio.cpp,360,80288E14,DSPSendMailToDSP,8016190C,rewritten
+src/hle/audio/audio.cpp,378,80288DE0,DSPCheckMailToDSP,801618D4,rewritten
+src/hle/audio/audio.cpp,384,80288DF0,DSPCheckMailFromDSP,801618E4,rewritten
+src/hle/audio/audio.cpp,390,80288E00,DSPReadMailFromDSP,801618F4,rewritten
+src/hle/audio/audio.cpp,396,80288F60,DSPAssertTask,80161A5C,rewritten
+src/hle/c_stdio.cpp,48,8025E220,__write_console,80141220,rewritten
+src/hle/esp.cpp,124,80299BF8,ESP_GetDataDir,,disabled: name not in Scooby
+src/hle/gx/gx_copy.cpp,80,8028D82C,GXSetDispCopySrc,8016BF40,rewritten
+src/hle/gx/gx_copy.cpp,83,8028D8AC,GXSetDispCopyDst,8016C038,rewritten
+src/hle/gx/gx_copy.cpp,94,8028D86C,GXSetTexCopySrc,8016BFBC,rewritten
+src/hle/gx/gx_copy.cpp,101,8028D8D0,GXSetTexCopyDst,8016C06C,rewritten
+src/hle/gx/gx_copy.cpp,109,8028DDA8,GXSetCopyFilter,8016C594,rewritten
+src/hle/gx/gx_copy.cpp,112,8028DF8C,GXSetDispCopyGamma,8016C79C,rewritten
+src/hle/gx/gx_copy.cpp,138,8028DFA0,GXCopyDisp,8016C7B0,rewritten
+src/hle/gx/gx_copy.cpp,215,8028E0DC,GXCopyTex,8016C918,rewritten
+src/hle/gx/gx_copy.cpp,221,8028DC64,GXSetDispCopyYScale,8016C450,rewritten
+src/hle/gx/gx_copy.cpp,227,8028DA34,GXGetYScaleFactor,8016C218,rewritten
+src/hle/gx/gx_dl.cpp,1550,80291458,GXCallDisplayList,8016EC0C,rewritten
+src/hle/gx/gx_indirect.cpp,9,8028FD44,GXSetNumIndStages,8016DD9C,rewritten
+src/hle/gx/gx_indirect.cpp,14,8028FC78,GXSetIndTexOrder,,disabled: name not in Scooby
+src/hle/gx/gx_indirect.cpp,19,8028FB74,GXSetIndTexCoordScale,8016DC58,rewritten
+src/hle/gx/gx_indirect.cpp,25,8028FA20,GXSetIndTexMtx,,disabled: name not in Scooby
+src/hle/gx/gx_indirect.cpp,32,8028FD64,GXSetTevDirect,8016DDC0,rewritten
+src/hle/gx/gx_indirect.cpp,38,8028FDAC,GXSetTevIndWarp,,disabled: name not in Scooby
+src/hle/gx/gx_indirect.cpp,45,8028F9B8,GXSetTevIndirect,8016DBEC,rewritten
+src/hle/gx/gx_init.cpp,91,80289CB4,GXInit,80168DCC,rewritten
+src/hle/gx/gx_init.cpp,100,8028ADAC,GXSetCPUFifo,8016A0B8,rewritten
+src/hle/gx/gx_init.cpp,103,8028AF8C,GXSetGPFifo,8016A1E0,rewritten
+src/hle/gx/gx_init.cpp,106,8028B21C,__GXSaveFifo,,disabled: name not in Scooby
+src/hle/gx/gx_init.cpp,109,8028B324,GXGetCPUFifo,8016A5C4,rewritten
+src/hle/gx/gx_init.cpp,167,8028D0D8,__GXPEInit,8016BA4C,rewritten
+src/hle/gx/gx_init.cpp,250,802912FC,GXBeginDisplayList,,disabled: name not in Scooby
+src/hle/gx/gx_init.cpp,325,802913AC,GXEndDisplayList,,disabled: name not in Scooby
+src/hle/gx/gx_init.cpp,332,8028C8E8,GXFlush,8016B3BC,rewritten
+src/hle/gx/gx_lighting.cpp,75,8028E54C,GXLoadLightObjImm,8016CB30,rewritten
+src/hle/gx/gx_lighting.cpp,87,8028E5C8,GXSetChanAmbColor,8016CBAC,rewritten
+src/hle/gx/gx_lighting.cpp,95,8028E6A0,GXSetChanMatColor,8016CC9C,rewritten
+src/hle/gx/gx_lighting.cpp,98,8028E778,GXSetNumChans,8016CD8C,rewritten
+src/hle/gx/gx_lighting.cpp,130,8028E79C,GXSetChanCtrl,8016CDC8,rewritten
+src/hle/gx/gx_nsmbw.cpp,26,8028D6A4,GXGetCullMode,,disabled: name not in Scooby
+src/hle/gx/gx_nsmbw.cpp,34,8028CADC,GXAbortFrame,8016B584,rewritten
+src/hle/gx/gx_nsmbw.cpp,47,8028CE58,GXPokeAlphaMode,8016B798,rewritten
+src/hle/gx/gx_nsmbw.cpp,49,8028CE68,GXPokeAlphaRead,8016B7AC,rewritten
+src/hle/gx/gx_nsmbw.cpp,51,8028CE80,GXPokeAlphaUpdate,8016B7CC,rewritten
+src/hle/gx/gx_nsmbw.cpp,53,8028CE94,GXPokeBlendMode,8016B7E4,rewritten
+src/hle/gx/gx_nsmbw.cpp,56,8028CEF0,GXPokeColorUpdate,8016B848,rewritten
+src/hle/gx/gx_nsmbw.cpp,58,8028CF04,GXPokeDstAlpha,8016B860,rewritten
+src/hle/gx/gx_nsmbw.cpp,60,8028CF1C,GXPokeDither,8016B884,rewritten
+src/hle/gx/gx_nsmbw.cpp,63,8028CF30,GXPokeZMode,8016B89C,rewritten
+src/hle/gx/gx_pixel.cpp,15,80290828,GXSetBlendMode,8016E90C,rewritten
+src/hle/gx/gx_pixel.cpp,20,80290878,GXSetColorUpdate,8016E960,rewritten
+src/hle/gx/gx_pixel.cpp,25,802908A4,GXSetAlphaUpdate,8016E98C,rewritten
+src/hle/gx/gx_pixel.cpp,35,802908D0,GXSetZMode,8016E9B8,rewritten
+src/hle/gx/gx_pixel.cpp,40,80290904,GXSetZCompLoc,8016E9EC,rewritten
+src/hle/gx/gx_pixel.cpp,49,80290934,GXSetPixelFmt,8016EA20,rewritten
+src/hle/gx/gx_pixel.cpp,54,802909DC,GXSetDither,8016EAF4,rewritten
+src/hle/gx/gx_pixel.cpp,59,80290A08,GXSetDstAlpha,8016EB20,rewritten
+src/hle/gx/gx_pixel.cpp,68,802904D8,GXSetFog,8016E5C4,rewritten
+src/hle/gx/gx_pixel.cpp,77,80290294,GXSetAlphaCompare,8016E330,rewritten
+src/hle/gx/gx_pixel.cpp,80,802902CC,GXSetZTexture,8016E374,rewritten
+src/hle/gx/gx_pixel.cpp,95,8028D67C,GXSetCullMode,8016BD60,rewritten
+src/hle/gx/gx_pixel.cpp,98,8028D6C0,GXSetCoPlanar,8016BDA4,rewritten
+src/hle/gx/gx_pixel.cpp,101,80291B38,GXSetClipMode,8016F10C,rewritten
+src/hle/gx/gx_stubs.cpp,42,8028CC90,GXSetDrawSync,,disabled: name not in Scooby
+src/hle/gx/gx_stubs.cpp,56,8028D058,GXFinishInterruptHandler,8016B9CC,rewritten
+src/hle/gx/gx_stubs.cpp,62,8028CD50,GXDrawDone,8016B6F4,rewritten
+src/hle/gx/gx_stubs.cpp,68,8028CE10,GXPixModeSync,8016B774,rewritten
+src/hle/gx/gx_stubs.cpp,75,80289B84,__GXInitRevisionBits,,disabled: name not in Scooby
+src/hle/gx/gx_stubs.cpp,85,8028F4FC,__GXSetSUTexRegs,8016D71C,rewritten
+src/hle/gx/gx_stubs.cpp,91,8028F664,__GXSetTmemConfig,8016D898,rewritten
+src/hle/gx/gx_stubs.cpp,97,8028FE34,__GXFlushTextureState,8016DE3C,rewritten
+src/hle/gx/gx_stubs.cpp,113,8028D9EC,GXSetDispCopyFrame2Field,8016C19C,rewritten
+src/hle/gx/gx_stubs.cpp,126,8028DA0C,GXSetCopyClamp,8016C1C0,rewritten
+src/hle/gx/gx_stubs.cpp,136,8028E234,GXClearBoundingBox,8016CAA4,rewritten
+src/hle/gx/gx_stubs.cpp,159,8028E26C,GXReadBoundingBox,,disabled: name not in Scooby
+src/hle/gx/gx_stubs.cpp,170,8028D13C,__GXSetDirtyState,8016BAC0,rewritten
+src/hle/gx/gx_stubs.cpp,175,8028C944,GXResetWriteGatherPipe,,disabled: name not in Scooby
+src/hle/gx/gx_tev.cpp,36,802904B4,GXSetNumTevStages,8016E59C,rewritten
+src/hle/gx/gx_tev.cpp,42,8028FE58,GXSetTevOp,8016DE60,rewritten
+src/hle/gx/gx_tev.cpp,50,80290358,GXSetTevOrder,8016E400,rewritten
+src/hle/gx/gx_tev.cpp,60,8028FEEC,GXSetTevColorIn,8016DEEC,rewritten
+src/hle/gx/gx_tev.cpp,66,8028FF2C,GXSetTevAlphaIn,8016DF30,rewritten
+src/hle/gx/gx_tev.cpp,76,8028FF6C,GXSetTevColorOp,8016DF74,rewritten
+src/hle/gx/gx_tev.cpp,82,8028FFC4,GXSetTevAlphaOp,8016DFDC,rewritten
+src/hle/gx/gx_tev.cpp,105,8029001C,GXSetTevColor,8016E044,rewritten
+src/hle/gx/gx_tev.cpp,114,8029007C,GXSetTevColorS10,8016E0C0,rewritten
+src/hle/gx/gx_tev.cpp,123,802900E0,GXSetTevKColor,8016E13C,rewritten
+src/hle/gx/gx_tev.cpp,126,8029013C,GXSetTevKColorSel,8016E1B0,rewritten
+src/hle/gx/gx_tev.cpp,129,8029018C,GXSetTevKAlphaSel,8016E20C,rewritten
+src/hle/gx/gx_tev.cpp,139,80290218,GXSetTevSwapModeTable,8016E2B0,rewritten
+src/hle/gx/gx_tev.cpp,145,802901DC,GXSetTevSwapMode,8016E268,rewritten
+src/hle/gx/gx_texture.cpp,263,8028EA24,GXInitTexObj,8016D0A4,rewritten
+src/hle/gx/gx_texture.cpp,338,8028EC30,GXInitTexObjCI,,disabled: name not in Scooby
+src/hle/gx/gx_texture.cpp,348,8028EC78,GXInitTexObjLOD,,disabled: name not in Scooby
+src/hle/gx/gx_texture.cpp,364,8028ED8C,GXInitTexObjWrapMode,,disabled: name not in Scooby
+src/hle/gx/gx_texture.cpp,378,8028EDA0,GXInitTexObjTlut,,disabled: name not in Scooby
+src/hle/gx/gx_texture.cpp,406,8028EDA8,GXInitTexObjFilter,,disabled: name not in Scooby
+src/hle/gx/gx_texture.cpp,716,8028EF78,GXLoadTexObj,8016D48C,rewritten
+src/hle/gx/gx_texture.cpp,721,8028EE14,GXLoadTexObjPreLoaded,8016D310,rewritten
+src/hle/gx/gx_texture.cpp,773,8028EFCC,GXInitTlutObj,,disabled: name not in Scooby
+src/hle/gx/gx_texture.cpp,782,8028EFF4,GXLoadTlut,,disabled: name not in Scooby
+src/hle/gx/gx_texture.cpp,794,8028F198,GXInvalidateTexAll,8016D60C,rewritten
+src/hle/gx/gx_texture.cpp,824,8028ED7C,GXInitTexObjData,,disabled: name not in Scooby
+src/hle/gx/gx_transform.cpp,52,80291994,GXSetViewportJitter,,disabled: name not in Scooby
+src/hle/gx/gx_transform.cpp,58,802919D0,GXSetViewport,8016F00C,rewritten
+src/hle/gx/gx_transform.cpp,73,802919FC,GXGetViewportv,,disabled: name not in Scooby
+src/hle/gx/gx_transform.cpp,100,80291AFC,GXSetScissorBoxOffset,8016F0CC,rewritten
+src/hle/gx/gx_transform.cpp,120,80291A4C,GXSetScissor,8016F054,rewritten
+src/hle/gx/gx_transform.cpp,174,80291698,GXSetProjection,8016EC7C,rewritten
+src/hle/gx/gx_transform.cpp,226,802916FC,GXSetProjectionv,8016ED20,rewritten
+src/hle/gx/gx_transform.cpp,234,80291748,GXGetProjectionv,8016EDAC,rewritten
+src/hle/gx/gx_transform.cpp,301,80291788,GXLoadPosMtxImm,8016EDF4,rewritten
+src/hle/gx/gx_transform.cpp,317,802917D8,GXLoadNrmMtxImm,8016EE44,rewritten
+src/hle/gx/gx_transform.cpp,344,80291850,GXLoadTexMtxImm,8016EEC8,rewritten
+src/hle/gx/gx_transform.cpp,347,80291830,GXSetCurrentMtx,8016EE94,rewritten
+src/hle/gx/gx_vertex.cpp,46,8028BEC8,GXClearVtxDesc,8016AA20,rewritten
+src/hle/gx/gx_vertex.cpp,60,8028B638,GXSetVtxDesc,8016A5D4,rewritten
+src/hle/gx/gx_vertex.cpp,71,8028B89C,GXSetVtxDescv,,disabled: name not in Scooby
+src/hle/gx/gx_vertex.cpp,83,8028BC84,GXGetVtxDesc,,disabled: name not in Scooby
+src/hle/gx/gx_vertex.cpp,101,8028BE38,GXGetVtxDescv,,disabled: name not in Scooby
+src/hle/gx/gx_vertex.cpp,127,8028BEFC,GXSetVtxAttrFmt,8016AA58,rewritten
+src/hle/gx/gx_vertex.cpp,138,8028C09C,GXSetVtxAttrFmtv,8016ACB4,rewritten
+src/hle/gx/gx_vertex.cpp,156,8028C2E0,GXGetVtxAttrFmt,,disabled: name not in Scooby
+src/hle/gx/gx_vertex.cpp,177,8028C54C,GXGetVtxAttrFmtv,,disabled: name not in Scooby
+src/hle/gx/gx_vertex.cpp,187,8028C5C0,GXSetArray,8016AFD0,rewritten
+src/hle/gx/gx_vertex.cpp,205,8028C838,GXSetNumTexGens,8016B2EC,rewritten
+src/hle/gx/gx_vertex.cpp,221,8028C610,GXSetTexCoordGen2,8016B06C,rewritten
+src/hle/gx/gx_vertex.cpp,228,8028D640,GXEnableTexOffsets,8016BD18,rewritten
+src/hle/gx/gx_vertex.cpp,233,8028D5D8,GXSetLineWidth,8016BC98,rewritten
+src/hle/gx/gx_vertex.cpp,238,8028D60C,GXSetPointSize,8016BCD8,rewritten
+src/hle/gx/gx_vertex.cpp,327,8028D3B4,GXBegin,8016BB40,rewritten
+src/hle/gx/gx_vertex.cpp,442,80290ADC,GXDrawSphere,,disabled: name not in Scooby
+src/hle/input/kpad.cpp,295,802DE7B4,KPADRead,,disabled: name not in Scooby
+src/hle/input/wpad.cpp,64,802CCBB4,WPADGetStatus,,disabled: name not in Scooby
+src/hle/input/wpad.cpp,70,802D0874,WPADGetDpdSensitivity,,disabled: name not in Scooby
+src/hle/input/wpad.cpp,90,802CC950,WPADInit,,disabled: name not in Scooby
+src/hle/input/wpad.cpp,96,802D97B0,WUDGetStatus,,disabled: name not in Scooby
+src/hle/input/wpad.cpp,105,802CE3CC,WPADGetDataFormat,,disabled: name not in Scooby
+src/hle/input/wpad.cpp,112,802CE414,WPADSetDataFormat,,disabled: name not in Scooby
+src/hle/input/wpad.cpp,159,802CE208,WPADProbe,,disabled: name not in Scooby
+src/hle/input/wpad.cpp,166,802CE684,WPADControlMotor,,disabled: name not in Scooby
+src/hle/input/wpad.cpp,177,802CE4C4,WPADGetInfoAsync,,disabled: name not in Scooby
+src/hle/input/wpad.cpp,225,802CCBA8,WPADStopSimpleSync,,disabled: name not in Scooby
+src/hle/ios.cpp,113,802960C4,IOS_IoctlAsync,,disabled: name not in Scooby
+src/hle/ios.cpp,131,80295834,IOS_OpenAsync,,disabled: name not in Scooby
+src/hle/ios.cpp,146,80295A6C,IOS_CloseAsync,,disabled: name not in Scooby
+src/hle/ios.cpp,152,80295BD4,IOS_ReadAsync,,disabled: name not in Scooby
+src/hle/ios.cpp,158,80295DDC,IOS_WriteAsync,,disabled: name not in Scooby
+src/hle/ios.cpp,170,80295FE4,IOS_SeekAsync,,disabled: name not in Scooby
+src/hle/ios.cpp,195,80296468,IOS_IoctlvAsync,,disabled: name not in Scooby
+src/hle/os/os_alarm.cpp,374,8026CB38,OSSetAlarm,80149F94,rewritten
+src/hle/os/os_alarm.cpp,467,8026CBA8,OSSetPeriodicAlarm,80149FFC,rewritten
+src/hle/os/os_cache.cpp,96,8026D7D4,DCInvalidateRange,8014A9CC,rewritten
+src/hle/os/os_cache.cpp,97,8026D800,DCFlushRange,8014A9F8,rewritten
+src/hle/os/os_cache.cpp,98,8026D830,DCStoreRange,8014AA28,rewritten
+src/hle/os/os_cache.cpp,99,8026D860,DCFlushRangeNoSync,8014AA58,rewritten
+src/hle/os/os_cache.cpp,225,8026D7C0,DCEnable,8014A9B8,rewritten
+src/hle/os/os_cache.cpp,226,8026D88C,DCZeroRange,,disabled: name not in Scooby
+src/hle/os/os_cache.cpp,227,8026D8B8,ICInvalidateRange,8014AA84,rewritten
+src/hle/os/os_cache.cpp,228,8026D8EC,ICFlashInvalidate,8014AAB8,rewritten
+src/hle/os/os_cache.cpp,229,8026D8FC,ICEnable,8014AAC8,rewritten
+src/hle/os/os_cache.cpp,236,8026D910,LCDisable,8014AADC,rewritten
+src/hle/os/os_cache.cpp,252,8026DA80,__OSCacheInit,8014ACFC,rewritten
+src/hle/os/os_context.cpp,80,8026E034,OSClearContext,8014B23C,rewritten
+src/hle/os/os_context.cpp,81,8026DE0C,OSSetCurrentContext,8014B044,rewritten
+src/hle/os/os_context.cpp,82,802748F8,OSGetCurrentThread,8014FE70,rewritten
+src/hle/os/os_context.cpp,167,8026DEF4,OSLoadContext,8014B12C,rewritten
+src/hle/os/os_font.cpp,37,80270C74,OSGetFontEncode,8014CC60,rewritten
+src/hle/os/os_font.cpp,48,80270CC8,OSSetFontEncode,,disabled: name not in Scooby
+src/hle/os/os_font.cpp,74,80271048,OSLoadFont,8014CD44,rewritten
+src/hle/os/os_font.cpp,94,80271428,OSGetFontTexel,8014D078,rewritten
+src/hle/os/os_init.cpp,30,80274664,__OSThreadInit,8014FD08,rewritten
+src/hle/os/os_init.cpp,89,80270198,OSFatal,8014C178,rewritten
+src/hle/os/os_init.cpp,116,8029D9C0,GKI_delay,,disabled: name not in Scooby
+src/hle/os/os_init.cpp,117,802A83E4,BTM_IsDeviceUp,,disabled: name not in Scooby
+src/hle/os/os_init.cpp,144,8026A5B0,SIInit,8017033C,rewritten
+src/hle/os/os_init.cpp,145,8026B214,SISetSamplingRate,80171138,rewritten
+src/hle/os/os_init.cpp,156,80273144,__OSInitMemoryProtection,8014E3F8,rewritten
+src/hle/os/os_init.cpp,177,8026B6E0,OSGetConsoleType,80149318,rewritten
+src/hle/os/os_init.cpp,193,80273B08,OSGetResetCode,8014ED58,rewritten
+src/hle/os/os_init.cpp,234,802761C0,__OSInitSTM,,disabled: name not in Scooby
+src/hle/os/os_init.cpp,242,8026C7A0,__OSPSInit,80149C48,rewritten
+src/hle/os/os_init.cpp,251,800063C8,__init_hardware,80011EC8,rewritten
+src/hle/os/os_init.cpp,263,8026B304,PPCMfhid0,801490EC,rewritten
+src/hle/os/os_init.cpp,266,8026B30C,PPCMthid0,801490F4,rewritten
+src/hle/os/os_init.cpp,279,8026B324,PPCMtdec,8014910C,rewritten
+src/hle/os/os_init.cpp,287,8026B32C,PPCSync,80149114,rewritten
+src/hle/os/os_init.cpp,290,8026B348,PPCMtmmcr0,80149130,rewritten
+src/hle/os/os_init.cpp,293,8026B350,PPCMtmmcr1,80149138,rewritten
+src/hle/os/os_init.cpp,296,8026B358,PPCMtpmc1,80149140,rewritten
+src/hle/os/os_init.cpp,299,8026B360,PPCMtpmc2,80149148,rewritten
+src/hle/os/os_init.cpp,302,8026B368,PPCMtpmc3,80149150,rewritten
+src/hle/os/os_init.cpp,305,8026B370,PPCMtpmc4,80149158,rewritten
+src/hle/os/os_init.cpp,322,8026B3C0,PPCMfhid2,801491A8,rewritten
+src/hle/os/os_init.cpp,334,8026B3C8,PPCMthid2,801491B0,rewritten
+src/hle/os/os_init.cpp,338,8026B3D0,PPCMfwpar,,disabled: name not in Scooby
+src/hle/os/os_init.cpp,342,8026B3DC,PPCMtwpar,801491B8,rewritten
+src/hle/os/os_init.cpp,345,8026B3E4,PPCDisableSpeculation,801491C0,rewritten
+src/hle/os/os_init.cpp,348,8026B414,PPCMthid4,,disabled: name not in Scooby
+src/hle/os/os_interrupt.cpp,236,802716B8,OSDisableInterrupts,8014D9B4,rewritten
+src/hle/os/os_interrupt.cpp,237,802716CC,OSEnableInterrupts,8014D9C8,rewritten
+src/hle/os/os_interrupt.cpp,238,802716E0,OSRestoreInterrupts,8014D9DC,rewritten
+src/hle/os/os_interrupt.cpp,239,80271728,__OSInterruptInit,8014DA30,rewritten
+src/hle/os/os_interrupt.cpp,240,802717EC,SetInterruptMask,8014DAA4,rewritten
+src/hle/os/os_interrupt.cpp,241,8026C3E0,OSExceptionInit,8014987C,rewritten
+src/hle/os/os_interrupt.cpp,242,80269128,EXIInit,80172488,rewritten
+src/hle/os/os_interrupt.cpp,243,80271704,__OSSetInterruptHandler,8014DA00,rewritten
+src/hle/os/os_interrupt.cpp,244,80271AC8,__OSUnmaskInterrupts,8014DE04,rewritten
+src/hle/os/os_interrupt.cpp,275,80271A48,__OSMaskInterrupts,8014DD7C,rewritten
+src/hle/os/os_interrupt.cpp,312,80268B58,EXISelect,80171E9C,rewritten
+src/hle/os/os_interrupt.cpp,313,80268C88,EXIDeselect,80171FC8,rewritten
+src/hle/os/os_interrupt.cpp,327,80268000,SetExiInterruptMask,80171240,rewritten
+src/hle/os/os_interrupt.cpp,444,80276104,OSSetPowerCallback,,disabled: name not in Scooby
+src/hle/os/os_interrupt.cpp,446,802680F0,EXIImm,80171334,rewritten
+src/hle/os/os_interrupt.cpp,447,80268410,EXIDma,80171630,rewritten
+src/hle/os/os_interrupt.cpp,448,80268508,EXISync,8017171C,rewritten
+src/hle/os/os_interrupt.cpp,449,802693E8,EXIUnlock,80172750,rewritten
+src/hle/os/os_interrupt.cpp,479,802950D0,IPCWriteReg,,disabled: name not in Scooby
+src/hle/os/os_interrupt.cpp,480,802950C0,IPCReadReg,,disabled: name not in Scooby
+src/hle/os/os_interrupt.cpp,506,80295534,IPCCltInit,,disabled: name not in Scooby
+src/hle/os/os_message.cpp,42,802727DC,OSInitMessageQueue,,disabled: name not in Scooby
+src/hle/os/os_message.cpp,168,8027283C,OSSendMessage,,disabled: name not in Scooby
+src/hle/os/os_message.cpp,196,80272904,OSReceiveMessage,,disabled: name not in Scooby
+src/hle/os/os_report.cpp,205,8026E440,OSReport,8014B5D4,rewritten
+src/hle/os/os_reset.cpp,55,8026B334,PPCHalt,8014911C,rewritten
+src/hle/os/os_reset.cpp,124,8019D5B0,OSPanic,8014B674,rewritten
+src/hle/os/os_reset.cpp,140,80273B38,OSResetSystem,8014EA9C,rewritten
+src/hle/os/os_reset.cpp,159,80277888,exit,801398C0,rewritten
+src/hle/os/os_scheduler.cpp,415,80274C24,SelectThread,80150160,rewritten
+src/hle/os/os_scheduler.cpp,502,802758E0,OSWakeupThread,80150A94,rewritten
+src/hle/os/os_scheduler.cpp,554,8027322C,OSLockMutex,,disabled: name not in Scooby
+src/hle/os/os_scheduler.cpp,600,80273308,OSUnlockMutex,,disabled: name not in Scooby
+src/hle/os/os_sleep.cpp,514,802757F4,OSSleepThread,801509A8,rewritten
+src/hle/os/os_thread.cpp,398,80274EA0,OSCreateThread,,disabled: name not in Scooby
+src/hle/os/os_thread.cpp,424,8027510C,OSExitThread,,disabled: name not in Scooby
+src/hle/os/os_thread.cpp,466,802751F0,OSCancelThread,801503F4,rewritten
+src/hle/os/os_thread.cpp,615,80275660,OSSuspendThread,80150838,rewritten
+src/hle/os/os_thread.cpp,718,802753C8,OSResumeThread,801505B0,rewritten
+src/hle/os/os_time.cpp,64,802759D4,OSGetTime,80150C44,rewritten
+src/hle/os/os_time.cpp,91,802759F4,__OSGetSystemTime,80150C64,rewritten
+src/hle/sc.cpp,50,8029A014,SCCheckStatus,,disabled: name not in Scooby
+src/hle/sc.cpp,60,8029B8D8,SCGetAspectRatio,,disabled: name not in Scooby
+src/hle/sc.cpp,84,8029BE5C,SCGetProductArea,,disabled: name not in Scooby
+src/hle/storage/dvd.cpp,999,802795D8,DVDInit,8015298C,rewritten
+src/hle/storage/dvd.cpp,1072,802793F0,DVDReadPrio,,disabled: name not in Scooby
+src/hle/storage/dvd.cpp,1089,80279308,DVDReadAsyncPrio,80152898,rewritten
+src/hle/storage/dvd.cpp,1154,8027CF08,DVDReadAbsAsyncPrio,80154574,rewritten
+src/hle/storage/dvd.cpp,1169,8027E308,DVDLowInit,,disabled: name not in Scooby
+src/hle/storage/dvd.cpp,1182,8027EDE8,DVDLowInquiry,80152110,rewritten
+src/hle/storage/dvd.cpp,1194,8027E56C,DVDLowReadDiskID,80151F54,rewritten
+src/hle/storage/dvd.cpp,1255,8027F554,DVDLowRead,80151BFC,rewritten
+src/hle/storage/dvd.cpp,1261,8027EAC0,DVDLowUnencryptedRead,,disabled: name not in Scooby
+src/hle/storage/dvd.cpp,1273,8027FA14,DVDLowClearCoverInterrupt,,disabled: name not in Scooby
+src/hle/storage/nand_api.cpp,120,80298CE8,NANDInit,,disabled: name not in Scooby
+src/hle/storage/nand_api.cpp,241,80297AAC,NANDOpen,,disabled: name not in Scooby
+src/hle/storage/nand_api.cpp,275,80297D2C,NANDClose,,disabled: name not in Scooby
+src/hle/storage/nand_api.cpp,297,80297258,NANDRead,,disabled: name not in Scooby
+src/hle/storage/nand_api.cpp,320,80297338,NANDWrite,,disabled: name not in Scooby
+src/hle/storage/nand_api.cpp,407,80297010,NANDDelete,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,127,80297BC4,NANDOpenAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,134,80297D98,NANDCloseAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,141,802972C0,NANDReadAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,148,802973A0,NANDWriteAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,155,80297418,NANDSeekAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,180,80297C3C,NANDPrivateOpenAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,211,80296F98,NANDPrivateCreateAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,218,802975F4,NANDPrivateCreateDirAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,225,80297198,NANDPrivateDeleteAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,232,80297914,NANDPrivateGetStatusAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,239,802998F0,NANDPrivateGetTypeAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,566,8029837C,NANDSafeCloseAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,570,80297E20,NANDSafeOpenAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,578,80296F20,NANDCreateAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,585,802970C0,NANDDeleteAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,592,80299C94,NANDCheckAsync,,disabled: name not in Scooby
+src/hle/storage/nand_async.cpp,606,802992C8,NANDChangeDirAsync,,disabled: name not in Scooby
+src/hle/storage/nand_isfs.cpp,429,8029594C,IOS_Open,,disabled: name not in Scooby
+src/hle/storage/nand_isfs.cpp,469,80295B2C,IOS_Close,,disabled: name not in Scooby
+src/hle/storage/nand_isfs.cpp,493,80295CD4,IOS_Read,,disabled: name not in Scooby
+src/hle/storage/nand_isfs.cpp,518,80295EDC,IOS_Write,,disabled: name not in Scooby
+src/hle/storage/nand_isfs.cpp,826,802961FC,IOS_Ioctl,,disabled: name not in Scooby
+src/hle/storage/nand_isfs.cpp,933,80293C70,ISFS_OpenLib,,disabled: name not in Scooby
+src/hle/storage/nand_isfs.cpp,1132,8029654C,IOS_Ioctlv,,disabled: name not in Scooby
+src/hle/vi.cpp,1089,802808C4,VIInit,80155E08,rewritten
+src/hle/vi.cpp,1095,802806B4,__VIInit,80155C08,rewritten
+src/hle/vi.cpp,1150,80280524,VISetPreRetraceCallback,,disabled: name not in Scooby
+src/hle/vi.cpp,1168,80280568,VISetPostRetraceCallback,80155B24,rewritten
+src/hle/vi.cpp,1178,8028217C,VIGetDTVStatus,,disabled: name not in Scooby
+src/hle/vi.cpp,1220,802812A8,VIConfigure,80156780,rewritten
+src/hle/vi.cpp,1257,80281D90,VIFlush,8015733C,rewritten
+src/hle/vi.cpp,1272,80281EA4,VISetNextFrameBuffer,8015746C,rewritten
+src/hle/vi.cpp,1303,80281F10,VISetBlack,801574E0,rewritten
+src/hle/vi.cpp,1316,80281F88,VIGetRetraceCount,8015755C,rewritten
+src/hle/vi.cpp,1329,80281F90,VIGetNextField,,disabled: name not in Scooby
+src/hle/vi.cpp,1362,8028202C,VIGetCurrentLine,801575CC,rewritten
+src/hle/vi.cpp,1409,80280E0C,VIWaitForRetrace,801562B8,rewritten
+src/hle/vi.cpp,1414,8028211C,VIGetScanMode,,disabled: name not in Scooby
