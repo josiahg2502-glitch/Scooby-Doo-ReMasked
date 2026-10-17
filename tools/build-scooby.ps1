@@ -138,7 +138,13 @@ Invoke-Step 'configure' $cmake $configure $wc
 if ($ConfigureOnly) { Set-Status 'configure only: done'; exit 0 }
 Invoke-Step 'compile' $cmake @('--build', $build, '--target', 'WiiCompiled', '--parallel', "$Jobs") $wc
 Set-Status "DONE: $build\WiiCompiled.exe"
-Get-Process 'Scooby-Doo Re-Masked' -ErrorAction SilentlyContinue | Stop-Process -Force; Start-Sleep -Seconds 1
-Copy-Item -LiteralPath (Join-Path $build 'WiiCompiled.exe') -Destination (Join-Path $root 'Play\Scooby-Doo Re-Masked.exe') -Force
-Set-Status 'copied to Play\Scooby-Doo Re-Masked.exe'
+$playExe = Join-Path $root 'Play\Scooby-Doo Re-Masked.exe'
+# Only the game running from Play\ holds the file; the launcher shares its process name.
+Get-Process 'Scooby-Doo Re-Masked' -ErrorAction SilentlyContinue | Where-Object { $_.Path -eq $playExe } | Stop-Process -Force
+Start-Sleep -Seconds 1
+Copy-Item -LiteralPath (Join-Path $build 'WiiCompiled.exe') -Destination $playExe -Force
+# The runtime DLLs (SDL3, Dawn, DXC, libc++ ...) and Dolphin's free dsp_coef.bin sit next to the build output.
+Get-ChildItem -LiteralPath $build -File | Where-Object { $_.Extension -eq '.dll' -or $_.Name -eq 'dsp_coef.bin' } |
+    Copy-Item -Destination (Join-Path $root 'Play') -Force
+Set-Status 'copied to Play\Scooby-Doo Re-Masked.exe (+ runtime DLLs)'
 
