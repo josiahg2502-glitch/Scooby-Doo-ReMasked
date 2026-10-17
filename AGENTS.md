@@ -98,7 +98,7 @@ Diagnostics: SCOOBY_TRACE_IO=1 ([io] completions, [aram] transfers); Play\drawdu
   autotest\level-sweep-20261016-223636: all 23 levels (ART_GAL, BONUSART, W0L1..W5L0) load and run 40 s, no crash.
   Not a playthrough: cutscenes, saves mid-level, bosses untested.
 - Screen tear: Aurora picked Immediate on D3D12 (tears). gpu.cpp best_present_mode now prefers Mailbox on every
-  backend but Metal (still unthrottled, no tearing). User also reported "slight shader issues": NOT yet identified.
+  backend but Metal (still unthrottled, no tearing). User reported "slight shader issues" (Chinatown), then said there were none (2026-10-16).
 - HDR: Config [video] hdr = true (+ hdr_paper_white_nits 200, hdr_peak_nits 1000; launcher Display page). Startup only
   (main.cpp aurora_set_hdr before aurora_initialize). gpu.cpp: render targets stay BGRA8; only the final present copy
   (g_PresentPipeline) writes an RGBA16Float swapchain = scRGB on Windows: pow 2.2 -> linear * paper/80, luminance^4
