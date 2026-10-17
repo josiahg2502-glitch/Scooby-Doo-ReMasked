@@ -18,5 +18,7 @@
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="scooby.png" LogicalName="ScoobyReMasked.scooby.png" />
+    <EmbeddedResource Include="mystery_machine.png" LogicalName="ScoobyReMasked.mystery_machine.png" />
+    <EmbeddedResource Include="title.ttf" LogicalName="ScoobyReMasked.title.ttf" Condition="Exists('title.ttf')" />
   </ItemGroup>
 </Project>

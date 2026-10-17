@@ -90,6 +90,7 @@ sealed class MainForm : Form
             if (shotDir == null) return;
             // Headless visual check: every page drawn to <dir>\<page>.png, plus the two pointers.
             Directory.CreateDirectory(shotDir);
+            shotShift = 9;
             startAt["ghost"] = T - 0.9;  // mid-unmask, so the shot shows the culprit
             foreach (var p in pages)
             {
@@ -154,7 +155,8 @@ sealed class MainForm : Form
     // Everything moves on one clock; with Windows animations turned off the scene stands still.
     readonly bool animate = SystemInformation.UIEffectsEnabled;
     readonly Stopwatch clock = Stopwatch.StartNew();
-    double T => animate ? clock.Elapsed.TotalSeconds : 1.0;
+    double T => (animate ? clock.Elapsed.TotalSeconds : 1.0) + shotShift;
+    double shotShift;  // --shots moves the clock on so the van is mid-road
     readonly Dictionary<string, double> startAt = new();
     Bitmap? headerBack, headerFront;
     readonly List<RectangleF> windows = new();
@@ -206,8 +208,23 @@ sealed class MainForm : Form
         return h == IntPtr.Zero ? (clickable ? Cursors.Hand : Cursors.Default) : new Cursor(h);
     }
 
+    // The title face: the embedded title.ttf when the build has one (a Scooby-Doo logo look-alike), else a stock face.
+    static readonly System.Drawing.Text.PrivateFontCollection titleFonts = new();
     static FontFamily TitleFont()
     {
+        try
+        {
+            using var s = typeof(MainForm).Assembly.GetManifestResourceStream("ScoobyReMasked.title.ttf");
+            if (s != null && titleFonts.Families.Length == 0)
+            {
+                var data = ReadAll(s);
+                var mem = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(data.Length);  // kept for the app's life
+                System.Runtime.InteropServices.Marshal.Copy(data, 0, mem, data.Length);
+                titleFonts.AddMemoryFont(mem, data.Length);
+            }
+            if (titleFonts.Families.Length > 0) return titleFonts.Families[0];
+        }
+        catch { }
         foreach (var name in new[] { "Cooper Black", "Segoe UI Black" })
             if (FontFamily.Families.Any(f => f.Name == name)) return new FontFamily(name);
         return new FontFamily("Segoe UI");
@@ -289,8 +306,8 @@ sealed class MainForm : Form
             float em = Math.Min(S(46), (r.Width - S(2 * 190)) / 12f);
             path.AddString("SCOOBY-DOO: RE-MASKED", TitleFont(), (int)FontStyle.Bold, em, new Point(r.Width / 2, S(18)), fmt);
             using (var outline = new Pen(Ink, S(9)) { LineJoin = LineJoin.Round }) g.DrawPath(outline, path);
-            using (var rim = new Pen(Lime, S(4)) { LineJoin = LineJoin.Round }) g.DrawPath(rim, path);
-            using (var fill = new LinearGradientBrush(new Rectangle(0, S(16), 10, (int)em + S(10)), Gold, Orange, LinearGradientMode.Vertical)) g.FillPath(fill, path);
+            using (var rim = new Pen(Hex("#E2491B"), S(4)) { LineJoin = LineJoin.Round }) g.DrawPath(rim, path);
+            using (var fill = new LinearGradientBrush(new Rectangle(0, S(16), 10, (int)em + S(10)), Hex("#FFE85C"), Hex("#F7941D"), LinearGradientMode.Vertical)) g.FillPath(fill, path);
             using var sub = new Font("Segoe UI", 10.5f, FontStyle.Bold);
             var subText = "Scooby-Doo! Unmasked (GameCube) on PC  -  made by JosiahG";
             var subSize = g.MeasureString(subText, sub);
@@ -352,13 +369,19 @@ sealed class MainForm : Form
         ghostRect = new Rectangle((int)gx, (int)gy, (int)gs, (int)(gs * 1.15f));
         DrawGhost(g, gx, gy, gs, Progress("ghost", 2.6));
 
-        // The van drives along the road, headlights on; a click makes it hop.
-        float vw = S(124), ground = r.Height - S(8);
-        double hop = Progress("van", 0.6);
-        float bounce = (float)(Math.Abs(Math.Sin(t * 9)) * S(2) + (hop < 0 ? 0 : Math.Sin(hop * Math.PI) * S(26)));
-        float vx = (float)((t * S(60)) % (r.Width + vw * 2)) - vw;
-        vanRect = new Rectangle((int)vx, (int)(ground - vw * 0.56f - bounce), (int)vw, (int)(vw * 0.56f));
-        DrawVan(g, vx, ground, vw, (float)(t * 8), bounce);
+        // The Mystery Machine drives along the road, headlights on; a click makes it hop.
+        if (VanArt != null)
+        {
+            float vw = S(86), vh = vw * VanArt.Height / VanArt.Width, ground = r.Height - S(2);
+            double hop = Progress("van", 0.6);
+            float bounce = (float)(Math.Abs(Math.Sin(t * 9)) * S(2) + (hop < 0 ? 0 : Math.Sin(hop * Math.PI) * S(26)));
+            float vx = (float)((t * S(60)) % (r.Width + vw * 2)) - vw, vy = ground - vh - bounce;
+            vanRect = new Rectangle((int)vx, (int)vy, (int)vw, (int)vh);
+            using (var beam = new SolidBrush(Color.FromArgb(55, 255, 240, 170)))
+                g.FillPolygon(beam, new[] { new PointF(vx + vw * 0.96f, vy + vh * 0.6f), new PointF(vx + vw * 2f, vy + vh * 0.25f), new PointF(vx + vw * 2f, vy + vh * 1.05f) });
+            if (vanSized == null || vanSized.Height != (int)vh) vanSized = SizedArt(VanArt, (int)vh);
+            g.DrawImageUnscaled(vanSized, (int)vx, (int)vy);
+        }
     }
 
     static void DrawBat(Graphics g, float x, float y, float s, float flap)
@@ -428,54 +451,6 @@ sealed class MainForm : Form
         g.FillEllipse(eye, x + s * 0.43f, oy + s * 0.62f, s * 0.14f, s * 0.16f);
     }
 
-    // The gang's van: teal body, green skirt, an orange flower, spinning wheels and headlight beams.
-    static void DrawVan(Graphics g, float x, float ground, float w, float wheelTurn, float bounce)
-    {
-        float h = w * 0.42f, wr = h * 0.25f;
-        float y = ground - wr - h * 0.82f - bounce;
-        using (var beam = new SolidBrush(Color.FromArgb(55, 255, 240, 170)))
-            g.FillPolygon(beam, new[] { new PointF(x + w, y + h * 0.62f), new PointF(x + w + w * 1.1f, y + h * 0.3f), new PointF(x + w + w * 1.1f, y + h * 1.15f) });
-        using var ink = new Pen(Ink, Math.Max(2f, w / 50f)) { LineJoin = LineJoin.Round };
-        using var body = Rounded(Rectangle.Round(new RectangleF(x, y, w * 0.8f, h)), (int)(h * 0.22f));
-        using var hood = Rounded(Rectangle.Round(new RectangleF(x + w * 0.66f, y + h * 0.4f, w * 0.34f, h * 0.6f)), (int)(h * 0.16f));
-        using var shape = new Region(body);
-        shape.Union(hood);
-        using (var teal = new SolidBrush(Teal)) g.FillRegion(teal, shape);
-        var clip = g.Clip;
-        g.SetClip(shape, CombineMode.Intersect);
-        using (var lime = new SolidBrush(Lime)) g.FillRectangle(lime, x, y + h * 0.7f, w, h * 0.3f);
-        g.Clip = clip;
-        g.DrawPath(ink, body);
-        g.DrawPath(ink, hood);
-        using (var glass = new SolidBrush(Hex("#BFE8FF")))
-        {
-            g.FillRectangle(glass, x + w * 0.6f, y + h * 0.12f, w * 0.15f, h * 0.3f);
-            g.FillRectangle(glass, x + w * 0.42f, y + h * 0.12f, w * 0.14f, h * 0.3f);
-        }
-        float fx = x + w * 0.22f, fy = y + h * 0.42f, pr = h * 0.11f;
-        using (var petal = new SolidBrush(Orange))
-            for (int i = 0; i < 5; i++)
-            {
-                double a = i * Math.PI * 2 / 5;
-                g.FillEllipse(petal, fx + (float)Math.Cos(a) * pr * 1.2f - pr, fy + (float)Math.Sin(a) * pr * 1.2f - pr, pr * 2, pr * 2);
-            }
-        using (var gold = new SolidBrush(Gold))
-        {
-            g.FillEllipse(gold, fx - pr * 0.8f, fy - pr * 0.8f, pr * 1.6f, pr * 1.6f);
-            g.FillEllipse(gold, x + w - h * 0.12f, y + h * 0.56f, h * 0.12f, h * 0.12f);  // headlight
-        }
-        using var tyre = new SolidBrush(Hex("#1A1A1A"));
-        using var hub = new SolidBrush(Hex("#C8C8C8"));
-        using var spoke = new Pen(Hex("#555555"), Math.Max(1.5f, wr / 6));
-        foreach (var cx in new[] { x + w * 0.2f, x + w * 0.8f })
-        {
-            float cy = ground - wr;
-            g.FillEllipse(tyre, cx - wr, cy - wr, wr * 2, wr * 2);
-            g.FillEllipse(hub, cx - wr * 0.45f, cy - wr * 0.45f, wr * 0.9f, wr * 0.9f);
-            g.DrawLine(spoke, cx, cy, cx + (float)Math.Cos(wheelTurn) * wr * 0.45f, cy + (float)Math.Sin(wheelTurn) * wr * 0.45f);
-        }
-    }
-
     // A bone-shaped Scooby Snack biscuit.
     static void DrawSnack(Graphics g, float cx, float cy, float s)
     {
@@ -490,7 +465,8 @@ sealed class MainForm : Form
     }
 
     // Scooby's picture (embedded scooby.png), resized once per size and kept.
-    static readonly Image? ScoobyArt = LoadArt("scooby.png");
+    static readonly Image? ScoobyArt = LoadArt("scooby.png"), VanArt = LoadArt("mystery_machine.png");
+    Bitmap? vanSized;
     static readonly PointF ScoobyMouth = new(0.43f, 0.54f);  // his open mouth, as a fraction of the picture
     readonly Dictionary<int, Bitmap> scoobySized = new();
 
