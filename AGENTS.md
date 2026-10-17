@@ -94,6 +94,8 @@ Diagnostics: SCOOBY_TRACE_IO=1 ([io] completions, [aram] transfers); Play\drawdu
 ## Release state (2026-10-16 late)
 - Git repo (branch main, no remote). Never commit Disc/, game/, Play binaries, dist/ (see .gitignore).
 - Keyboard defaults (aurora pad.cpp): WASD stick, arrows C-stick, Space A, LShift B, R X, F Y, C Z, Q/E L/R, Enter Start, IJKL D-pad.
+  Gamepads: aurora PADRead used to skip a pad on a port with keyboard bindings, so after the keyboard defaults
+  (port 1) pads did nothing. Now keyboard and pad add up on that port (sticks summed and clamped, triggers max).
 - Level sweep: tools\level-sweep.ps1 [-Seconds 40] [-Levels W1L0,...] (temporary mod sets engine.ini StartingLevelPath).
   autotest\level-sweep-20261016-223636: all 23 levels (ART_GAL, BONUSART, W0L1..W5L0) load and run 40 s, no crash.
   Not a playthrough: cutscenes, saves mid-level, bosses untested.

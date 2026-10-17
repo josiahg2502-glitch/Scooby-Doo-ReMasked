@@ -804,7 +804,8 @@ u32 PADRead(PADStatus* status) {
       status[i].triggerRight = static_cast<u8>(std::min(static_cast<int>(status[i].triggerRight) + tr, 255));
     }
 
-    if (controller && !g_keyboardBindings[i].m_mappingsSet) {
+    // Keyboard and gamepad both drive a port that has keyboard bindings (port 1 by default): their inputs add up.
+    if (controller) {
       EnsureMappingLoaded(controller);
 
       // Wii U Pro Controller raw D-pad fallback. SDL's HIDAPI Wii driver posts
@@ -929,8 +930,8 @@ u32 PADRead(PADStatus* status) {
         yl /= 256;
       }
 
-      status[i].stickX = static_cast<int8_t>(xl);
-      status[i].stickY = static_cast<int8_t>(yl);
+      status[i].stickX = static_cast<int8_t>(std::clamp(static_cast<int>(status[i].stickX) + xl, -127, 127));
+      status[i].stickY = static_cast<int8_t>(std::clamp(static_cast<int>(status[i].stickY) + yl, -127, 127));
 
       const auto xrPos = _get_axis_value(controller, PAD_AXIS_RIGHT_X_POS);
       const auto xrNeg = _get_axis_value(controller, PAD_AXIS_RIGHT_X_NEG);
@@ -956,8 +957,8 @@ u32 PADRead(PADStatus* status) {
         yr /= 256;
       }
 
-      status[i].substickX = static_cast<int8_t>(xr);
-      status[i].substickY = static_cast<int8_t>(yr);
+      status[i].substickX = static_cast<int8_t>(std::clamp(static_cast<int>(status[i].substickX) + xr, -127, 127));
+      status[i].substickY = static_cast<int8_t>(std::clamp(static_cast<int>(status[i].substickY) + yr, -127, 127));
 
       Sint16 tl = std::max(static_cast<Sint16>(0), _get_axis_value(controller, PAD_AXIS_TRIGGER_L));
       Sint16 tr = std::max(static_cast<Sint16>(0), _get_axis_value(controller, PAD_AXIS_TRIGGER_R));
@@ -984,8 +985,8 @@ u32 PADRead(PADStatus* status) {
       tl /= 128;
       tr /= 128;
 
-      status[i].triggerLeft = static_cast<int8_t>(tl);
-      status[i].triggerRight = static_cast<int8_t>(tr);
+      status[i].triggerLeft = static_cast<u8>(std::max<int>(status[i].triggerLeft, static_cast<u8>(tl)));
+      status[i].triggerRight = static_cast<u8>(std::max<int>(status[i].triggerRight, static_cast<u8>(tr)));
 
       if (controller->m_hasRumble) {
         rumbleSupport |= PAD_CHAN0_BIT >> i;
