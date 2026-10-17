@@ -126,13 +126,8 @@ Diagnostics: SCOOBY_TRACE_IO=1 ([io] completions, [aram] transfers); Play\drawdu
   Verified 2026-10-16 (autotest\axgc2.err.log, 75 s): main-menu music = 2 voices, [meter] output peak 12-15k of
   32767, 12000 lists in ~60 s of audio (keeps real time). User-checked in W0L1 (music, SFX, streamed voice lines).
   ITD and DPL2 AUXB routing are skipped, as in Dolphin.
-- 48 KHZ OUTPUT (opt-in, env SCOOBY_AX_48K=1; default is the DSP's own 32 kHz - user found the difference small): the 32 kHz mix stays exact for all
-  guest-visible state; each voice is ALSO rendered from its decoded source samples straight to 48 kHz (16-tap
-  Blackman sinc, HiSrc in ax_mix.cpp, ~1 ms latency), and MAIN L/R minus the voices (reverb returns, surround fold) is
-  upsampled once and added; audio.cpp pushes that frame (OutputSampleRate / HiRateFrame). Log: `[ax-hirate] ... ok`.
-  Compressor gain (CMD 0x12) is not applied to the 48 kHz voices. The first version had audible issues (user report):
-  unsigned mixer ramp deltas (fades ramped up) and the ratio used for 1:1 src_type voices; both fixed in source,
-  not yet rebuilt or re-listened.
+- No 48 kHz output: a parallel 48 kHz voice render was tried and removed (2026-10-16) - the user heard problems
+  and wants the original 32 kHz output. SDL resamples 32 -> device rate as before.
 - Voice-line streams (STREAM\*.DSP, SOUND_ProcessStreams) need ARQPostRequest_Gc (gc_hw.cpp) to fill the ARQRequest:
   SOUND_UpdateStreamCB picks its stream by request->owner. Unfilled, every refill went to stream 0 and Shaggy's
   W0L1 line looped its first 25.6 KB (fixed 2026-10-16).
