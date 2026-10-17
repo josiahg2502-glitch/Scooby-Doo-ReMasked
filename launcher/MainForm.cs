@@ -6,7 +6,7 @@ namespace ScoobyReMasked;
 
 // The launcher window: a spooky animated header (haunted mansion, bats, the Mystery Machine), a nav column
 // with Scooby catching snacks, and one card per page (Play, Display, Controls, Mods). Everything it changes goes to
-// Play\UserData\Config.toml, the keys the game's F10 menu uses. All art is drawn here; nothing from the game is shipped.
+// data\UserData\Config.toml, the keys the game's F10 menu uses. All art is drawn here; nothing from the game is shipped.
 sealed class MainForm : Form
 {
     const string GameExe = "Scooby-Doo Re-Masked.exe", AppTitle = "Scooby-Doo: Re-Masked";
@@ -33,12 +33,12 @@ sealed class MainForm : Form
     {
         this.shotDir = shotDir;
         k = DeviceDpi / 96f;
-        root = FindRoot();
-        play = Path.Combine(root, "Play");
+        (root, play) = FindGame();
         userData = Path.Combine(play, "UserData");
         configPath = Path.Combine(userData, "Config.toml");
         modsDir = Path.Combine(userData, "mods");
-        discDir = Path.Combine(root, "Disc", "DATA");
+        // Release: the disc lives in data\Disc next to the game. Dev tree (Play\): the shared Disc\ at the root.
+        discDir = IsRelease ? Path.Combine(play, "Disc", "DATA") : Path.Combine(root, "Disc", "DATA");
 
         Text = AppTitle;
         try { Icon = Icon.ExtractAssociatedIcon(Environment.ProcessPath!); } catch { }
@@ -109,13 +109,16 @@ sealed class MainForm : Form
         };
     }
 
-    // The folder holding Play\<GameExe>: beside the launcher, or (while developing) above launcher\publish.
-    static string FindRoot()
+    // The game folder: data\ beside the launcher (release), or Play\ above launcher\publish (dev tree).
+    static (string root, string game) FindGame()
     {
         for (var d = new DirectoryInfo(AppContext.BaseDirectory); d != null; d = d.Parent)
-            if (File.Exists(Path.Combine(d.FullName, "Play", GameExe))) return d.FullName;
-        return AppContext.BaseDirectory;
+            foreach (var sub in new[] { "data", "Play" })
+                if (File.Exists(Path.Combine(d.FullName, sub, GameExe))) return (d.FullName, Path.Combine(d.FullName, sub));
+        return (AppContext.BaseDirectory, Path.Combine(AppContext.BaseDirectory, "data"));
     }
+
+    bool IsRelease => Path.GetFileName(play) == "data";
 
     void AddPage(FlowLayoutPanel nav, string title, Control page)
     {
@@ -581,7 +584,7 @@ sealed class MainForm : Form
         "Any gamepad works as a GameCube controller right away.",
         "Cinematic 2.39:1 shows more of every level than the GameCube ever could.",
         "Something look odd at 120 fps? Set the frame rate to 60 on the Display page.",
-        "Saves live in Play\\UserData. A backup now and then never hurts.",
+        "Saves live in data\\UserData. A backup now and then never hurts.",
         "Hungry? Click the Scooby Snack by the menu.",
         "Give the van a click. Beep beep!",
     };
@@ -644,7 +647,7 @@ sealed class MainForm : Form
                 if (Directory.Exists(discDir)) Directory.Delete(discDir, true);
                 Directory.Move(staging, discDir);
                 var cfg = new GameConfig(configPath);
-                cfg.Set("paths", "dvd_root", "'../../Disc/DATA'");  // relative to Play\UserData, so the folder can move
+                cfg.Set("paths", "dvd_root", IsRelease ? "'../Disc/DATA'" : "'../../Disc/DATA'");  // relative to UserData, so the folder can move
                 cfg.Save();
             }
             catch (Exception e) { MessageBox.Show(this, "Extraction failed: " + e.Message, AppTitle, MessageBoxButtons.OK, MessageBoxIcon.Error); }
@@ -655,7 +658,7 @@ sealed class MainForm : Form
     void Launch()
     {
         var exe = Path.Combine(play, GameExe);
-        if (!File.Exists(exe)) { MessageBox.Show(this, $"Play\\{GameExe} is missing. Re-extract the download next to this launcher.", AppTitle); return; }
+        if (!File.Exists(exe)) { MessageBox.Show(this, "The game files (the data folder) are missing. Re-extract the download next to this launcher.", AppTitle); return; }
         Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = play, UseShellExecute = true });
         WindowState = FormWindowState.Minimized;
     }
@@ -717,7 +720,7 @@ sealed class MainForm : Form
     Control BuildModsPage()
     {
         var (card, body) = NewCard("Mods");
-        body.Controls.Add(Note("A mod is a folder in Play\\UserData\\mods. Its files\\ folder mirrors the disc's files\\ (replacing game files), " +
+        body.Controls.Add(Note("A mod is a folder in data\\UserData\\mods. Its files\\ folder mirrors the disc's files\\ (replacing game files), " +
                                "and its textures\\ folder holds texture replacements. Untick a mod to switch it off; when two mods change the same file, the later name wins."));
         var list = new CheckedListBox { Width = S(520), Height = S(220), CheckOnClick = true, BorderStyle = BorderStyle.FixedSingle, Margin = S(0, 8, 0, 8) };
         void Fill()

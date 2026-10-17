@@ -115,8 +115,12 @@ Diagnostics: SCOOBY_TRACE_IO=1 ([io] completions, [aram] transfers); Play\drawdu
   haunted mansion (flickering windows), bats, the Mystery Machine (launcher\mystery_machine.png, user's picture,
   rotated 10 deg level) driving with headlights (click = hop + sound); title (launcher\title.ttf = "Scooby Doo" font by Lauren Ashpole, FontSpace, personal use; credited in README) + "Made by JosiahG" on a top layer; Scooby (launcher\scooby.png, the user's picture, embedded; cut out
   with ImageMagick floodfill) under the nav catches a Scooby Snack on click and hops; magnifying-glass cursor; "Scooby says" tips. `--shots <dir>` draws every page to PNGs.
-- Packaging: tools\package-scooby.ps1 [-Build] [-Zip] -> dist\ScoobyDooReMasked (launcher, Play runtime files,
-  README from tools\package-README.txt). No disc data shipped.
+- Packaging: tools\package-scooby.ps1 [-Build] [-Zip] -> dist\ScoobyDooReMasked = ONE exe on top
+  ("Scooby-Doo Re-Masked.exe" = the launcher, renamed), README.txt, data\ (game exe, dlls, UserData, Disc). No disc
+  data shipped. The user PLAYS FROM dist, so the script never deletes it: it overwrites program files only and keeps
+  data\Disc and data\UserData (saves in UserData\Saves\MemoryCard, Config.toml, mods); an older Play\ layout is
+  migrated. -Zip stages a clean copy in %TEMP%. The launcher finds data\ (release) or Play\ (dev tree); the release
+  disc is data\Disc\DATA with dvd_root '../Disc/DATA'. (Earlier runs deleted dist wholesale and lost the user's disc.)
 - Diagnostics [band]/[gpuvp]/[vpmap]/[mode]/[card] are left in, each capped at a few dozen lines per run.
 
 ## Known gaps
