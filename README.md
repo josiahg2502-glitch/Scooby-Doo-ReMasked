@@ -4,7 +4,15 @@ A native PC port of **Scooby-Doo! Unmasked** (GameCube, 2005), made by staticall
 code to C++ with [WiiCompiled](https://github.com/patchzyy/Wiicompiled). No emulator: the game runs as a Windows
 program, drawn by a modern renderer.
 
-![The launcher](docs/launcher.png)
+![The aquarium level in widescreen](docs/screenshots/aquarium.jpg)
+
+<p>
+  <img src="docs/screenshots/chinatown.jpg" width="32%" alt="Chinatown docks">
+  <img src="docs/screenshots/swamp.jpg" width="32%" alt="Foggy swamp">
+  <img src="docs/screenshots/daphne.jpg" width="32%" alt="Daphne cutscene">
+</p>
+
+*Screenshots from this port, rendered in widescreen.*
 
 ## Features
 
@@ -23,6 +31,8 @@ program, drawn by a modern renderer.
 
 You need **Windows 10 or 11 (64-bit)** and your own dump of **Scooby-Doo! Unmasked for the GameCube, USA
 (G5DE78)** as a `.iso`, `.gcm` or `.ciso` file (for example dumped with CleanRip on a Wii).
+
+![The launcher](docs/launcher.png)
 
 1. Download the latest release and unzip it anywhere.
 2. Open **`Scooby-Doo Re-Masked.exe`**, the only program you need to open.
