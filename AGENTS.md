@@ -109,6 +109,10 @@ Diagnostics: SCOOBY_TRACE_IO=1 ([io] completions, [aram] transfers); Play\drawdu
   Controls (text), Mods. --selftest exits 0; --extract on Disc\G5DE78.iso = 1890 files byte-identical to Disc\DATA.
   .ciso reader untested. The launcher walks up to the folder with Play\Scooby-Doo Re-Masked.exe, so in the dev tree
   extracting a disc REPLACES the dev Disc\DATA.
+- Launcher look (SPM-style, all art drawn in code, no game/web art shipped): night header with twinkling stars, moon,
+  haunted mansion (flickering windows), bats, a ghost (click = unmask: caretaker + "Jinkies!" bubble), the gang's van
+  driving with headlights (click = hop + sound); Scooby (embedded scooby.ico, pixel-sharp) under the nav catches a
+  Scooby Snack on click; magnifying-glass cursor; "Scooby says" tips. `--shots <dir>` draws every page to PNGs.
 - Packaging: tools\package-scooby.ps1 [-Build] [-Zip] -> dist\ScoobyDooReMasked (launcher, Play runtime files,
   README from tools\package-README.txt). No disc data shipped.
 - Diagnostics [band]/[gpuvp]/[vpmap]/[mode]/[card] are left in, each capped at a few dozen lines per run.

@@ -27,8 +27,9 @@ static class Program
             }
         }
         ApplicationConfiguration.Initialize();
-        var form = new MainForm();
-        // "--selftest": build every page, then exit 0.
+        // "--shots <dir>": draw every page to <dir>\<page>.png and exit. "--selftest": build every page, then exit 0.
+        int shots = Array.IndexOf(args, "--shots");
+        var form = new MainForm(shots >= 0 && shots + 1 < args.Length ? args[shots + 1] : null);
         if (args.Contains("--selftest")) { form.Shown += (_, _) => form.Close(); }
         Application.Run(form);
         return 0;
