@@ -85,9 +85,8 @@ copy, the GameCube DVD/card/audio paths and the renderer fixes work.
 ## Credits
 
 - **Port:** JosiahG
-- **WiiCompiled** (the recompiler and runtime) by patchzyy and contributors, from the
-  [NSMB Wii Multiplayer Recompilation](https://github.com/WitherBlitz/NSMB-Wii-Multiplayer-Recompilation) by
-  WitherBlitz, GPLv3
+- **[WiiCompiled](https://github.com/patchzyy/Wiicompiled)** (the recompiler and runtime) by patchzyy and
+  contributors, GPLv3
 - **Aurora** by Luke Street, MIT; Dawn, SDL3 and the other components listed in
   [`wiicompiled/THIRD-PARTY-NOTICES.md`](wiicompiled/THIRD-PARTY-NOTICES.md)
 - Launcher title font **"Scooby Doo"** by Lauren Ashpole
