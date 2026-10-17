@@ -4,11 +4,8 @@
 # functions are compiled once into mkw_base_shared; only callers whose direct
 # ABI differs between profiles receive small base/RR variants.
 
-set(DATA_INIT_FILE "${MKW_RUNTIME_SOURCE_DIR}/../generated/data_sections_init.cpp")
-set(DATA_INIT_BLOB_ASM "${MKW_RUNTIME_SOURCE_DIR}/../generated/data_sections_init_blobs.S")
-if(EXISTS "${DATA_INIT_FILE}")
-    list(APPEND SOURCES "${DATA_INIT_FILE}")
-endif()
+# Scooby-Doo: Re-Masked ships no game data: the translator's data_sections_init.cpp and its blobs are not compiled;
+# src/hle/scooby_dol_loader.cpp loads the sections from the player's disc instead.
 # Crash-report symbolization table emitted by generate-data-init. The stub
 # (deliberately outside the globbed src/ tree so it is never picked up twice)
 # keeps link succeeding when the generated table has not been produced yet.
@@ -17,11 +14,6 @@ if(EXISTS "${GUEST_SYMBOL_TABLE_FILE}")
     list(APPEND SOURCES "${GUEST_SYMBOL_TABLE_FILE}")
 else()
     list(APPEND SOURCES "${MKW_RUNTIME_SOURCE_DIR}/cmake/guest_symbol_table_stub.cpp")
-endif()
-if(EXISTS "${DATA_INIT_BLOB_ASM}")
-    enable_language(ASM)
-    set_source_files_properties("${DATA_INIT_BLOB_ASM}" PROPERTIES LANGUAGE ASM SKIP_UNITY_BUILD_INCLUSION ON)
-    list(APPEND SOURCES "${DATA_INIT_BLOB_ASM}")
 endif()
 list(REMOVE_DUPLICATES SOURCES)
 
