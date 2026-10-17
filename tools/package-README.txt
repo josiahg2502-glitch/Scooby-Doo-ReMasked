@@ -14,3 +14,5 @@ Keyboard: WASD move, arrows camera, Space A, Left Shift B, R X, F Y, C Z, Q/E L/
 Gamepads work right away.
 
 Saves are kept in Play\UserData. Mods go in Play\UserData\mods (see the launcher's Mods page).
+
+Credits: title font "Scooby Doo" by Lauren Ashpole (fontspace.com/scooby-doo-font-f7039), free for personal use.

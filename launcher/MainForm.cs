@@ -308,8 +308,9 @@ sealed class MainForm : Form
             // Title in a groovy face, yellow to orange with the logo's red-orange rim.
             using var path = new GraphicsPath();
             var fmt = new StringFormat { Alignment = StringAlignment.Center };
-            float em = Math.Min(S(46), (r.Width - S(2 * 190)) / 12f);
-            path.AddString("SCOOBY-DOO: RE-MASKED", TitleFont(), (int)FontStyle.Bold, em, new Point(r.Width / 2, S(30)), fmt);
+            float em = Math.Min(S(56), (r.Width - S(2 * 170)) / 10.5f);
+            var face = TitleFont();
+            path.AddString("SCOOBY-DOO: RE-MASKED", face, (int)(face.IsStyleAvailable(FontStyle.Bold) ? FontStyle.Bold : FontStyle.Regular), em, new Point(r.Width / 2, S(14)), fmt);
             using (var outline = new Pen(Ink, S(9)) { LineJoin = LineJoin.Round }) g.DrawPath(outline, path);
             using (var rim = new Pen(Hex("#E2491B"), S(4)) { LineJoin = LineJoin.Round }) g.DrawPath(rim, path);
             using (var fill = new LinearGradientBrush(new Rectangle(0, S(16), 10, (int)em + S(10)), Hex("#FFE85C"), Hex("#F7941D"), LinearGradientMode.Vertical)) g.FillPath(fill, path);
@@ -317,7 +318,7 @@ sealed class MainForm : Form
             using (var shadow = new SolidBrush(Color.FromArgb(160, 0, 0, 0)))
             using (var light = new SolidBrush(Moon))
             {
-                var at = new PointF(r.Width / 2f, S(30) + em * 1.28f);
+                var at = new PointF(r.Width / 2f, S(14) + em * 1.2f);
                 g.DrawString("Made by JosiahG", credit, shadow, at.X + S(1), at.Y + S(1), fmt);
                 g.DrawString("Made by JosiahG", credit, light, at, fmt);
             }
@@ -371,7 +372,7 @@ sealed class MainForm : Form
         // The Mystery Machine drives along the road, headlights on; a click makes it hop.
         if (VanArt != null)
         {
-            float vw = S(100), vh = vw * VanArt.Height / VanArt.Width, ground = r.Height - S(2);
+            float vw = S(90), vh = vw * VanArt.Height / VanArt.Width, ground = r.Height - S(2);
             double hop = Progress("van", 0.6);
             float bounce = (float)(Math.Abs(Math.Sin(t * 9)) * S(2) + (hop < 0 ? 0 : Math.Sin(hop * Math.PI) * S(26)));
             float vx = (float)((t * S(60)) % (r.Width + vw * 2)) - vw, vy = ground - vh - bounce;

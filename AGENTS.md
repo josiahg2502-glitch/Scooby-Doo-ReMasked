@@ -111,7 +111,7 @@ Diagnostics: SCOOBY_TRACE_IO=1 ([io] completions, [aram] transfers); Play\drawdu
   extracting a disc REPLACES the dev Disc\DATA.
 - Launcher look (SPM-style; scene drawn in code, Scooby picture supplied by the user): night header with twinkling stars, moon,
   haunted mansion (flickering windows), bats, the Mystery Machine (launcher\mystery_machine.png, user's picture,
-  rotated 10 deg level) driving with headlights (click = hop + sound); title + "Made by JosiahG" on a top layer; Scooby (launcher\scooby.png, the user's picture, embedded; cut out
+  rotated 10 deg level) driving with headlights (click = hop + sound); title (launcher\title.ttf = "Scooby Doo" font by Lauren Ashpole, FontSpace, personal use; credited in README) + "Made by JosiahG" on a top layer; Scooby (launcher\scooby.png, the user's picture, embedded; cut out
   with ImageMagick floodfill) under the nav catches a Scooby Snack on click and hops; magnifying-glass cursor; "Scooby says" tips. `--shots <dir>` draws every page to PNGs.
 - Packaging: tools\package-scooby.ps1 [-Build] [-Zip] -> dist\ScoobyDooReMasked (launcher, Play runtime files,
   README from tools\package-README.txt). No disc data shipped.
