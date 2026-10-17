@@ -123,6 +123,20 @@ Diagnostics: SCOOBY_TRACE_IO=1 ([io] completions, [aram] transfers); Play\drawdu
   disc is data\Disc\DATA with dvd_root '../Disc/DATA'. (Earlier runs deleted dist wholesale and lost the user's disc.)
 - Diagnostics [band]/[gpuvp]/[vpmap]/[mode]/[card] are left in, each capped at a few dozen lines per run.
 
+## Public release (2026-10-17) - github.com/josiahg2502-glitch/Scooby-Doo-ReMasked, GPLv3 (inherited from WiiCompiled)
+- NO GAME DATA in the exe: runtime/cmake/PublicProducts.cmake no longer compiles the translator's
+  data_sections_init.cpp/blobs. runtime/src/hle/scooby_dol_loader.cpp (InitializeDataSections) rebuilds main_logic.dol
+  from <disc>/sys/main.dol + every .ghr's logic modules (C++ mirror of build_logic_overlay.py: change both together),
+  checks the SHA-256 in hle/scooby_logic_dol_sha256.inc (written by build-scooby.ps1), caches <disc>/sys/main_logic.dol.
+  Verified: 0 of 187 64-byte probes of the game's DOL sections occur in the release exe.
+- Upstream leftovers removed (NSMBW Android app, installer, workflows, NSMBW/MKWii/SPM projects). The three dependency
+  scripts build-scooby needs live in wiicompiled/buildtools. Translator.Cli no longer references the installer library.
+- Fresh-clone build is verified (README "Building from source"): get-dotnet.ps1 fetches a portable .NET 8 SDK,
+  build-scooby builds the translator when missing, copies game/main.dol from Disc/DATA, copies the runtime DLLs and
+  dsp_coef.bin to Play/. Clean clone -> zip took ~16 min plus ~8 min of first-time downloads.
+- Release: run tools/package-scooby.ps1 -Zip in a CLEAN clone and upload dist/ScoobyDooReMasked.zip. Commits use the
+  GitHub no-reply address 339941312+josiahg2502-glitch@users.noreply.github.com (keep it that way: public repo).
+
 ## Known gaps
 - GameCube AX (ucode CRC E2136399) is ported from Dolphin AX.cpp/AXVoice.h: ax_mix.cpp `ExecuteGcCommandList` (all 20
   GC commands, AXPBGc, 5x1 ms voice steps with PB updates, ADPCM/PCM8/PCM16 from host ARAM via gc_hw.cpp
