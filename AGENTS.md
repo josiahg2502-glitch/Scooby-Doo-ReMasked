@@ -91,6 +91,28 @@ Next: a black strip along the bottom of the picture (viewport/aspect), verify pa
 level, check widescreen/4K/120 fps on this game, Bink videos (VIDEO\*.BIK) are not played yet.
 Diagnostics: SCOOBY_TRACE_IO=1 ([io] completions, [aram] transfers); Play\drawdump.txt = frame number to dump GX draws
 ([spmext] per-draw NDC extents); SPM_FLAT_TEST=4 draws everything flat white; tools\capture-window.ps1 = one window PNG.
+## Release state (2026-10-16 late)
+- Git repo (branch main, no remote). Never commit Disc/, game/, Play binaries, dist/ (see .gitignore).
+- Keyboard defaults (aurora pad.cpp): WASD stick, arrows C-stick, Space A, LShift B, R X, F Y, C Z, Q/E L/R, Enter Start, IJKL D-pad.
+- Level sweep: tools\level-sweep.ps1 [-Seconds 40] [-Levels W1L0,...] (temporary mod sets engine.ini StartingLevelPath).
+  autotest\level-sweep-20261016-223636: all 23 levels (ART_GAL, BONUSART, W0L1..W5L0) load and run 40 s, no crash.
+  Not a playthrough: cutscenes, saves mid-level, bosses untested.
+- Screen tear: Aurora picked Immediate on D3D12 (tears). gpu.cpp best_present_mode now prefers Mailbox on every
+  backend but Metal (still unthrottled, no tearing). User also reported "slight shader issues": NOT yet identified.
+- HDR: Config [video] hdr = true (+ hdr_paper_white_nits 200, hdr_peak_nits 1000; launcher Display page). Startup only
+  (main.cpp aurora_set_hdr before aurora_initialize). gpu.cpp: render targets stay BGRA8; only the final present copy
+  (g_PresentPipeline) writes an RGBA16Float swapchain = scRGB on Windows: pow 2.2 -> linear * paper/80, luminance^4
+  highlight boost toward peak. Log: "HDR output on: ...". Verified only that it starts and runs; NOT looked at on an
+  HDR display (PrintWindow captures were black at 18 s in both HDR and SDR runs).
+- Launcher: launcher\ (WinForms net8, toolsuild-launcher.ps1 -> launcher\publish\Scooby-Doo Re-Masked Launcher.exe).
+  Pages Play (disc setup: .iso/.gcm/.ciso -> Disc\DATA via Disc\DATA.new, writes dvd_root '../../Disc/DATA'), Display,
+  Controls (text), Mods. --selftest exits 0; --extract on Disc\G5DE78.iso = 1890 files byte-identical to Disc\DATA.
+  .ciso reader untested. The launcher walks up to the folder with Play\Scooby-Doo Re-Masked.exe, so in the dev tree
+  extracting a disc REPLACES the dev Disc\DATA.
+- Packaging: tools\package-scooby.ps1 [-Build] [-Zip] -> dist\ScoobyDooReMasked (launcher, Play runtime files,
+  README from tools\package-README.txt). No disc data shipped.
+- Diagnostics [band]/[gpuvp]/[vpmap]/[mode]/[card] are left in, each capped at a few dozen lines per run.
+
 ## Known gaps
 - GameCube AX (ucode CRC E2136399) is ported from Dolphin AX.cpp/AXVoice.h: ax_mix.cpp `ExecuteGcCommandList` (all 20
   GC commands, AXPBGc, 5x1 ms voice steps with PB updates, ADPCM/PCM8/PCM16 from host ARAM via gc_hw.cpp
@@ -100,11 +122,13 @@ Diagnostics: SCOOBY_TRACE_IO=1 ([io] completions, [aram] transfers); Play\drawdu
   Verified 2026-10-16 (autotest\axgc2.err.log, 75 s): main-menu music = 2 voices, [meter] output peak 12-15k of
   32767, 12000 lists in ~60 s of audio (keeps real time). User-checked in W0L1 (music, SFX, streamed voice lines).
   ITD and DPL2 AUXB routing are skipped, as in Dolphin.
-- 48 KHZ OUTPUT (default; env SCOOBY_AX_32K=1 = the DSP's own 32 kHz for A/B): the 32 kHz mix stays exact for all
+- 48 KHZ OUTPUT (opt-in, env SCOOBY_AX_48K=1; default is the DSP's own 32 kHz - user found the difference small): the 32 kHz mix stays exact for all
   guest-visible state; each voice is ALSO rendered from its decoded source samples straight to 48 kHz (16-tap
   Blackman sinc, HiSrc in ax_mix.cpp, ~1 ms latency), and MAIN L/R minus the voices (reverb returns, surround fold) is
   upsampled once and added; audio.cpp pushes that frame (OutputSampleRate / HiRateFrame). Log: `[ax-hirate] ... ok`.
-  Compressor gain (CMD 0x12) is not applied to the 48 kHz voices.
+  Compressor gain (CMD 0x12) is not applied to the 48 kHz voices. The first version had audible issues (user report):
+  unsigned mixer ramp deltas (fades ramped up) and the ratio used for 1:1 src_type voices; both fixed in source,
+  not yet rebuilt or re-listened.
 - Voice-line streams (STREAM\*.DSP, SOUND_ProcessStreams) need ARQPostRequest_Gc (gc_hw.cpp) to fill the ARQRequest:
   SOUND_UpdateStreamCB picks its stream by request->owner. Unfilled, every refill went to stream 0 and Shaggy's
   W0L1 line looped its first 25.6 KB (fixed 2026-10-16).

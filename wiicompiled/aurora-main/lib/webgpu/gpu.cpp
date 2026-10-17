@@ -58,6 +58,7 @@ TextureWithSampler g_depthBuffer;
 // EFB -> XFB copy pipeline
 static wgpu::BindGroupLayout g_CopyBindGroupLayout;
 wgpu::RenderPipeline g_CopyPipeline;
+wgpu::RenderPipeline g_PresentPipeline;  // final copy onto the swapchain: g_CopyPipeline, or the HDR one
 wgpu::BindGroup g_CopyBindGroup;
 static bool g_presentSourceOverrideActive = false;
 static wgpu::BindGroup g_presentSourceOverrideBindGroup;
@@ -219,6 +220,11 @@ RenderTargetSize clamp_frame_buffer_size(uint32_t width, uint32_t height) noexce
 // wait (Immediate, else Mailbox). On, the runtime runs the game's VI clock at a whole fraction of the
 // display's refresh (runtime/src/hle/vi.cpp), so presents land one per k vblanks and never queue up.
 std::atomic<bool> g_vsyncEnabled{false};
+// HDR output: read when the device is set up (aurora_set_hdr before aurora_initialize).
+std::atomic<bool> g_hdrRequested{false};
+std::atomic<float> g_hdrPaperWhiteNits{200.f};
+std::atomic<float> g_hdrPeakNits{1000.f};
+bool g_hdrActive = false;
 std::atomic<int> g_vsyncRequest{-1};
 
 wgpu::PresentMode best_present_mode() {
@@ -233,9 +239,10 @@ wgpu::PresentMode best_present_mode() {
   if (g_vsyncEnabled.load(std::memory_order_acquire) && supports(wgpu::PresentMode::Fifo)) {
     return wgpu::PresentMode::Fifo;
   }
-  // Vulkan prefers Mailbox, every other backend Immediate. Under window capture the Vulkan driver
-  // cannot flip and Immediate leaks about a megabyte per present until the device is lost.
-  const bool preferMailbox = g_backendType == wgpu::BackendType::Vulkan;
+  // Mailbox first: it never throttles the guest's pacing and, unlike Immediate, never tears (D3D12
+  // Immediate tore visibly in Scooby-Doo). Metal's Mailbox is not offered. Under window capture the
+  // Vulkan driver cannot flip and Immediate leaks about a megabyte per present until the device is lost.
+  const bool preferMailbox = g_backendType != wgpu::BackendType::Metal;
   if (preferMailbox && supports(wgpu::PresentMode::Mailbox)) {
     return wgpu::PresentMode::Mailbox;
   }
@@ -456,9 +463,8 @@ static TextureWithSampler create_depth_texture(uint32_t width, uint32_t height) 
   };
 }
 
-void create_copy_pipeline() {
-  wgpu::ShaderSourceWGSL sourceDescriptor{};
-  sourceDescriptor.code = R"""(
+wgpu::RenderPipeline create_copy_pipeline(wgpu::TextureFormat format, const std::string& fragmentTail) {
+  const std::string code = R"""(
 @group(0) @binding(0)
 var efb_sampler: sampler;
 @group(0) @binding(1)
@@ -491,16 +497,16 @@ fn vs_main(@builtin(vertex_index) vtxIdx: u32) -> VertexOutput {
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
     let color = textureSample(efb_texture, efb_sampler, in.uv);
-    return vec4(color.rgb, 1.0);
-}
-)""";
+)""" + fragmentTail + "\n}\n";
+  wgpu::ShaderSourceWGSL sourceDescriptor{};
+  sourceDescriptor.code = code.c_str();
   const wgpu::ShaderModuleDescriptor moduleDescriptor{
       .nextInChain = &sourceDescriptor,
       .label = "XFB Copy Module",
   };
   auto module = g_device.CreateShaderModule(&moduleDescriptor);
   const std::array colorTargets{wgpu::ColorTargetState{
-      .format = g_graphicsConfig.surfaceConfiguration.format,
+      .format = format,
       .writeMask = wgpu::ColorWriteMask::All,
   }};
   const wgpu::FragmentState fragmentState{
@@ -532,7 +538,9 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
       .entryCount = bindGroupLayoutEntries.size(),
       .entries = bindGroupLayoutEntries.data(),
   };
-  g_CopyBindGroupLayout = g_device.CreateBindGroupLayout(&bindGroupLayoutDescriptor);
+  if (!g_CopyBindGroupLayout) {  // shared by every copy pipeline, so one bind group fits all
+    g_CopyBindGroupLayout = g_device.CreateBindGroupLayout(&bindGroupLayoutDescriptor);
+  }
   const wgpu::PipelineLayoutDescriptor layoutDescriptor{
       .bindGroupLayoutCount = 1,
       .bindGroupLayouts = &g_CopyBindGroupLayout,
@@ -556,7 +564,7 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
           },
       .fragment = &fragmentState,
   };
-  g_CopyPipeline = g_device.CreateRenderPipeline(&pipelineDescriptor);
+  return g_device.CreateRenderPipeline(&pipelineDescriptor);
 }
 
 wgpu::BindGroup create_copy_bind_group(wgpu::TextureView sourceView, wgpu::Sampler sampler) {
@@ -970,7 +978,32 @@ bool initialize(AuroraBackend auroraBackend) {
       .textureAnisotropy = g_config.maxTextureAnisotropy,
       .maxTextureDimension2D = maxTextureDimension2D,
   };
-  create_copy_pipeline();
+  g_CopyPipeline = create_copy_pipeline(g_graphicsConfig.surfaceConfiguration.format, "return vec4(color.rgb, 1.0);");
+  g_PresentPipeline = g_CopyPipeline;
+  g_hdrActive = false;
+  if (g_hdrRequested.load(std::memory_order_acquire)) {
+    bool fp16 = false;
+    for (size_t i = 0; i < g_surfaceCapabilities.formatCount; ++i) {
+      fp16 |= g_surfaceCapabilities.formats[i] == wgpu::TextureFormat::RGBA16Float;
+    }
+    if (fp16) {
+      // Everything still renders in the SDR format; only the final copy writes a float16 swapchain,
+      // which Windows reads as scRGB (linear, 1.0 = 80 nits). The game's gamma-2.2 picture is
+      // linearised, placed at paper white, and the brightest tones are stretched toward the peak.
+      // shortcut: no SurfaceColorManagement chain (DXGI's FP16 default is already scRGB); add it for Vulkan/Metal HDR.
+      const float paper = std::max(g_hdrPaperWhiteNits.load(), 80.f);
+      const float peak = std::max(g_hdrPeakNits.load(), paper);
+      const std::string tail = "    let sdr = pow(max(color.rgb, vec3(0.0)), vec3(2.2));\n"
+                               "    let lum = dot(sdr, vec3(0.2126, 0.7152, 0.0722));\n"
+                               "    let boost = 1.0 + " + std::to_string(peak / paper - 1.f) + " * pow(lum, 4.0);\n"
+                               "    return vec4(sdr * boost * " + std::to_string(paper / 80.f) + ", 1.0);";
+      g_PresentPipeline = create_copy_pipeline(wgpu::TextureFormat::RGBA16Float, tail);
+      g_hdrActive = true;
+      Log.info("HDR output on: scRGB float16 swapchain, paper white {} nits, peak {} nits", paper, peak);
+    } else {
+      Log.warn("HDR requested but the surface offers no RGBA16Float format; staying SDR");
+    }
+  }
   {
     window::SurfaceLock surfaceLock;
     resize_swapchain(size.fb_width, size.fb_height, size.native_fb_width, size.native_fb_height, true);
@@ -1035,6 +1068,7 @@ void shutdown() {
   g_initialized.store(false, std::memory_order_release);
   g_CopyBindGroupLayout = {};
   g_CopyPipeline = {};
+  g_PresentPipeline = {};
   g_CopyBindGroup = {};
   g_frameBuffer = {};
   g_frameBufferResolved = {};
@@ -1087,6 +1121,12 @@ bool refresh_surface(bool recreate) {
     resize_swapchain(width, height, native_width, native_height, true);
   }
   return true;
+}
+
+void request_hdr(bool enabled, float paperWhiteNits, float peakNits) noexcept {
+  g_hdrRequested.store(enabled, std::memory_order_release);
+  g_hdrPaperWhiteNits.store(paperWhiteNits);
+  g_hdrPeakNits.store(peakNits);
 }
 
 void request_vsync(bool enabled) noexcept {
@@ -1164,6 +1204,9 @@ void resize_swapchain(uint32_t width, uint32_t height, uint32_t native_width, ui
   g_graphicsConfig.surfaceConfiguration.height = native_height;
   auto surfaceConfiguration = g_graphicsConfig.surfaceConfiguration;
   surfaceConfiguration.device = g_device;
+  if (g_hdrActive) {
+    surfaceConfiguration.format = wgpu::TextureFormat::RGBA16Float;  // render targets keep the SDR format
+  }
   g_surface.Configure(&surfaceConfiguration);
   if (!sizeChanged) {
     // Forced reconfigure at an unchanged size (present-mode change or recreated surface). The

@@ -975,7 +975,7 @@ bool present_presentation_job(const PresentationJob& job) {
             .colorAttachments = attachments.data(),
         };
         const auto pass = encoder.BeginRenderPass(&renderPassDescriptor);
-        pass.SetPipeline(webgpu::g_CopyPipeline);
+        pass.SetPipeline(webgpu::g_PresentPipeline);
         pass.SetBindGroup(0, job.image->bindGroup, 0, nullptr);
         pass.SetViewport(0.f, 0.f,
                          static_cast<float>(webgpu::g_graphicsConfig.surfaceConfiguration.width),
@@ -2068,6 +2068,9 @@ void aurora_get_present_timing(AuroraPresentTiming* timing) {
   }
 }
 void aurora_set_vsync(bool enabled) { aurora::webgpu::request_vsync(enabled); }
+void aurora_set_hdr(bool enabled, float paperWhiteNits, float peakNits) {
+  aurora::webgpu::request_hdr(enabled, paperWhiteNits, peakNits);
+}
 bool aurora_get_vsync() { return aurora::webgpu::vsync_enabled(); }
 void aurora_set_frame_interpolation_fps(uint32_t targetFps) {
 #ifdef AURORA_ENABLE_GX

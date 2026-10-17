@@ -220,32 +220,34 @@ std::array<PADButtonMapping, PAD_BUTTON_COUNT> g_defaultButtonsWiiUPro{{
     {SDL_GAMEPAD_BUTTON_DPAD_RIGHT, PAD_BUTTON_RIGHT},
 }};
 
+// Scooby-Doo: Re-Masked keyboard defaults (port 1; F10 bindings saved in keyboard_bindings.dat override them):
+// WASD stick, arrows C-stick, Space A, Left Shift B, R X, F Y, C Z, Q/E L/R, Enter Start, I/J/K/L D-pad.
 std::array<PADKeyButtonBinding, PAD_BUTTON_COUNT> g_defaultKeys{{
-    {PAD_KEY_INVALID, PAD_BUTTON_A},
-    {PAD_KEY_INVALID, PAD_BUTTON_B},
-    {PAD_KEY_INVALID, PAD_BUTTON_X},
-    {PAD_KEY_INVALID, PAD_BUTTON_Y},
-    {PAD_KEY_INVALID, PAD_BUTTON_START},
-    {PAD_KEY_INVALID, PAD_TRIGGER_Z},
-    {PAD_KEY_INVALID, PAD_TRIGGER_L},
-    {PAD_KEY_INVALID, PAD_TRIGGER_R},
-    {PAD_KEY_INVALID, PAD_BUTTON_UP},
-    {PAD_KEY_INVALID, PAD_BUTTON_DOWN},
-    {PAD_KEY_INVALID, PAD_BUTTON_LEFT},
-    {PAD_KEY_INVALID, PAD_BUTTON_RIGHT},
+    {SDL_SCANCODE_SPACE, PAD_BUTTON_A},
+    {SDL_SCANCODE_LSHIFT, PAD_BUTTON_B},
+    {SDL_SCANCODE_R, PAD_BUTTON_X},
+    {SDL_SCANCODE_F, PAD_BUTTON_Y},
+    {SDL_SCANCODE_RETURN, PAD_BUTTON_START},
+    {SDL_SCANCODE_C, PAD_TRIGGER_Z},
+    {SDL_SCANCODE_Q, PAD_TRIGGER_L},
+    {SDL_SCANCODE_E, PAD_TRIGGER_R},
+    {SDL_SCANCODE_I, PAD_BUTTON_UP},
+    {SDL_SCANCODE_K, PAD_BUTTON_DOWN},
+    {SDL_SCANCODE_J, PAD_BUTTON_LEFT},
+    {SDL_SCANCODE_L, PAD_BUTTON_RIGHT},
 }};
 
 std::array<PADKeyAxisBinding, PAD_AXIS_COUNT> g_defaultKeyAxis{{
-    {PAD_KEY_INVALID, PAD_AXIS_LEFT_X_POS, 0},
-    {PAD_KEY_INVALID, PAD_AXIS_LEFT_X_NEG, 0},
-    {PAD_KEY_INVALID, PAD_AXIS_LEFT_Y_POS, 0},
-    {PAD_KEY_INVALID, PAD_AXIS_LEFT_Y_NEG, 0},
-    {PAD_KEY_INVALID, PAD_AXIS_RIGHT_X_POS, 0},
-    {PAD_KEY_INVALID, PAD_AXIS_RIGHT_X_NEG, 0},
-    {PAD_KEY_INVALID, PAD_AXIS_RIGHT_Y_POS, 0},
-    {PAD_KEY_INVALID, PAD_AXIS_RIGHT_Y_NEG, 0},
-    {PAD_KEY_INVALID, PAD_AXIS_TRIGGER_L, 0},
-    {PAD_KEY_INVALID, PAD_AXIS_TRIGGER_R, 0},
+    {SDL_SCANCODE_D, PAD_AXIS_LEFT_X_POS, 0},
+    {SDL_SCANCODE_A, PAD_AXIS_LEFT_X_NEG, 0},
+    {SDL_SCANCODE_W, PAD_AXIS_LEFT_Y_POS, 0},
+    {SDL_SCANCODE_S, PAD_AXIS_LEFT_Y_NEG, 0},
+    {SDL_SCANCODE_RIGHT, PAD_AXIS_RIGHT_X_POS, 0},
+    {SDL_SCANCODE_LEFT, PAD_AXIS_RIGHT_X_NEG, 0},
+    {SDL_SCANCODE_UP, PAD_AXIS_RIGHT_Y_POS, 0},
+    {SDL_SCANCODE_DOWN, PAD_AXIS_RIGHT_Y_NEG, 0},
+    {SDL_SCANCODE_Q, PAD_AXIS_TRIGGER_L, 0},
+    {SDL_SCANCODE_E, PAD_AXIS_TRIGGER_R, 0},
 }};
 
 std::array<PADAxisMapping, PAD_AXIS_COUNT> g_defaultAxes{{
@@ -358,6 +360,7 @@ BOOL PADInit() {
     state.m_buttonMapping = g_defaultKeys;
     state.m_axisMapping = g_defaultKeyAxis;
   });
+  g_keyboardBindings[0].m_mappingsSet = true;  // the keyboard drives port 1 out of the box (single-player game)
 
   return true;
 }

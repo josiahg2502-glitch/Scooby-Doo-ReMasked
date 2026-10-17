@@ -55,6 +55,7 @@ extern TextureWithSampler g_frameBuffer;
 extern TextureWithSampler g_frameBufferResolved;
 extern TextureWithSampler g_depthBuffer;
 extern wgpu::RenderPipeline g_CopyPipeline;
+extern wgpu::RenderPipeline g_PresentPipeline;
 extern wgpu::BindGroup g_CopyBindGroup;
 extern wgpu::Instance g_instance;
 extern bool g_bcTexturesSupported;
@@ -79,6 +80,8 @@ void fail_if_device_lost() noexcept;
 void release_surface() noexcept;
 bool refresh_surface(bool recreate = true);
 // NSMBW: V-Sync (Fifo) on or off; the change is applied by take_vsync_change at a frame boundary.
+// HDR output for the next device setup (startup only).
+void request_hdr(bool enabled, float paperWhiteNits, float peakNits) noexcept;
 void request_vsync(bool enabled) noexcept;
 bool vsync_enabled() noexcept;
 // Applies a pending V-Sync change to the surface configuration; true when the swapchain must be reconfigured.

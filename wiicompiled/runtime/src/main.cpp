@@ -1574,6 +1574,7 @@ int RuntimeMain(int argc, char** argv) {
 #endif
 
 
+        aurora_set_hdr(RuntimeConfigFile::Hdr(), RuntimeConfigFile::HdrPaperWhiteNits(), RuntimeConfigFile::HdrPeakNits());
         const AuroraInfo auroraInfo = aurora_initialize(0, nullptr, &auroraConfig);
         if (auroraInfo.initializationStatus != AURORA_INITIALIZATION_SUCCESS) {
             throw std::runtime_error(auroraInfo.initializationError != nullptr

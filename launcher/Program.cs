@@ -1,0 +1,42 @@
+namespace ScoobyReMasked;
+
+static class Program
+{
+    [STAThread]
+    static int Main(string[] args)
+    {
+        // Headless: "--extract <image> <outdir>" writes <outdir>\extract.log; exit 0 ok, 2 holes, 3 wrong disc, 1 error.
+        if (args.Length == 3 && args[0] == "--extract")
+        {
+            var log = new List<string>();
+            try
+            {
+                using var disc = GcDisc.Open(args[1]);
+                log.Add($"game {disc.GameId} rev {disc.Revision} \"{disc.Title}\" problem=\"{disc.Problem()}\"");
+                if (disc.Problem().Length > 0) { Write(args[2], log); return 3; }
+                int n = disc.Extract(args[2], (done, total, name) => { if (done % 500 == 0) log.Add($"{done}/{total} {name}"); });
+                log.Add($"extracted {n} files, holes {disc.Holes}");
+                Write(args[2], log);
+                return disc.Holes == 0 ? 0 : 2;
+            }
+            catch (Exception e)
+            {
+                log.Add("ERROR " + e);
+                Write(args[2], log);
+                return 1;
+            }
+        }
+        ApplicationConfiguration.Initialize();
+        var form = new MainForm();
+        // "--selftest": build every page, then exit 0.
+        if (args.Contains("--selftest")) { form.Shown += (_, _) => form.Close(); }
+        Application.Run(form);
+        return 0;
+    }
+
+    static void Write(string dir, List<string> log)
+    {
+        Directory.CreateDirectory(dir);
+        File.WriteAllLines(Path.Combine(dir, "extract.log"), log);
+    }
+}

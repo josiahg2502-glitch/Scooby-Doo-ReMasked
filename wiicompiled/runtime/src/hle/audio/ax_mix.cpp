@@ -145,8 +145,8 @@ void HiSelfCheck() {
 }
 
 bool HiRateOn() {
-    // SCOOBY_AX_32K=1 restores the DSP's own 32 kHz output, for A/B listening.
-    static const bool on = kGameCubeAx && std::getenv("SCOOBY_AX_32K") == nullptr;
+    // Opt-in (SCOOBY_AX_48K=1): the DSP's own 32 kHz output is the default.
+    static const bool on = kGameCubeAx && std::getenv("SCOOBY_AX_48K") != nullptr;
     return on;
 }
 
@@ -1007,12 +1007,15 @@ private:
 
     static HiGains HiGainsFor(const AXPBGc& pb, AXMixControl control) {
         HiGains g;
-        g.step = Hilo(pb.src.ratio_hi, pb.src.ratio_lo) / 65536.0 * (32.0 / 48.0);
+        // ResampleAudio reads 1:1 (ratio ignored) for any src_type but polyphase/linear.
+        const bool resampled = pb.src_type == 0 || pb.src_type == 1;
+        g.step = (resampled ? Hilo(pb.src.ratio_hi, pb.src.ratio_lo) / 65536.0 : 1.0) * (32.0 / 48.0);
         g.env0 = pb.vol_env.cur_volume / 32768.0f;
         g.envDelta = pb.vol_env.cur_volume_delta / 32768.0f;
         auto bus = [&](uint32_t bit, uint32_t rampBit, const VolumeData& vd, float& v0, float& dv) {
             v0 = (control & bit) ? vd.volume / 32768.0f : 0.0f;
-            dv = (control & bit) && (control & rampBit) ? vd.volume_delta / 32768.0f : 0.0f;
+            // The 32 kHz ramp adds volume_delta with 16-bit wrap, i.e. it is a signed step.
+            dv = (control & bit) && (control & rampBit) ? static_cast<int16_t>(vd.volume_delta) / 32768.0f : 0.0f;
         };
         bus(MIX_MAIN_L, MIX_MAIN_L_RAMP, pb.mixer.main_left, g.l0, g.dl);
         bus(MIX_MAIN_R, MIX_MAIN_R_RAMP, pb.mixer.main_right, g.r0, g.dr);

@@ -72,6 +72,8 @@ void aurora_get_frame_interpolation_diagnostics(AuroraFrameInterpolationDiagnost
 void aurora_set_frame_interpolation_fps(uint32_t targetFps);
 // NSMBW: V-Sync on (Fifo) or off (Immediate, else Mailbox); off by default.
 void aurora_set_vsync(bool enabled);
+// HDR (scRGB) output; call before aurora_initialize.
+void aurora_set_hdr(bool enabled, float paperWhiteNits, float peakNits);
 bool aurora_get_vsync();
 uint32_t aurora_get_frame_interpolation_fps();
 

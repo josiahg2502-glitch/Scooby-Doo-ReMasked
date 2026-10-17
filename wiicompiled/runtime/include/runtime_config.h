@@ -52,6 +52,9 @@ struct RuntimeUserConfig {
     std::optional<bool> showFps;
     std::optional<bool> spinningCoins;  // NSMBW: [video] spinning_coins, animated tiles
     std::optional<bool> frameGraph;     // NSMBW: [video] frame_graph, frame times under the FPS counter
+    std::optional<bool> hdr;             // [video] hdr: scRGB HDR output (startup only)
+    std::optional<float> hdrPaperWhiteNits;
+    std::optional<float> hdrPeakNits;
     std::optional<bool> vsync;          // NSMBW: [video] vsync, presents wait for the display (Windows)
     std::optional<uint32_t> disabledPostProcessingPaths;
     std::optional<float> audioVolume;
@@ -387,7 +390,7 @@ inline void EnsureConfigFile() {
     // size), cinematic 2.39:1, 120 fps interpolation, HD textures on. The launcher writes the same keys.
     output << "# Scooby-Doo: Re-Masked user configuration\n"
               "# paths.dvd_root is your Scooby-Doo! Unmasked (USA, G5DE78) extracted to a DATA folder; the\n"
-              "# launcher's Game disc page fills it in from a .iso/.ciso/.wbfs.\n\n"
+              "# launcher's Game disc page fills it in from a .iso/.gcm/.ciso.\n\n"
               "[video]\n"
               "widescreen = true\n"
               "force_16_9 = false\n"
@@ -431,7 +434,7 @@ inline void EnsureConfigFile() {
               "enabled = true\n"
               "# client_id = \"123456789012345678\"\n\n"
               "[paths]\n"
-              "# dvd_root = \"D:\\\\Games\\\\SuperPaperMario\\\\DATA\"\n"
+              "# dvd_root = \"D:\\\\Games\\\\ScoobyDoo\\\\DATA\"\n"
               "# nand_root = \"D:\\\\WiiNand\"\n"
               "# retro_rewind_root = \"D:\\\\RetroRewind\\\\RetroRewind6\"\n"
               "# overlay_roots = [\"D:\\\\RetroRewind\"]\n";
@@ -585,6 +588,9 @@ inline RuntimeUserConfig ParseConfigDocument(const toml::value& document) {
     config.spinningCoins = FindConfigValue<bool>(document, "video", "spinning_coins");
     config.frameGraph = FindConfigValue<bool>(document, "video", "frame_graph");
     config.vsync = FindConfigValue<bool>(document, "video", "vsync");
+    config.hdr = FindConfigValue<bool>(document, "video", "hdr");
+    config.hdrPaperWhiteNits = FindConfigFloat(document, "video", "hdr_paper_white_nits");
+    config.hdrPeakNits = FindConfigFloat(document, "video", "hdr_peak_nits");
     config.textureReplacements = FindConfigValue<bool>(document, "video", "texture_replacements");
     config.textureDumps = FindConfigValue<bool>(document, "video", "texture_dumps");
     if (auto value = FindConfigUint(document, "video", "disabled_post_processing_paths");
@@ -832,6 +838,10 @@ inline bool SetFrameGraph(bool value) {
     Mutable().frameGraph = value;
     return WriteSetting("video", "frame_graph", value ? "true" : "false");
 }
+
+inline bool Hdr() { return Get().hdr.value_or(false); }
+inline float HdrPaperWhiteNits() { return std::clamp(Get().hdrPaperWhiteNits.value_or(200.f), 80.f, 1000.f); }
+inline float HdrPeakNits() { return std::clamp(Get().hdrPeakNits.value_or(1000.f), 80.f, 10000.f); }
 
 inline bool VSync(bool fallback = false) {
     return Get().vsync.value_or(fallback);
