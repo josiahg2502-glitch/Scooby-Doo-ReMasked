@@ -49,15 +49,15 @@ if ($Zip) {
     Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
     $zipPath = "$root\dist\ScoobyDooReMasked.zip"
     Remove-Item -LiteralPath $zipPath -ErrorAction SilentlyContinue
-    $zip = [IO.Compression.ZipFile]::Open($zipPath, 'Create')
+    $archive = [IO.Compression.ZipFile]::Open($zipPath, 'Create')
     try {
         $base = Split-Path $clean
         foreach ($f in Get-ChildItem -LiteralPath $clean -Recurse -File) {
             $name = $f.FullName.Substring($base.Length + 1).Replace('\', '/')
-            [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $f.FullName, $name, 'Optimal') | Out-Null
+            [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive, $f.FullName, $name, 'Optimal') | Out-Null
         }
-        $zip.CreateEntry('ScoobyDooReMasked/data/UserData/mods/') | Out-Null  # keep the empty mods folder
-    } finally { $zip.Dispose() }
+        $archive.CreateEntry('ScoobyDooReMasked/data/UserData/mods/') | Out-Null  # keep the empty mods folder
+    } finally { $archive.Dispose() }
     Remove-Item -Recurse -Force (Split-Path $clean)
     Write-Host "DONE: $root\dist\ScoobyDooReMasked.zip"
 }
