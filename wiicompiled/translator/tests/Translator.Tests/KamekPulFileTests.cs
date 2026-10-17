@@ -161,7 +161,7 @@ internal static class ProjectPathsForTests
         while (dir is not null)
         {
             if (File.Exists(Path.Combine(dir.FullName, "translator", "Translator.sln")) &&
-                File.Exists(Path.Combine(dir.FullName, "projects", "mkwii", "recomp.yml")))
+                File.Exists(Path.Combine(dir.FullName, "projects", "scooby", "recomp.yml")))
             {
                 return dir.FullName;
             }

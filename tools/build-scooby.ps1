@@ -1,6 +1,6 @@
 # One-shot Scooby-Doo: Re-Masked build: portable tools -> pinned dependencies -> translate -> configure -> compile.
 # Run from anywhere:  powershell -ExecutionPolicy Bypass -File <project>\tools\build-scooby.ps1
-# Everything it downloads is the pinned set WiiCompiled's own Launcher scripts fetch (llvm-mingw, CMake,
+# Everything it downloads is the pinned set WiiCompiled build scripts (wiicompiled\buildtools) fetch (llvm-mingw, CMake,
 # Ninja, SDL3, Dawn and the other Dependencies/ trees); nothing else is installed. Logs: <project>\build-logs\.
 [CmdletBinding()]
 param(
@@ -21,7 +21,7 @@ $logs = Join-Path $root 'build-logs'
 $project = 'projects/scooby/recomp.yml'
 if ($Jobs -le 0) { $Jobs = [Environment]::ProcessorCount }
 [IO.Directory]::CreateDirectory($logs) | Out-Null
-. (Join-Path $wc 'Launcher\NativeBuildFlags.ps1')
+. (Join-Path $wc 'buildtools\NativeBuildFlags.ps1')
 
 function Set-Status([string]$Text) {
     $line = "{0:HH:mm:ss} {1}" -f (Get-Date), $Text
@@ -58,12 +58,12 @@ foreach ($required in @((Join-Path $root 'game\main.dol'), (Join-Path $wc 'proje
 if (-not $SkipTools) {
     if (-not (Test-Path -LiteralPath (Join-Path $toolchain 'llvm-mingw\bin\x86_64-w64-mingw32-clang++.exe'))) {
         Set-Status 'tools: downloading llvm-mingw, CMake and Ninja'
-        & (Join-Path $wc 'Launcher\Prepare-PortableTools.ps1') -Destination $toolchain *>&1 |
+        & (Join-Path $wc 'buildtools\Prepare-PortableTools.ps1') -Destination $toolchain *>&1 |
             ForEach-Object { "$_" } | Out-File -LiteralPath (Join-Path $logs 'tools.log') -Encoding utf8
     }
     if (-not (Test-Path -LiteralPath (Join-Path $wc 'Dependencies\dawn_prebuilt\bin\webgpu_dawn.dll'))) {
         Set-Status 'dependencies: downloading the pinned source trees and Dawn'
-        & (Join-Path $wc 'Launcher\Prepare-Dependencies.ps1') -Destination (Join-Path $wc 'Dependencies') *>&1 |
+        & (Join-Path $wc 'buildtools\Prepare-Dependencies.ps1') -Destination (Join-Path $wc 'Dependencies') *>&1 |
             ForEach-Object { "$_" } | Out-File -LiteralPath (Join-Path $logs 'dependencies.log') -Encoding utf8
     }
     foreach ($tool in @('llvm-mingw\bin\x86_64-w64-mingw32-clang++.exe', 'CMake\bin\cmake.exe', 'Ninja\ninja.exe')) {

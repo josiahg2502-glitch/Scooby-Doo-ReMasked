@@ -3571,7 +3571,7 @@ List<AddressRange> BuildExecutableRanges()
 }
 
 TranslationProjectConfig RequireProject() => project ?? throw new InvalidOperationException(
-    "This command requires --project <path>. See projects/mkwii/recomp.yml for an example.");
+    "This command requires --project <path>. See projects/scooby/recomp.yml for an example.");
 
 int ShowHelp(string invalidCommand)
 {

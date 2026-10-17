@@ -29,3 +29,4 @@
 /wiicompiled/projects/scooby/MAP_logic.txt
 __pycache__/
 *.pyc
+wiicompiled/buildtools/artifacts/
