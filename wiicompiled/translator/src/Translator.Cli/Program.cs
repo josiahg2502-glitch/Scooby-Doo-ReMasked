@@ -366,22 +366,9 @@ int RunValidateRetroWfcPayload(string[] argsTail)
         return 1;
     }
 
-    try
-    {
-        WiiCompiled.Setup.Common.RetroWfcPayload.ValidateStagedRetroWfcPayloadDirectory(directory);
-        Console.WriteLine("[translator] Retro WFC payload signature validated.");
-        return 0;
-    }
-    catch (InvalidDataException ex)
-    {
-        Console.Error.WriteLine($"[translator] Retro WFC payload validation failed: {ex.Message}");
-        return 2;
-    }
-    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-    {
-        Console.Error.WriteLine($"[translator] Could not read Retro WFC payload: {ex.Message}");
-        return 1;
-    }
+    // Mario Kart Wii only; its validator lived in the WiiCompiled installer, which this repository does not carry.
+    Console.Error.WriteLine($"[translator] Retro WFC payload validation is not available in this build ({directory}).");
+    return 1;
 }
 
 int RunTranslateRecursive(string[] argsTail)
