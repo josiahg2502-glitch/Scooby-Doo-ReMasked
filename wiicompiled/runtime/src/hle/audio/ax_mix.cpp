@@ -15,7 +15,6 @@
 #include <array>
 #include <atomic>
 #include <chrono>
-#include <cmath>
 #include <condition_variable>
 #include <cstddef>
 #include <cstdint>
@@ -28,7 +27,6 @@
 #include <mutex>
 #include <string>
 #include <thread>
-#include <unordered_map>
 
 namespace AxDspHle {
 namespace {
@@ -54,100 +52,6 @@ std::filesystem::path FindDspCoefficientRom() {
     }
 
     throw std::runtime_error("Missing bundled Wii DSP coefficient ROM (dsp_coef.bin)");
-}
-
-// ---- 48 kHz output path ("cleaner mixing") ----
-// The DSP-exact 32 kHz mix stays the source of truth for everything the guest sees. Each voice is also rendered
-// straight from its decoded source samples to 48 kHz with a windowed-sinc filter, which replaces both the DSP's 4-tap
-// interpolation and the backend's 32->48 kHz resample; the rest of the main bus (reverb returns, surround fold, ...)
-// is upsampled once and added.
-constexpr uint32_t kHiSamplesPerMs = 48;
-constexpr uint32_t kHiSamplesPerFrame = kHiSamplesPerMs * 5;
-constexpr int kHiHalfTaps = 8;
-constexpr int kHiTableRes = 512;
-constexpr double kHiCutoff = 0.92;  // of the input Nyquist (of the output's, when downsampling)
-constexpr double kHiPi = 3.14159265358979323846;
-
-const std::array<float, kHiHalfTaps * kHiTableRes + 2>& HiKernel() {
-    static const auto table = [] {
-        std::array<float, kHiHalfTaps * kHiTableRes + 2> t{};
-        for (size_t i = 0; i < t.size(); ++i) {
-            const double x = std::min<double>(static_cast<double>(i) / kHiTableRes, kHiHalfTaps);
-            const double sinc = x == 0 ? 1.0 : std::sin(kHiPi * x) / (kHiPi * x);
-            const double w = 0.42 + 0.5 * std::cos(kHiPi * x / kHiHalfTaps) + 0.08 * std::cos(2 * kHiPi * x / kHiHalfTaps);
-            t[i] = static_cast<float>(sinc * w);
-        }
-        return t;
-    }();
-    return table;
-}
-
-// One channel of band-limited resampling over a pushed input stream, read kLatency input samples behind its head.
-struct HiSrc {
-    static constexpr uint32_t kSize = 256;
-    static constexpr double kLatency = 32.0;
-    std::array<float, kSize> x{};
-    uint64_t n = 0;
-    double pos = -kLatency;
-
-    void Push(float v) {
-        x[n % kSize] = v;
-        ++n;
-    }
-    float At(int64_t i) const {
-        return (i < 0 || static_cast<uint64_t>(i) >= n || n - static_cast<uint64_t>(i) > kSize) ? 0.0f : x[i % kSize];
-    }
-    // step = input samples per output sample.
-    float Next(double step) {
-        step = std::clamp(step, 1.0 / 512, 4.0);
-        pos += step;
-        const double head = static_cast<double>(n);
-        if (pos > head - kLatency / 2 || pos < head - kLatency * 2) {
-            pos = head - kLatency;  // shortcut: resync after a starve or jump; a click, only on a corrupt ratio
-        }
-        const auto& k = HiKernel();
-        const double fc = step > 1.0 ? kHiCutoff / step : kHiCutoff;
-        const double reach = kHiHalfTaps / fc;
-        double acc = 0.0;
-        double wsum = 0.0;
-        for (auto i = static_cast<int64_t>(std::floor(pos - reach)) + 1; i <= static_cast<int64_t>(std::floor(pos + reach)); ++i) {
-            const double t = std::fabs((pos - static_cast<double>(i)) * fc) * kHiTableRes;
-            const auto ti = static_cast<size_t>(t);
-            if (ti + 1 >= k.size()) continue;
-            const double h = k[ti] + (k[ti + 1] - k[ti]) * (t - static_cast<double>(ti));
-            acc += h * At(i);
-            wsum += h;
-        }
-        return wsum != 0.0 ? static_cast<float>(acc / wsum) : 0.0f;
-    }
-};
-
-// A 1 kHz sine through the resampler, up (32->48) and down (2:1); worst error after the latency has filled.
-void HiSelfCheck() {
-    auto run = [](double step) {
-        HiSrc s;
-        const double f = 1000.0 / 32000.0;  // cycles per input sample
-        double worst = 0.0;
-        uint64_t pushed = 0;
-        for (int k = 0; k < 4000; ++k) {
-            while (static_cast<double>(pushed) < s.pos + step + HiSrc::kLatency) {
-                s.Push(static_cast<float>(std::sin(2 * kHiPi * f * static_cast<double>(pushed++))));
-            }
-            const float y = s.Next(step);
-            if (k > 400) worst = std::max(worst, std::fabs(y - std::sin(2 * kHiPi * f * s.pos)));
-        }
-        return worst;
-    };
-    const double up = run(2.0 / 3.0);
-    const double down = run(2.0);
-    RT_LOGF(RT_TAG_AUDIO, "[ax-hirate] 48 kHz output on; resampler self-check err up %.5f down %.5f: %s\n", up, down,
-            up < 2e-3 && down < 2e-3 ? "ok" : "FAILED");
-}
-
-bool HiRateOn() {
-    // Opt-in (SCOOBY_AX_48K=1): the DSP's own 32 kHz output is the default.
-    static const bool on = kGameCubeAx && std::getenv("SCOOBY_AX_48K") != nullptr;
-    return on;
 }
 
 class AXWii {
@@ -183,15 +87,6 @@ public:
         m_auxOutCount = 0;
         m_auxInCount = 0;
         m_deferredAux = false;
-        m_hiRate = HiRateOn();
-        m_hiVoices.clear();
-        m_hiResL = HiSrc{};
-        m_hiResR = HiSrc{};
-        m_hiFrames = {};
-        if (m_hiRate && !m_hiSelfChecked) {
-            m_hiSelfChecked = true;
-            HiSelfCheck();
-        }
         LoadResamplingCoefficients();
         PushMail(kDspInit);
     }
@@ -694,10 +589,6 @@ private:
         uint32_t idx = 0;
         uint32_t pbAddr = 0;
         m_gcVoicesThisList = 0;
-        m_voice32L.fill(0);
-        m_voice32R.fill(0);
-        m_hiL.fill(0.0f);
-        m_hiR.fill(0.0f);
         auto word = [&]() -> uint16_t { return idx < m_cmdList.size() ? m_cmdList[idx++] : 0; };
         auto address = [&]() {
             const uint16_t hi = word();
@@ -723,17 +614,9 @@ private:
             case GC_CMD_PB_ADDR:
                 pbAddr = address();
                 break;
-            case GC_CMD_PROCESS: {
-                // What PROCESS adds to MAIN L/R is the voices; the 48 kHz path renders exactly that itself.
-                const auto mainL = m_gcBus[kGcMainL];
-                const auto mainR = m_gcBus[kGcMainR];
+            case GC_CMD_PROCESS:
                 GcProcessPBList(pbAddr);
-                for (uint32_t i = 0; i < kGcAxSamplesPerFrame; ++i) {
-                    m_voice32L[i] += GcBus(kGcMainL)[i] - mainL[i];
-                    m_voice32R[i] += GcBus(kGcMainR)[i] - mainR[i];
-                }
                 break;
-            }
             case GC_CMD_MIX_AUXA:
             case GC_CMD_MIX_AUXB: {
                 const uint32_t writeAddr = address();
@@ -783,9 +666,6 @@ private:
                 const uint32_t surroundAddr = address();
                 const uint32_t lrAddr = address();
                 GcOutputSamples(lrAddr, surroundAddr);
-                if (m_hiRate) {
-                    HiOutput(lrAddr);
-                }
                 break;
             }
             case GC_CMD_END:
@@ -970,7 +850,6 @@ private:
             if (pb.running == 1) {
                 ++m_gcVoicesThisList;
             }
-            HiVoice& hv = m_hiVoices[pbAddr];
             uint32_t updateStart = 0;
             for (uint32_t ms = 0; ms < 5; ++ms) {
                 // Dolphin ApplyUpdatesForMs: a sub-frame's updates land before it is mixed.
@@ -984,138 +863,24 @@ private:
                     }
                 }
                 updateStart += count;
-                GcProcessVoice(pb, hv, ms * kSamplesPerMs, kSamplesPerMs, GcConvertMixerControl(pb.mixer_control));
+                GcProcessVoice(pb, ms * kSamplesPerMs, kSamplesPerMs, GcConvertMixerControl(pb.mixer_control));
             }
             GcWritePB(pbAddr, pb);
             pbAddr = Hilo(pb.next_pb_hi, pb.next_pb_lo);
         }
     }
 
-    // Per-ms voice gains as the 32 kHz path applies them (envelope, MAIN L/R ramps, LPF), for the 48 kHz render.
-    struct HiGains {
-        double step = 1.0;
-        float env0 = 0, envDelta = 0, l0 = 0, dl = 0, r0 = 0, dr = 0;
-        bool lpfOn = false;
-        float lpfA = 0, lpfB = 0;
-    };
-    struct HiVoice {
-        HiSrc src;
-        HiGains last;
-        float lpfY = 0;
-        bool running = false;
-    };
-
-    static HiGains HiGainsFor(const AXPBGc& pb, AXMixControl control) {
-        HiGains g;
-        // ResampleAudio reads 1:1 (ratio ignored) for any src_type but polyphase/linear.
-        const bool resampled = pb.src_type == 0 || pb.src_type == 1;
-        g.step = (resampled ? Hilo(pb.src.ratio_hi, pb.src.ratio_lo) / 65536.0 : 1.0) * (32.0 / 48.0);
-        g.env0 = pb.vol_env.cur_volume / 32768.0f;
-        g.envDelta = pb.vol_env.cur_volume_delta / 32768.0f;
-        auto bus = [&](uint32_t bit, uint32_t rampBit, const VolumeData& vd, float& v0, float& dv) {
-            v0 = (control & bit) ? vd.volume / 32768.0f : 0.0f;
-            // The 32 kHz ramp adds volume_delta with 16-bit wrap, i.e. it is a signed step.
-            dv = (control & bit) && (control & rampBit) ? static_cast<int16_t>(vd.volume_delta) / 32768.0f : 0.0f;
-        };
-        bus(MIX_MAIN_L, MIX_MAIN_L_RAMP, pb.mixer.main_left, g.l0, g.dl);
-        bus(MIX_MAIN_R, MIX_MAIN_R_RAMP, pb.mixer.main_right, g.r0, g.dr);
-        if (pb.lpf.on) {
-            // The one-pole y = a0*x + b0*y1 designed for 32 kHz, moved to 48 kHz with the same pole time and DC gain.
-            const double b32 = std::clamp(pb.lpf.b0 / 32768.0, 0.0, 0.9999);
-            const double b48 = std::pow(b32, 32.0 / 48.0);
-            g.lpfOn = true;
-            g.lpfB = static_cast<float>(b48);
-            g.lpfA = static_cast<float>(pb.lpf.a0 / 32768.0 * (1.0 - b48) / (1.0 - b32));
-        }
-        return g;
-    }
-
-    // 48 samples of one voice into the 48 kHz MAIN L/R at this ms; t is the 32 kHz-sample time within the ms.
-    void HiRenderVoice(HiVoice& hv, const HiGains& g, uint32_t offset32) {
-        const uint32_t base = offset32 / 32 * kHiSamplesPerMs;
-        for (uint32_t j = 0; j < kHiSamplesPerMs; ++j) {
-            const float t = j * (32.0f / 48.0f);
-            float s = hv.src.Next(g.step) * (g.env0 + g.envDelta * t);
-            if (g.lpfOn) {
-                s = hv.lpfY = g.lpfA * s + g.lpfB * hv.lpfY;
-            }
-            m_hiL[base + j] += s * (g.l0 + g.dl * t);
-            m_hiR[base + j] += s * (g.r0 + g.dr * t);
-        }
-        hv.last = g;
-    }
-
-    // A stopped voice still owes its resampler latency (~1 ms): play it out over silence with the last gains.
-    void HiFlushVoice(HiVoice& hv, uint32_t offset32) {
-        for (int i = 0; i < static_cast<int>(HiSrc::kLatency * 2); ++i) hv.src.Push(0.0f);
-        HiGains g = hv.last;
-        g.dl = g.dr = g.envDelta = 0;
-        HiRenderVoice(hv, g, offset32);
-        hv.running = false;
-    }
-
-    // OUTPUT: the 48 kHz frame = voices rendered at 48 kHz + everything else on MAIN L/R, upsampled once.
-    // shortcut: CMD_COMPRESSOR's gain is not applied to the 48 kHz voices; only matters if the game enables AXCompressor.
-    void HiOutput(uint32_t lrAddr) {
-        for (uint32_t i = 0; i < kGcAxSamplesPerFrame; ++i) {
-            m_hiResL.Push(static_cast<float>(GcBus(kGcMainL)[i] - m_voice32L[i]) / 32768.0f);
-            m_hiResR.Push(static_cast<float>(GcBus(kGcMainR)[i] - m_voice32R[i]) / 32768.0f);
-        }
-        HiFrame* frame = &m_hiFrames[m_hiFrameNext];
-        for (HiFrame& f : m_hiFrames) {
-            if (f.addr == lrAddr) frame = &f;
-        }
-        if (frame->addr != lrAddr) {
-            m_hiFrameNext = (m_hiFrameNext + 1) % m_hiFrames.size();
-        }
-        frame->addr = lrAddr;
-        for (uint32_t j = 0; j < kHiSamplesPerFrame; ++j) {
-            const float l = m_hiResL.Next(32.0 / 48.0) + m_hiL[j];
-            const float r = m_hiResR.Next(32.0 / 48.0) + m_hiR[j];
-            // AI frame order is right, left (big-endian), like the guest buffer.
-            BigEndian::Write16(&frame->bytes[j * 4], static_cast<uint16_t>(ClampS16(std::lround(r * 32768.0f))));
-            BigEndian::Write16(&frame->bytes[j * 4 + 2], static_cast<uint16_t>(ClampS16(std::lround(l * 32768.0f))));
-        }
-    }
-
-public:
-    const uint8_t* HiFrameFor(uint32_t aiAddr, uint32_t& bytes) const {
-        for (const HiFrame& f : m_hiFrames) {
-            if (f.addr == aiAddr && aiAddr != 0) {
-                bytes = static_cast<uint32_t>(f.bytes.size());
-                return f.bytes.data();
-            }
-        }
-        return nullptr;
-    }
-
-private:
-    void GcProcessVoice(AXPBGc& pb, HiVoice& hv, uint32_t offset, uint32_t count, AXMixControl control) {
+    void GcProcessVoice(AXPBGc& pb, uint32_t offset, uint32_t count, AXMixControl control) {
         if (pb.running != 1) {
-            if (hv.running && m_hiRate) {
-                HiFlushVoice(hv, offset);
-            }
             return;
         }
-        if (!hv.running) {
-            hv = HiVoice{};
-            hv.running = true;
-        }
-        const HiGains hiGains = m_hiRate ? HiGainsFor(pb, control) : HiGains{};
         AcceleratorT<AXPBGc> accel;
         accel.Setup(&pb);
         std::array<int16_t, 32> samples{};
         pb.src.cur_addr_frac = static_cast<uint16_t>(ResampleAudio(
-            [&accel, &hv](uint32_t) {
-                const int16_t s = static_cast<int16_t>(accel.ReadSample());
-                hv.src.Push(s / 32768.0f);  // the source sample, before the DSP's 4-tap SRC
-                return s;
-            },
-            samples.data(), count, pb.src.last_samples, pb.src.cur_addr_frac, Hilo(pb.src.ratio_hi, pb.src.ratio_lo),
-            pb.src_type, VoiceCoefficients(BaseCoefficients(), pb.coef_select)));
-        if (m_hiRate) {
-            HiRenderVoice(hv, hiGains, offset);
-        }
+            [&accel](uint32_t) { return accel.ReadSample(); }, samples.data(), count, pb.src.last_samples,
+            pb.src.cur_addr_frac, Hilo(pb.src.ratio_hi, pb.src.ratio_lo), pb.src_type,
+            VoiceCoefficients(BaseCoefficients(), pb.coef_select)));
         for (uint32_t i = 0; i < count; ++i) {
             // The envelope volume is signed on GameCube.
             samples[i] = ClampS16((static_cast<int32_t>(samples[i]) * pb.vol_env.cur_volume) >> 15);
@@ -2036,20 +1801,6 @@ private:
     uint32_t m_gcPeakVoices = 0;
     uint32_t m_gcListCount = 0;
 
-    // 48 kHz output path.
-    struct HiFrame {
-        uint32_t addr = 0;
-        std::array<uint8_t, kHiSamplesPerFrame * 4> bytes{};
-    };
-    bool m_hiRate = false;
-    bool m_hiSelfChecked = false;
-    std::unordered_map<uint32_t, HiVoice> m_hiVoices;  // by PB address
-    std::array<int, kGcAxSamplesPerFrame> m_voice32L{}, m_voice32R{};
-    std::array<float, kHiSamplesPerFrame> m_hiL{}, m_hiR{};
-    HiSrc m_hiResL, m_hiResR;
-    std::array<HiFrame, 4> m_hiFrames{};  // keyed by AI buffer address; the game triple-buffers
-    size_t m_hiFrameNext = 0;
-
     // Mix worker handshake.
     std::thread m_mixThread;
     mutable std::mutex m_mixMutex;
@@ -2195,14 +1946,6 @@ void ShutdownMixWorker() {
 
 void SetMixWorkerEnabled(bool enabled) {
     Instance().SetMixWorkerEnabled(enabled);
-}
-
-uint32_t OutputSampleRate(uint32_t aiSampleRate) {
-    return HiRateOn() ? 48000u : aiSampleRate;
-}
-
-const uint8_t* HiRateFrame(uint32_t aiAddr, uint32_t& bytes) {
-    return HiRateOn() ? Instance().HiFrameFor(aiAddr, bytes) : nullptr;
 }
 
 } // namespace AxDspHle

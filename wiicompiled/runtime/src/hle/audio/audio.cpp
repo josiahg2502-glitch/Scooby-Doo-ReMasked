@@ -63,7 +63,7 @@ void ReportAudioProblem(const char* who, const char* what) {
 }
 
 bool EnsureAudioBackend(uint32_t sampleRate) {
-    return AudioBackend::Instance().Init(AxDspHle::OutputSampleRate(sampleRate), kAudioChannels);
+    return AudioBackend::Instance().Init(sampleRate, kAudioChannels);
 }
 
 uint32_t EncodeAIDmaStartRegister(uint32_t startAddr) {
@@ -100,16 +100,6 @@ void MeterAudioBlock(const uint8_t* src, uint32_t bytes) {
 bool PushAudioBlock(uint32_t startAddr, uint32_t length) {
     if (startAddr == 0 || length == 0) {
         return false;
-    }
-    if (AxDspHle::OutputSampleRate(kDefaultSampleRate) != kDefaultSampleRate) {
-        uint32_t hiBytes = 0;
-        if (const uint8_t* hi = AxDspHle::HiRateFrame(startAddr, hiBytes)) {
-            MeterAudioBlock(hi, hiBytes);
-            return AudioBackend::Instance().PushWiiAiSamplesBE16(hi, hiBytes);
-        }
-        // No mix has targeted this buffer yet (the first blocks): the same duration of silence at 48 kHz.
-        const std::vector<int16_t> silence(length / kBytesPerSample * 3 / 2, 0);
-        return AudioBackend::Instance().PushSamplesLE16(silence.data(), silence.size());
     }
     const uint32_t bytes = length;
     const uint8_t* src = nullptr;

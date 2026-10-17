@@ -33,11 +33,4 @@ void SetMixWorkerEnabled(bool enabled);
 
 void InitAram();
 
-// The rate the backend plays at: 48 kHz when the GameCube mix renders its own 48 kHz output, else the AI rate.
-uint32_t OutputSampleRate(uint32_t aiSampleRate);
-
-// The 48 kHz frame (big-endian right/left pairs) the last OUTPUT made for this AI buffer; nullptr when 48 kHz
-// output is off or no mix has targeted the buffer yet.
-const uint8_t* HiRateFrame(uint32_t aiAddr, uint32_t& bytes);
-
 }

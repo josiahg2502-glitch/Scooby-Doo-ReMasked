@@ -111,8 +111,8 @@ Diagnostics: SCOOBY_TRACE_IO=1 ([io] completions, [aram] transfers); Play\drawdu
   extracting a disc REPLACES the dev Disc\DATA.
 - Launcher look (SPM-style, all art drawn in code, no game/web art shipped): night header with twinkling stars, moon,
   haunted mansion (flickering windows), bats, a ghost (click = unmask: caretaker + "Jinkies!" bubble), the gang's van
-  driving with headlights (click = hop + sound); Scooby (embedded scooby.ico, pixel-sharp) under the nav catches a
-  Scooby Snack on click; magnifying-glass cursor; "Scooby says" tips. `--shots <dir>` draws every page to PNGs.
+  driving with headlights (click = hop + sound); Scooby (vector-drawn head, DrawScooby: blinks, jaw drops) under the nav
+  catches a Scooby Snack on click; magnifying-glass cursor; "Scooby says" tips. `--shots <dir>` draws every page to PNGs.
 - Packaging: tools\package-scooby.ps1 [-Build] [-Zip] -> dist\ScoobyDooReMasked (launcher, Play runtime files,
   README from tools\package-README.txt). No disc data shipped.
 - Diagnostics [band]/[gpuvp]/[vpmap]/[mode]/[card] are left in, each capped at a few dozen lines per run.
