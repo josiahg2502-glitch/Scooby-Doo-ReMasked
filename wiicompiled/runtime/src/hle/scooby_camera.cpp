@@ -53,3 +53,13 @@ extern "C" void Scooby_CameraGetViewWindow(CpuContext* ctx) {
     ctx->fpr[0].d = y;
 }
 PPC_NATIVE_OVERRIDE_VOID(8005884C, Scooby_CameraGetViewWindow, (CpuContext* ctx), (ctx));
+
+// EFCamera::GetViewWindow (0x800F0768) forwards to its HGCamera (this + 40). The frustum the game culls with
+// (UpdateFrustumLocal) and its guard band are built from it, so it hands back the widened window as stored:
+// otherwise objects in the widened sides are culled and pop in and out.
+extern "C" void Scooby_EFCameraGetViewWindow(CpuContext* ctx) {
+    const uint32_t camera = ctx->gpr[3] + 40;
+    WriteF32(ctx->gpr[4], ReadF32(camera + 228));
+    WriteF32(ctx->gpr[5], ReadF32(camera + 232));
+}
+PPC_NATIVE_OVERRIDE_VOID(800F0768, Scooby_EFCameraGetViewWindow, (CpuContext* ctx), (ctx));
