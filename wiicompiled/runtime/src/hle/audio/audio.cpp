@@ -97,6 +97,12 @@ void MeterAudioBlock(const uint8_t* src, uint32_t bytes) {
     }
 }
 
+// Diagnostic (env AUDIO_RAW_DUMP=<file>): every AI block as the game wrote it (BE16, right/left pairs).
+static void AudioRawDump(const void* be, uint32_t bytes) {
+    static FILE* dump = [] { const char* p = std::getenv("AUDIO_RAW_DUMP"); return p ? std::fopen(p, "wb") : nullptr; }();
+    if (dump) std::fwrite(be, 1, bytes, dump);
+}
+
 bool PushAudioBlock(uint32_t startAddr, uint32_t length) {
     if (startAddr == 0 || length == 0) {
         return false;
@@ -111,6 +117,7 @@ bool PushAudioBlock(uint32_t startAddr, uint32_t length) {
 
     if (src) {
         MeterAudioBlock(src, bytes);
+        AudioRawDump(src, bytes);
         return AudioBackend::Instance().PushWiiAiSamplesBE16(src, bytes);
     }
 
@@ -126,6 +133,11 @@ bool PushAudioBlock(uint32_t startAddr, uint32_t length) {
         }
     } catch (const Memory::AccessViolation&) {
         return false;
+    }
+    if (std::getenv("AUDIO_RAW_DUMP")) {
+        std::vector<uint16_t> be(samples.size());
+        for (size_t i = 0; i < be.size(); ++i) be[i] = static_cast<uint16_t>((uint16_t(samples[i]) >> 8) | (uint16_t(samples[i]) << 8));
+        AudioRawDump(be.data(), bytes);
     }
     // Memory::Read16 has converted endianness, but the Wii AI frame order is
     // still right, left. Convert it to the host's left, right convention.

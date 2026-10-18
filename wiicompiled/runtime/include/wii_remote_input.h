@@ -109,4 +109,7 @@ bool PeriodicRescanEnabled();
 // Rescans issued since a Wii controller was last seen.
 uint32_t ScanCount();
 
+// Buttons NSMBW_INPUT_SCRIPT holds for GameCube pad 1 now; false without a script.
+bool ScriptedPadButtons(uint16_t& buttons);
+
 } // namespace WiiRemoteInput

@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <functional>
 #include <array>
+#include <atomic>
 #include <charconv>
 #include <cstring>
 #include <filesystem>
@@ -69,6 +70,13 @@ struct ReplacementIndexEntry {
 };
 
 absl::flat_hash_map<RuntimeTextureKey, ReplacementIndexEntry> s_replacementIndex;
+// <UserData>/button_icons/<style>: button prompts for the controller in use, looked up before everything else.
+constexpr const char* kButtonIconStyles[] = {"xbox", "playstation", "nintendo"};
+std::array<absl::flat_hash_map<RuntimeTextureKey, ReplacementIndexEntry>, 3> s_buttonIconIndex;
+std::atomic<int> s_buttonIconStyle{-1};
+std::atomic<bool> s_buttonIconStyleChanged{false};
+int s_appliedButtonIconStyle = -1;
+int s_buttonIconForced = -1;
 absl::flat_hash_map<RuntimeTextureKey, CachedReplacement> s_replacementCache;
 absl::flat_hash_set<RuntimeTextureKey> s_failedKeys;
 absl::flat_hash_set<RuntimeTextureKey> s_reportedMisses;
@@ -573,9 +581,28 @@ void build_index() noexcept {
   }
 
   Log.info("Indexed {} texture replacements from {} folder(s) (texture_replacements + mods)", s_replacementIndex.size(), roots.size());
+
+  for (size_t style = 0; style < s_buttonIconIndex.size(); ++style) {
+    for (const auto& entry : std::filesystem::directory_iterator(userPath / "button_icons" / kButtonIconStyles[style], ec)) {
+      if (const auto parsed = parse_replacement_filename(fs_path_to_string(entry.path().filename())); parsed.has_value())
+        s_buttonIconIndex[style].try_emplace(*parsed, ReplacementIndexEntry{entry.path()});
+    }
+    ec.clear();
+    Log.info("Button icons '{}': {} textures", kButtonIconStyles[style], s_buttonIconIndex[style].size());
+  }
+  // BUTTON_ICONS=xbox|playstation|nintendo pins a set (tests: scripted input never reaches the gamepad code).
+  if (const char* forced = std::getenv("BUTTON_ICONS")) {
+    for (size_t style = 0; style < s_buttonIconIndex.size(); ++style)
+      if (std::string_view(forced) == kButtonIconStyles[style]) s_buttonIconForced = static_cast<int>(style);
+    set_button_icon_style(s_buttonIconForced);
+  }
 }
 
 const ReplacementIndexEntry* find_replacement_path(const RuntimeTextureKey& key) noexcept {
+  if (s_appliedButtonIconStyle >= 0) {
+    const auto& icons = s_buttonIconIndex[s_appliedButtonIconStyle];
+    if (const auto it = icons.find(key); it != icons.end()) return &it->second;
+  }
   if (const auto it = s_replacementIndex.find(key); it != s_replacementIndex.end()) {
     return &it->second;
   }
@@ -706,6 +733,7 @@ void shutdown() noexcept {
     tlut = {};
   }
   s_replacementLru.clear();
+  for (auto& icons : s_buttonIconIndex) icons.clear();
   s_replacementCacheBytes = 0;
   s_replacementRoot.clear();
   s_dumpRoot.clear();
@@ -806,6 +834,31 @@ std::optional<TextureHandle> find_replacement(const GXTexObj_& obj) noexcept {
 
   cache_replacement(key, handle);
   return handle;
+}
+
+void set_button_icon_style(int style) noexcept {
+  if (s_buttonIconForced >= 0) style = s_buttonIconForced;
+  if (style < -1 || style >= static_cast<int>(s_buttonIconIndex.size())) style = -1;
+  if (s_buttonIconStyle.exchange(style) != style) s_buttonIconStyleChanged.store(true);
+}
+
+int button_icon_style() noexcept { return s_buttonIconStyle.load(); }
+
+// Called on the renderer's thread before textures are resolved: drops the cached icon textures of the old style.
+bool take_button_icon_style_change() noexcept {
+  if (!s_buttonIconStyleChanged.exchange(false)) return false;
+  s_appliedButtonIconStyle = s_buttonIconStyle.load();
+  for (const auto& icons : s_buttonIconIndex) {
+    for (const auto& [key, _] : icons) {
+      if (const auto it = s_replacementCache.find(key); it != s_replacementCache.end()) {
+        s_replacementLru.erase(it->second.lruIt);
+        s_replacementCacheBytes -= it->second.bytes;
+        s_replacementCache.erase(it);
+      }
+      s_failedKeys.erase(key);
+    }
+  }
+  return true;
 }
 
 std::string build_texture_replacement_name(const GXTexObj_& obj) noexcept {

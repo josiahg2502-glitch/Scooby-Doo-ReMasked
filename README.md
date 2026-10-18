@@ -21,7 +21,8 @@ program, drawn by a modern renderer.
 - **120 or 180 fps** with frame interpolation (the game itself runs at its original 60)
 - **HDR** output (scRGB) on HDR displays, with brightness and highlight controls
 - Tear-free presentation, borderless or exclusive fullscreen, or a window
-- **Gamepads** (Xbox, PlayStation, Switch Pro, GameCube adapter) and keyboard, remappable in game
+- **Gamepads** (Xbox, PlayStation, Switch Pro, GameCube adapter) and keyboard, remappable in game; button prompts
+  match your controller
 - GameCube memory-card saves, and mods that replace game files or textures
 - A launcher that installs the game from your own disc image
 
@@ -101,7 +102,8 @@ copy, the GameCube DVD/card/audio paths and the renderer fixes work.
   [`wiicompiled/THIRD-PARTY-NOTICES.md`](wiicompiled/THIRD-PARTY-NOTICES.md)
 - Launcher title font **"Scooby Doo"** by Lauren Ashpole
   ([FontSpace](https://www.fontspace.com/scooby-doo-font-f7039)), free for personal use
-- Launcher Scooby and Mystery Machine images: fan art
+- Launcher Scooby and Mystery Machine images: fan art (the Scooby picture also replaces the HUD portrait)
+- Button prompts from [Kenney's Input Prompts](https://kenney.nl/assets/input-prompts) (CC0)
 
 ## License
 

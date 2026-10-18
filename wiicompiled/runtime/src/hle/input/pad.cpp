@@ -4,6 +4,9 @@
 #include "input_bindings.h"
 #include "wii_remote_input.h"
 
+#include <aurora/aurora.h>
+#include <SDL3/SDL_gamepad.h>
+
 #include <algorithm>
 #include <atomic>
 #include <cstdio>
@@ -117,8 +120,27 @@ extern "C" uint32_t PAD__Read_HLE(uint32_t statusPtr)
     // between "connected" and "no controller" every time the overlay toggles.
     WiiRemoteInput::HideRemotesFromPad(statuses, PAD_CHANMAX);
 
+    // On-screen button prompts follow the first connected controller (UserData/button_icons, tools/make-button-icons.py).
+    if (static unsigned n = 0; n++ % 30 == 0) {
+        int count = 0, style = -1;
+        if (SDL_JoystickID* ids = SDL_GetGamepads(&count)) {
+            if (count > 0) switch (SDL_GetGamepadTypeForID(ids[0])) {
+                case SDL_GAMEPAD_TYPE_UNKNOWN: break;
+                case SDL_GAMEPAD_TYPE_PS3: case SDL_GAMEPAD_TYPE_PS4: case SDL_GAMEPAD_TYPE_PS5: style = 1; break;
+                case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_PRO: case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_LEFT:
+                case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT: case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_JOYCON_PAIR: style = 2; break;
+                default: style = 0; break;
+            }
+            SDL_free(ids);
+        }
+        aurora_set_button_icon_style(style);
+    }
     FillTriggersHeldByButtons(statuses);
     InputBindings::Apply(statuses);
+    if (uint16_t scripted = 0; WiiRemoteInput::ScriptedPadButtons(scripted)) {  // NSMBW_INPUT_SCRIPT drives pad 1 (tests)
+        statuses[0].err = PAD_ERR_NONE;
+        statuses[0].button |= scripted;
+    }
 
     try {
         for (uint32_t i = 0; i < PAD_CHANMAX; ++i) {

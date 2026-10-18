@@ -10,4 +10,9 @@ void register_tlut(const GXTlutObj* obj, const void* data, GXTlutFmt format, uin
 void load_tlut(const GXTlutObj* obj, uint32_t idx) noexcept;
 std::optional<TextureHandle> find_replacement(const GXTexObj_& obj) noexcept;
 std::string build_texture_replacement_name(const GXTexObj_& obj) noexcept;
+// Button prompt set for the controller in use (0 xbox, 1 playstation, 2 nintendo, -1 the game's own GameCube icons).
+// take_button_icon_style_change returns true once after it changed, so cached textures can be re-resolved.
+void set_button_icon_style(int style) noexcept;
+bool take_button_icon_style_change() noexcept;
+int button_icon_style() noexcept;
 } // namespace aurora::gfx::texture_replacement

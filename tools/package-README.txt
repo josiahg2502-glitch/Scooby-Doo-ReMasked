@@ -17,4 +17,4 @@ The data folder holds the game, your disc files, saves (data\UserData\Saves) and
 Mods go in data\UserData\mods (see the launcher's Mods page). Updating: copy the new download over this
 folder; your disc, saves and settings are kept.
 
-Credits: title font "Scooby Doo" by Lauren Ashpole (fontspace.com/scooby-doo-font-f7039), free for personal use.
+Credits: title font "Scooby Doo" by Lauren Ashpole (fontspace.com/scooby-doo-font-f7039), free for personal use. Button prompts: Kenney Input Prompts (CC0).

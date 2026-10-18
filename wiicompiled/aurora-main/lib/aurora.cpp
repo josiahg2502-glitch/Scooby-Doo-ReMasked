@@ -2,6 +2,7 @@
 
 #ifdef AURORA_ENABLE_GX
 #include "gfx/common.hpp"
+#include "gfx/texture_replacement.hpp"
 #include "gfx/efb_ram_copy.hpp"
 #include "gx/fifo.hpp"
 #include "gx/shader_info.hpp"
@@ -2182,6 +2183,11 @@ void aurora_set_background_input(bool value) {
 void aurora_set_display_mode(AuroraDisplayMode mode) { aurora::window::set_display_mode(mode); }
 AuroraDisplayMode aurora_get_display_mode() { return aurora::window::get_display_mode(); }
 void aurora_set_metalfx_spatial(bool enabled) { aurora::g_metalfxRequested.store(enabled); }
+void aurora_set_button_icon_style(int style) {
+#ifdef AURORA_ENABLE_GX
+  aurora::gfx::texture_replacement::set_button_icon_style(style);
+#endif
+}
 bool aurora_get_metalfx_spatial() { return aurora::g_metalfxRequested.load(); }
 bool aurora_is_metalfx_spatial_supported() { return aurora::g_metalfxSupported.load(); }
 AuroraMetalFXStatus aurora_get_metalfx_status() { return aurora::g_metalfxStatus.load(); }

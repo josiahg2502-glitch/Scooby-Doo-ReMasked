@@ -20,6 +20,13 @@ function Stage([string]$to) {
     foreach ($f in 'Scooby-Doo Re-Masked.exe', '*.dll', 'dsp_coef.bin', 'initial_pipeline_cache.db', 'portable.txt') {
         if (Test-Path "$root\Play\$f") { Copy-Item "$root\Play\$f" "$to\data" -Force }
     }
+    # Button prompts per controller (tools\make-button-icons.py, made from a texture dump into Play) and the HUD
+    # portrait (tools\make-hud-portrait.py): replaced whole on every update.
+    if (-not (Test-Path "$root\Play\UserData\button_icons")) { throw "Play\UserData\button_icons is missing (tools\make-button-icons.py)" }
+    Remove-Item -Recurse -Force "$to\data\UserData\button_icons", "$to\data\UserData\texture_replacements\ReMasked" -ErrorAction SilentlyContinue
+    Copy-Item -Recurse "$root\Play\UserData\button_icons" "$to\data\UserData\button_icons"
+    python "$PSScriptRoot\make-hud-portrait.py" --out "$to\data\UserData\texture_replacements\ReMasked"
+    if ($LASTEXITCODE -ne 0) { throw "make-hud-portrait.py failed" }
 }
 
 $dist = "$root\dist\ScoobyDooReMasked"

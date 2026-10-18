@@ -932,4 +932,16 @@ const char* AccelCalibrationMessage() {
     return g_calibrationMessage[0] != '\0' ? g_calibrationMessage : nullptr;
 }
 
+bool ScriptedPadButtons(uint16_t& buttons) {
+    KpadSample sample;
+    if (!ScriptedSample(0, sample)) return false;
+    const std::pair<uint32_t, uint16_t> map[] = {
+        {kWpadA, PAD_BUTTON_A}, {kWpadB, PAD_BUTTON_B}, {kWpadPlus, PAD_BUTTON_START}, {kWpadOne, PAD_BUTTON_X},
+        {kWpadTwo, PAD_BUTTON_Y}, {kWpadMinus, PAD_TRIGGER_Z}, {kWpadUp, PAD_BUTTON_UP}, {kWpadDown, PAD_BUTTON_DOWN},
+        {kWpadLeft, PAD_BUTTON_LEFT}, {kWpadRight, PAD_BUTTON_RIGHT}};
+    buttons = 0;
+    for (const auto& [wpad, pad] : map) if (sample.hold & wpad) buttons |= pad;
+    return true;
+}
+
 } // namespace WiiRemoteInput

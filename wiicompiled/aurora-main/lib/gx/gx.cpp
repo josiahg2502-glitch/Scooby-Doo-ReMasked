@@ -1364,6 +1364,7 @@ GXState::CopyTextureRef* find_copy_texture_for_texobj(const GXTexObj_& obj) noex
 
 void resolve_sampled_textures(const ShaderInfo& info) noexcept {
   ZoneScoped;
+  if (gfx::texture_replacement::take_button_icon_style_change()) invalidate_static_texture_cache();
 
   for (u32 i = 0; i < MaxTextures; ++i) {
     if (!info.sampledTextures.test(i)) {
@@ -2256,7 +2257,12 @@ static bool supports_wgpu_aniso(wgpu::FilterMode magFilter, wgpu::FilterMode min
 
 wgpu::SamplerDescriptor aurora::gfx::TextureBind::get_descriptor() const noexcept {
   auto [minFilter, mipFilter] = wgpu_filter_mode(texObj.min_filter());
-  const auto [magFilter, _] = wgpu_filter_mode(texObj.mag_filter());
+  auto [magFilter, _] = wgpu_filter_mode(texObj.mag_filter());
+  // The Bink movie frame (a full-screen RGBA8 picture) is set to nearest filtering: right at the console's 640x480,
+  // hard pixel blocks when scaled up to a modern screen. Filter it.
+  if (texObj.width() == 640 && texObj.height() >= 448 && texObj.format() == GX_TF_RGBA8 &&
+      magFilter == wgpu::FilterMode::Nearest)
+    magFilter = minFilter = wgpu::FilterMode::Linear;
   float minLod = texObj.min_lod();
   float maxLod = texObj.max_lod();
   if (ref && ref->isReplacement) {
