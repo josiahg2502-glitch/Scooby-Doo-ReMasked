@@ -226,6 +226,23 @@ static std::string HostPathText(const fs::path& path) {
     return RuntimeConfigFile::PathToUtf8(path);
 }
 
+// Skip intro ([video] skip_intro): the boot logo movies report a single frame (Bink header, frame count at 0x08 and
+// 0x10), so the game's own player ends them at once. First showing per launch only; cutscenes are untouched.
+static void SkipIntroMovie(const fs::path& hostPath, uint32_t offset, std::vector<uint8_t>& buf) {
+    if (offset != 0 || buf.size() < 0x14 || std::memcmp(buf.data(), "BIK", 3) != 0 || !RuntimeConfigFile::SkipIntro()) return;
+    static constexpr const char* kIntroMovies[] = {"A2M_LOGO.BIK", "THQ_LOGO.BIK", "WB_LOGO.BIK", "LEGAL.BIK"};
+    static bool skipped[std::size(kIntroMovies)] = {};
+    const std::string path = HostPathText(hostPath);
+    for (size_t m = 0; m < std::size(kIntroMovies); ++m) {
+        const size_t len = std::strlen(kIntroMovies[m]);
+        if (skipped[m] || path.size() < len || path.compare(path.size() - len, std::string::npos, kIntroMovies[m]) != 0) continue;
+        skipped[m] = true;
+        const uint8_t one[4] = {1, 0, 0, 0};
+        std::memcpy(buf.data() + 0x08, one, 4);
+        std::memcpy(buf.data() + 0x10, one, 4);
+    }
+}
+
 static bool IsDvdDataRoot(const fs::path& path) {
     std::error_code ec;
     return fs::is_directory(path, ec) && !ec &&
@@ -1070,6 +1087,7 @@ extern "C" int32_t DVDReadPrio_8015E834(uint32_t fileInfoPtr, uint32_t bufferPtr
                             DvdReadContract::Describe(failure));
     }
 
+    SkipIntroMovie(entry.hostPath, uOffset, tempBuf);
     CopyToGuestAsDma(bufferPtr, tempBuf.data(), uLength);
 
     Memory::Write32(fileInfoPtr + DVD_CB_OFFSET_TRANSFERRED, uLength);
@@ -1143,6 +1161,7 @@ extern "C" int32_t DVD__ReadAbsAsyncPrio_HLE_801628cc(uint32_t cmdBlockPtr,
                                          readInfo.fileOffset, readInfo.readLength,
                                          DvdReadContract::Describe(failure));
             } else {
+                SkipIntroMovie(readInfo.entry->hostPath, readInfo.fileOffset, tempBuf);
                 CopyToGuestAsDma(bufferPtr, tempBuf.data(), tempBuf.size());
                 bytesRead = static_cast<int32_t>(tempBuf.size());
             }

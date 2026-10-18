@@ -1050,8 +1050,14 @@ wgpu::ShaderModule build_shader(const ShaderConfig& config) noexcept {
   } else {
     // GX_LINES / GX_LINESTRIP: expand line segment perpendicular to direction
     vtxXfrAttrsPre +=
-        "\n    let clip_a = vec4f(mv_pos_a, 1.0) * ubuf.proj;"
-        "\n    let clip_b = vec4f(mv_pos_b, 1.0) * ubuf.proj;"
+        "\n    var clip_a = vec4f(mv_pos_a, 1.0) * ubuf.proj;"
+        "\n    var clip_b = vec4f(mv_pos_b, 1.0) * ubuf.proj;"
+        // Clip the segment to the part in front of the camera first, as GX does; an endpoint behind it (w <= 0)
+        // flipped the screen-space expansion into a screen-wide slab (firework trails, spider threads).
+        "\n    let near_w = 1e-5;"
+        "\n    if (clip_a.w < near_w && clip_b.w >= near_w) { clip_a = mix(clip_a, clip_b, (near_w - clip_a.w) / (clip_b.w - clip_a.w)); }"
+        "\n    if (clip_b.w < near_w && clip_a.w >= near_w) { clip_b = mix(clip_b, clip_a, (near_w - clip_b.w) / (clip_a.w - clip_b.w)); }"
+        "\n    if (clip_a.w < near_w && clip_b.w < near_w) { clip_a = vec4f(0.0, 0.0, 0.0, -1.0); clip_b = clip_a; }"
         "\n    let ndc_a = clip_a.xy / clip_a.w;"
         "\n    let ndc_b = clip_b.xy / clip_b.w;"
         "\n    let viewport_scale = ubuf.render_viewport_size / max(ubuf.logical_viewport_size, vec2f(1.0));"

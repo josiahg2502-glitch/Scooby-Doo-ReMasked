@@ -132,8 +132,8 @@ uint64_t TicksAtOrAfter(Clock::time_point point) noexcept {
         return 0;
     }
     const uint64_t ns = static_cast<uint64_t>(sinceEpoch);
-    constexpr uint64_t kNum = TimeBaseContract::kTickRatioNumerator;    // 243 ticks
-    constexpr uint64_t kDen = TimeBaseContract::kTickRatioDenominator;  // per 4000 ns
+    constexpr uint64_t kNum = TimeBaseContract::kTickRatioNumerator;    // 81 ticks (GameCube 40.5 MHz)
+    constexpr uint64_t kDen = TimeBaseContract::kTickRatioDenominator;  // per 2000 ns
     return (ns / kDen) * kNum + ((ns % kDen) * kNum + kDen - 1) / kDen;
 }
 

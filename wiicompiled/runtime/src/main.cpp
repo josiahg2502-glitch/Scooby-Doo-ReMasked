@@ -800,7 +800,8 @@ void ShowRuntimeFatalPopup(std::string_view category, std::string_view details) 
     if (g_fatalPopupShown.exchange(true, std::memory_order_acq_rel)) {
         return;
     }
-    if (std::getenv("SPM_MAP_SWEEP_FILE")) {
+    // RUNTIME_NO_POPUP: automated runs (tools/level-sweep.ps1) log the fatal error instead of opening a window.
+    if (std::getenv("SPM_MAP_SWEEP_FILE") || std::getenv("RUNTIME_NO_POPUP")) {
         RT_LOGF(RT_TAG_RUNTIME, "[spmsweep] fatal %.*s: %.*s\n", static_cast<int>(category.size()), category.data(),
                 static_cast<int>(details.size()), details.data());
         return;
@@ -1493,6 +1494,7 @@ int RuntimeMain(int argc, char** argv) {
         auroraConfig.windowHeight = 480;
         auroraConfig.windowWidth = RuntimeConfigFile::WindowWidth(auroraConfig.windowWidth);
         auroraConfig.windowHeight = RuntimeConfigFile::WindowHeight(auroraConfig.windowHeight);
+        auroraConfig.msaa = RuntimeConfigFile::Msaa(1);
         auroraConfig.hasWindowPosition = RuntimeConfigFile::WindowPosition(
             auroraConfig.windowPosX, auroraConfig.windowPosY);
         auroraConfig.allowJoystickBackgroundEvents = true;

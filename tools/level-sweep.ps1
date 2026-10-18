@@ -34,6 +34,7 @@ public static class SweepWin {
 }
 "@
 [SweepWin]::SetProcessDPIAware() | Out-Null
+$env:RUNTIME_NO_POPUP = '1'; $env:NSMBW_LOG_FPS = '1'  # crashes are logged, never a popup window
 $engine = Get-Content (Join-Path $files 'engine.ini')
 $report = @()
 try {

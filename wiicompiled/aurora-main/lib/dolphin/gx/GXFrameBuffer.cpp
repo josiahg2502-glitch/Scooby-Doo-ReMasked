@@ -227,6 +227,8 @@ aurora::gfx::TextureHandle acquire_copy_texture(const aurora::gx::GXState::CopyT
 u16 get_num_xfb_lines_internal(u16 efbHeight, u32 iScale) {
   CHECK(efbHeight != 0, "GXGetNumXfbLines requires non-zero EFB height");
   CHECK(iScale != 0, "invalid XFB line scale");
+  // NO100F (w028's movie): a scale of 0.5 masks to iScale 0; hardware's divwu doesn't trap, the host divide did.
+  if (iScale == 0) return efbHeight;
 
   const u32 count = static_cast<u32>(efbHeight - 1u) * 0x100u;
   u32 realHeight = (count / iScale) + 1u;

@@ -5,17 +5,18 @@
 
 namespace TimeBaseContract {
 
-// Broadway's time base runs at one quarter of the 243 MHz Wii bus clock.
+// GameCube: Gekko's time base runs at one quarter of the 162 MHz bus clock (the Wii's Broadway runs at 243 MHz).
+// Code that hard-codes the GameCube rate (NO100F's Bink movies) ran 1.5x fast on the Wii clock.
 // Reduced against one billion nanoseconds per second, that is exactly
-// 243 time-base ticks per 4000 nanoseconds (60.75 MHz).
-inline constexpr uint64_t kBusClockHz = 243'000'000u;
+// 81 time-base ticks per 2000 nanoseconds (40.5 MHz).
+inline constexpr uint64_t kBusClockHz = 162'000'000u;
 inline constexpr uint64_t kTimeBaseDivider = 4u;
 inline constexpr uint64_t kTicksPerSecond = kBusClockHz / kTimeBaseDivider;
 inline constexpr uint64_t kNanosecondsPerSecond = 1'000'000'000u;
-inline constexpr uint64_t kTickRatioNumerator = 243u;
-inline constexpr uint64_t kTickRatioDenominator = 4'000u;
+inline constexpr uint64_t kTickRatioNumerator = 81u;
+inline constexpr uint64_t kTickRatioDenominator = 2'000u;
 
-static_assert(kTicksPerSecond == 60'750'000u);
+static_assert(kTicksPerSecond == 40'500'000u);
 static_assert(kTicksPerSecond * kTickRatioDenominator ==
               kNanosecondsPerSecond * kTickRatioNumerator);
 

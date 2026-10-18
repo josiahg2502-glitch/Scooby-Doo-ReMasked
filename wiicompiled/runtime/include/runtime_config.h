@@ -50,6 +50,8 @@ struct RuntimeUserConfig {
     std::optional<bool> textureReplacements;
     std::optional<bool> textureDumps;
     std::optional<bool> showFps;
+    std::optional<bool> skipIntro;
+    std::optional<uint32_t> msaa;
     std::optional<bool> spinningCoins;  // NSMBW: [video] spinning_coins, animated tiles
     std::optional<bool> frameGraph;     // NSMBW: [video] frame_graph, frame times under the FPS counter
     std::optional<bool> hdr;             // [video] hdr: scRGB HDR output (startup only)
@@ -585,6 +587,10 @@ inline RuntimeUserConfig ParseConfigDocument(const toml::value& document) {
     config.skipUnreadyPipelines = FindConfigValue<bool>(document, "video", "skip_unready_pipelines");
     config.disableCopyFilter = FindConfigValue<bool>(document, "video", "disable_copy_filter");
     config.showFps = FindConfigValue<bool>(document, "video", "show_fps");
+    config.skipIntro = FindConfigValue<bool>(document, "video", "skip_intro");
+    if (auto value = FindConfigUint(document, "video", "msaa"); value && (*value == 1 || *value == 2 || *value == 4 || *value == 8)) {
+        config.msaa = *value;
+    }
     config.spinningCoins = FindConfigValue<bool>(document, "video", "spinning_coins");
     config.frameGraph = FindConfigValue<bool>(document, "video", "frame_graph");
     config.vsync = FindConfigValue<bool>(document, "video", "vsync");
@@ -1132,6 +1138,15 @@ inline bool SkipUnreadyPipelines(bool fallback = true) {
 
 inline bool DisableCopyFilter(bool fallback = true) {
     return Get().disableCopyFilter.value_or(fallback);
+}
+
+// Multisample anti-aliasing samples (1 = off, 2, 4 or 8); applies at the next start.
+inline uint32_t Msaa(uint32_t fallback = 1) {
+    return Get().msaa.value_or(fallback);
+}
+
+inline bool SkipIntro(bool fallback = false) {
+    return Get().skipIntro.value_or(fallback);
 }
 
 inline bool ShowFps(bool fallback = true) {

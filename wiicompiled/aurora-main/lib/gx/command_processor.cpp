@@ -2710,10 +2710,10 @@ static void spm_log_draw_extent(u8 prim, GXVtxFmt fmt, const u8* verts, u32 coun
                k[0], k[1], k[2], k[3], c0[0], c0[1], c0[2], c0[3], mat[0], mat[1], mat[2], mat[3]);
     }
   }
-  Log.warn("[spmext] draw {} prim {:#x} fmt {} n {} ndc {:.3f} {:.3f} .. {:.3f} {:.3f}{} proj {} tex {}x{} f{} blend {} src {} dst {} zc {} tev {}{} chan0 mat {} amb {} lit {} clr0 desc {} type {} ac {} {} {} {}",
+  Log.warn("[spmext] draw {} prim {:#x} fmt {} n {} ndc {:.3f} {:.3f} .. {:.3f} {:.3f}{} proj {} tex {}x{} f{} blend {} src {} dst {} zc {} zu {} zf {} tev {}{} chan0 mat {} amb {} lit {} clr0 desc {} type {} ac {} {} {} {}",
            g_spmAudit[0], prim, (int)fmt, count, x0, y0, x1, y1, depth, (int)g_gxState.projType, to.width(), to.height(), to.format(),
            (int)g_gxState.blendMode, (int)g_gxState.blendFacSrc, (int)g_gxState.blendFacDst, g_gxState.depthCompare,
-           g_gxState.numTevStages, tev, (int)cc.matSrc, (int)cc.ambSrc, cc.lightingEnabled, (int)g_gxState.vtxDesc[GX_VA_CLR0],
+           g_gxState.depthUpdate, (int)g_gxState.depthFunc, g_gxState.numTevStages, tev, (int)cc.matSrc, (int)cc.ambSrc, cc.lightingEnabled, (int)g_gxState.vtxDesc[GX_VA_CLR0],
            (int)g_gxState.vtxFmts[fmt].attrs[GX_VA_CLR0].type, (int)g_gxState.alphaCompare.comp0, g_gxState.alphaCompare.ref0,
            (int)g_gxState.alphaCompare.comp1, g_gxState.alphaCompare.ref1);
 }
@@ -2727,8 +2727,7 @@ static bool admit_draw(GXPrimitive prim, GXVtxFmt fmt, u16 count, uint32_t verte
   if (frame_interpolation_identity_needed() && frame_interpolation_replay_safe())
     demand[1] *= 1 + MaxInterpolatedFrames;
   for (int i = GX_VA_POS; i <= GX_VA_TEX7; ++i) {
-    if ((g_gxState.vtxDesc[i] == GX_INDEX8 || g_gxState.vtxDesc[i] == GX_INDEX16) &&
-        g_gxState.arrays[i].cachedRange.size == 0)
+    if (g_gxState.vtxDesc[i] == GX_INDEX8 || g_gxState.vtxDesc[i] == GX_INDEX16)  // uploaded every draw
       demand[3] += gfx::staging_storage_bytes(g_gxState.arrays[i].size);
   }
   return gfx::staging_has_space(demand);
@@ -2822,9 +2821,120 @@ static bool handle_draw(u8 cmd, const u8* data, u32& pos, u32 size, bool bigEndi
   }
 
 
+  // A display list's vertex data cannot overlap a vertex array it indexes: stop the draw where a bound array
+  // begins. NO100F world lists declare sizes that run up to 31 bytes into the position array stored right
+  // after them (the CP fetches lists in 32-byte units, so hardware never reads them); a strip that read those
+  // bytes as 5 more vertices stretched an object in Mystic Manor into a slab across the courtyard. The
+  // declared bytes are still consumed so parsing stays in step.
+  struct TailSkip {
+    u32& pos;
+    u32 bytes = 0;
+    ~TailSkip() {
+      if (std::uncaught_exceptions() == 0) pos += bytes;  // a StagingBatchFull retry re-parses this draw
+    }
+  } tailSkip{pos};
+  if (g_replayingDisplayList) {
+    const u8* first = data + pos;
+    const u8* end = first + totalVtxBytes;
+    for (int a = GX_VA_POS; a <= GX_VA_TEX7; ++a) {
+      const auto* base = static_cast<const u8*>(g_gxState.arrays[a].data);
+      if ((g_gxState.vtxDesc[a] == GX_INDEX8 || g_gxState.vtxDesc[a] == GX_INDEX16) && base > first && base < end) end = base;
+    }
+    // The same overlap with a buffer that is not bound here (NO100F characters: the list's last 32-byte block is
+    // shared with the next allocation, so a strip's final vertices hold that buffer's floats): stop at a vertex in
+    // that block whose position index jumps past twice everything before it. Real geometry never does; those
+    // vertices threw a triangle across the screen from the character, different every frame.
+    const GXAttrType pd = g_gxState.vtxDesc[GX_VA_POS];
+    const u8* lastBlock = data + (size > 32 ? size - 32 : 0);
+    if ((pd == GX_INDEX8 || pd == GX_INDEX16) && end > lastBlock && vtxCount > 8) {
+      const u32 pre = matrix_index_prefix_size(fmt);
+      const auto posIdx = [&](const u8* v) {
+        return pd == GX_INDEX8 ? u32(v[pre]) : (bigEndian ? u32((v[pre] << 8) | v[pre + 1]) : u32(v[pre] | (v[pre + 1] << 8)));
+      };
+      const u32 tailStart = u32(std::max<std::ptrdiff_t>(0, (lastBlock - first + vtxSize - 1) / vtxSize));
+      u32 maxIdx = 0;
+      for (u32 i = 0; i < tailStart && i < vtxCount; ++i) maxIdx = std::max(maxIdx, posIdx(first + i * vtxSize));
+      for (u32 i = tailStart; tailStart >= 4 && i < u32(end - first) / vtxSize; ++i)
+        if (posIdx(first + i * vtxSize) > 2 * maxIdx + 16) { end = first + i * vtxSize; break; }
+    }
+    if (end != first + totalVtxBytes) UNLIKELY {
+      const u32 fetched = u32(end - first) / vtxSize;
+      const u32 unit = prim == GX_QUADS ? 4 : prim == GX_TRIANGLES ? 3 : prim == GX_LINES ? 2 : 1;
+      const u16 kept = static_cast<u16>(fetched - fetched % unit);
+      tailSkip.bytes = (vtxCount - kept) * vtxSize;
+      vtxCount = kept;
+      totalVtxBytes = kept * vtxSize;
+    }
+  }
   ++g_spmAudit[0];
   spm_dump_draw("fifo", cmd, fmt, vtxCount, vtxSize, data + pos, bigEndian);
   spm_bbox_accumulate(fmt, data + pos, vtxCount, vtxSize, bigEndian);
+  // NO100F diagnostic (env NO100F_IDX_CHECK): position indices past the uploaded array, matrix indices past slot 9.
+  if (static const bool idxCheck = std::getenv("NO100F_IDX_CHECK") != nullptr; idxCheck) {
+    const GXAttrType pd = g_gxState.vtxDesc[GX_VA_POS];
+    const auto& arr = g_gxState.arrays[GX_VA_POS];
+    const bool hasPn = g_gxState.vtxDesc[GX_VA_PNMTXIDX] == GX_DIRECT;
+    const u32 pre = matrix_index_prefix_size(fmt);
+    u32 oob = 0, badPn = 0, maxIdx = 0;
+    for (u32 i = 0; i < vtxCount; ++i) {
+      const u8* v = data + pos + i * vtxSize;
+      if (hasPn && v[0] / 3u >= MaxPnMtx) ++badPn;
+      if (pd == GX_INDEX8 || pd == GX_INDEX16) {
+        const u8* pp = v + pre;
+        const u32 idx = pd == GX_INDEX8 ? pp[0] : (bigEndian ? u32((pp[0] << 8) | pp[1]) : u32(pp[0] | (pp[1] << 8)));
+        maxIdx = std::max(maxIdx, idx);
+        if (arr.stride && u64(idx) * arr.stride + 6 > arr.size) ++oob;
+      }
+    }
+    // Model-space outliers: a vertex 6x farther from the draw's centre than the median vertex.
+    const auto& pf = g_gxState.vtxFmts[fmt].attrs[GX_VA_POS];
+    const u32 cs = pf.type == GX_F32 ? 4u : (pf.type >= GX_U16 ? 2u : 1u);
+    std::vector<std::array<float, 3>> p;
+    std::vector<u32> pidx;
+    for (u32 i = 0; i < vtxCount && pd != GX_NONE; ++i) {
+      const u8* v = data + pos + i * vtxSize;
+      const u8* pp = v + pre;
+      u32 idx = ~0u;
+      if (pd == GX_INDEX8 || pd == GX_INDEX16) {
+        idx = pd == GX_INDEX8 ? pp[0] : (bigEndian ? u32((pp[0] << 8) | pp[1]) : u32(pp[0] | (pp[1] << 8)));
+        if (!arr.data || u64(idx) * arr.stride + 3 * cs > arr.size) continue;
+        pp = static_cast<const u8*>(arr.data) + idx * arr.stride;
+      }
+      const bool cbe = pd == GX_DIRECT ? bigEndian : true;  // guest arrays are big-endian
+      p.push_back({spm_bbox_comp(pp, pf.type, pf.frac, cbe), spm_bbox_comp(pp + cs, pf.type, pf.frac, cbe),
+                   spm_bbox_comp(pp + 2 * cs, pf.type, pf.frac, cbe)});
+      pidx.push_back(idx);
+    }
+    if (p.size() >= 12) {
+      float c[3] = {};
+      for (auto& q : p) for (int k = 0; k < 3; ++k) c[k] += q[k] / p.size();
+      std::vector<float> d(p.size());
+      for (size_t k = 0; k < p.size(); ++k) d[k] = std::hypot(p[k][0] - c[0], p[k][1] - c[1], p[k][2] - c[2]);
+      std::vector<float> s = d;
+      std::nth_element(s.begin(), s.begin() + s.size() / 2, s.end());
+      const float med = s[s.size() / 2];
+      for (size_t k = 0; k < p.size(); ++k)
+        if (med > 0 && med < 1e4f && d[k] > 6 * med) {
+          if (static int nb = 0; nb++ < 6) {
+            std::string hex;
+            for (u32 b = (vtxCount >= 6 ? vtxCount - 6 : 0) * vtxSize; b < vtxCount * vtxSize; ++b)
+              hex += fmt::format("{:02x}{}", data[pos + b], (b + 1) % vtxSize ? "" : " ");
+            std::string after;
+            for (u32 b = pos + totalVtxBytes; b < std::min<u32>(size, pos + totalVtxBytes + 40); ++b) after += fmt::format("{:02x}", data[b]);
+            std::fprintf(stderr, "[outbytes] vsz=%u pos=%u size=%u left=%u pre=%u last6: %s | after: %s\n", vtxSize, pos, size,
+                         size - pos - totalVtxBytes, pre, hex.c_str(), after.c_str());
+          }
+          if (static int n = 0; n++ < 400)
+            std::fprintf(stderr, "[outlier] prim=%d n=%u vtx=%zu idx=%u pos=(%g %g %g) med=%g d=%g pd=%d type=%d stride=%u size=%u data=%p dl=%d pn=%d\n",
+                         (int)prim, (unsigned)vtxCount, k, pidx[k], p[k][0], p[k][1], p[k][2], med, d[k], (int)pd, (int)pf.type,
+                         (unsigned)arr.stride, (unsigned)arr.size, arr.data, (int)g_replayingDisplayList, hasPn ? (data + pos)[0] : -1);
+          break;
+        }
+    }
+    if (static int n = 0; (oob || badPn) && n++ < 60)
+      std::fprintf(stderr, "[idxchk] prim=%d n=%u oob=%u badpn=%u maxidx=%u stride=%u size=%u dl=%d\n", (int)prim, (unsigned)vtxCount, oob,
+                   badPn, maxIdx, (unsigned)arr.stride, (unsigned)arr.size, (int)g_replayingDisplayList);
+  }
   if (!has_complete_primitive(prim, vtxCount)) {
     pos += totalVtxBytes;
     return true;
@@ -3002,34 +3112,22 @@ static void handle_draw_unmerged(GXPrimitive prim, GXVtxFmt fmt, u16 vtxCount,
     if (g_gxState.vtxDesc[i] != GX_INDEX8 && g_gxState.vtxDesc[i] != GX_INDEX16) {
       continue;
     }
+    // Upload every draw's arrays as they are in RAM now, like the GPU reading memory. Games rewrite arrays at the
+    // same address between draws (CPU-animated models), so reusing an earlier upload of that address drew models with
+    // another moment's vertices.
     auto& array = g_gxState.arrays[i];
-    if (array.cachedRange.size > 0) {
-      ranges.vaRanges[i - GX_VA_POS] = array.cachedRange;
+    // A/B diagnostic (env ARRAY_REUSE=1): the old behaviour, reusing this staging epoch's upload of the same address.
+    static const bool reuse = std::getenv("ARRAY_REUSE") != nullptr;
+    static absl::flat_hash_map<const void*, std::pair<gfx::Range, u32>> s_staged;
+    static u32 s_stagedEpoch = 0;
+    if (reuse && s_stagedEpoch != g_arrayUploadEpoch) { s_staged.clear(); s_stagedEpoch = g_arrayUploadEpoch; }
+    if (const auto it = s_staged.find(array.data); reuse && it != s_staged.end() && it->second.second >= array.size) {
+      array.cachedRange = it->second.first;
     } else {
-      // SPM re-binds the same big map arrays per object, each time with the size its display list needs
-      // (highest index used). Re-copying ~200 KB per draw filled the 8 MB storage staging every ~40 draws,
-      // forcing a mid-frame GPU submit each time (gn3_12: 14 fps). Reuse this staging epoch's upload of
-      // the same array when it already covers the requested size.
-      struct StagedArray {
-        gfx::Range range;
-        u32 size;
-      };
-      static absl::flat_hash_map<const void*, StagedArray> s_staged;
-      static u32 s_stagedEpoch = 0;
-      if (s_stagedEpoch != g_arrayUploadEpoch) {
-        s_staged.clear();
-        s_stagedEpoch = g_arrayUploadEpoch;
-      }
-      gfx::Range range;
-      if (const auto it = s_staged.find(array.data); it != s_staged.end() && it->second.size >= array.size) {
-        range = it->second.range;
-      } else {
-        range = gfx::push_storage(static_cast<const uint8_t*>(array.data), array.size);
-        s_staged[array.data] = StagedArray{range, array.size};
-      }
-      ranges.vaRanges[i - GX_VA_POS] = range;
-      array.cachedRange = range;
+      array.cachedRange = gfx::push_storage(static_cast<const uint8_t*>(array.data), array.size);
+      if (reuse) s_staged[array.data] = {array.cachedRange, array.size};
     }
+    ranges.vaRanges[i - GX_VA_POS] = array.cachedRange;
   }
 
   const auto& pipelineState = resolve_pipeline_state(prim, fmt);
