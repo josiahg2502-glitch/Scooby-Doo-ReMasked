@@ -1327,7 +1327,10 @@ extern "C" void GX__CallDisplayList_80172f64(uint32_t listAddr, uint32_t nbytes)
     static bool s_skipNext = false;
     try {
         const uint8_t* list = static_cast<const uint8_t*>(GuestToHostPtr(listAddr, nbytes));
-        if (!list) return;
+        if (!list) {
+            if (static int n = 0; n++ < 30) RT_LOGF(RT_TAG_GX, "[dldrop] list 0x%08X (%u bytes) not in guest memory\n", listAddr, nbytes);
+            return;
+        }
         if (const uint8_t* hostDl = nullptr; true) {
             uint32_t hostSize = 0;
             if (SpmHostDisplayList(list, nbytes, hostDl, hostSize)) {
@@ -1542,9 +1545,14 @@ extern "C" void GX__CallDisplayList_80172f64(uint32_t listAddr, uint32_t nbytes)
         EnsureAuroraFrameActive();
         GXMarkFrameWork();
         InvalidateAppliedAuroraState();
+        if (static int n = 0; n++ < 30) RT_LOGF(RT_TAG_GX, "[dldrop] list 0x%08X (%u bytes): array setup failed, CPU fallback\n", listAddr, nbytes);
         ParseDisplayList(list, nbytes);
         InvalidateAppliedAuroraState();
-    } catch (...) {}
+    } catch (const std::exception& e) {
+        if (static int n = 0; n++ < 30) RT_LOGF(RT_TAG_GX, "[dldrop] list 0x%08X (%u bytes) DROPPED: %s\n", listAddr, nbytes, e.what());
+    } catch (...) {
+        if (static int n = 0; n++ < 30) RT_LOGF(RT_TAG_GX, "[dldrop] list 0x%08X (%u bytes) DROPPED (non-std exception)\n", listAddr, nbytes);
+    }
 }
 
 PPC_NATIVE_OVERRIDE_VOID(8016ec0c, GX__CallDisplayList_80172f64, (uint32_t listAddr, uint32_t nbytes), (listAddr, nbytes));
