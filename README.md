@@ -7,9 +7,10 @@ program, drawn by a modern renderer.
 ![The aquarium level in widescreen](docs/screenshots/aquarium.jpg)
 
 <p>
-  <img src="docs/screenshots/chinatown.jpg" width="32%" alt="Chinatown docks">
-  <img src="docs/screenshots/swamp.jpg" width="32%" alt="Foggy swamp">
-  <img src="docs/screenshots/daphne.jpg" width="32%" alt="Daphne cutscene">
+  <img src="docs/screenshots/chinatown.jpg" width="24%" alt="Chinatown docks">
+  <img src="docs/screenshots/swamp.jpg" width="24%" alt="Foggy swamp">
+  <img src="docs/screenshots/daphne.jpg" width="24%" alt="Daphne cutscene">
+  <img src="docs/screenshots/pause.jpg" width="24%" alt="Pause menu with Xbox button prompts">
 </p>
 
 *Screenshots from this port, rendered in widescreen.*
