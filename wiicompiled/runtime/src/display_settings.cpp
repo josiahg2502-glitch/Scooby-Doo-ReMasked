@@ -12,7 +12,11 @@
 #include <cstring>
 #include <string>
 #include <algorithm>
+#include <atomic>
 #include <mutex>
+
+// The aspect the game's cameras are widened to (0 = 4:3), read by hle/scooby_camera.cpp.
+std::atomic<float> g_gameCameraAspect{0.0f};
 
 namespace DisplaySettings {
 namespace {
@@ -85,6 +89,11 @@ void ApplyGameCanvas(int32_t aspect) {
     AuroraSetWidePerspectiveAspect(
         aspect == kAspectCinematic ? kRatioCinematic
         : widened ? static_cast<float>(g_surfaceWidth) / static_cast<float>(g_surfaceHeight) : 0.0f);
+    // Unmasked's cameras stay 4:3 in its 16:9 mode, which stretched the picture: the game itself widens them.
+    g_gameCameraAspect.store(aspect == kAspectCinematic ? kRatioCinematic
+                             : widened ? static_cast<float>(g_surfaceWidth) / static_cast<float>(g_surfaceHeight)
+                             : aspect == kAspect16x9 || aspect == kAspectFill ? kRatio16x9 : 0.0f,
+                             std::memory_order_relaxed);
 
 }
 
