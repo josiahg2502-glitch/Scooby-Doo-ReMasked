@@ -1990,7 +1990,10 @@ void populate_pipeline_config(PipelineConfig& config, GXPrimitive primitive, GXV
   config.pixelFmt = g_gxState.pixelFmt;
   config.dstAlpha = effective_dst_alpha(g_gxState.pixelFmt, g_gxState.alphaUpdate, g_gxState.dstAlpha);
   config.depthCompare = g_gxState.depthCompare;
-  config.depthUpdate = g_gxState.depthUpdate;
+  // GX writes Z only when the Z test is on (Dolphin: "if the test is disabled write is disabled too"). Scooby-Doo!
+  // Unmasked's glow pass draws a full-screen quad with compare off and update on; writing its depth hid the floor,
+  // props and characters drawn earlier and let later draws show through walls.
+  config.depthUpdate = g_gxState.depthCompare && g_gxState.depthUpdate;
   config.alphaUpdate = effective_alpha_update(g_gxState.pixelFmt, g_gxState.alphaUpdate);
   config.colorUpdate = g_gxState.colorUpdate;
 }

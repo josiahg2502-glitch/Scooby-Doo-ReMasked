@@ -326,6 +326,13 @@ static inline void mark_pipeline_state_dirty() noexcept {
   } while (0)
 
 static bool copy_xf_data(u32 addr, const u8* data, u32 len, bool bigEndian) {
+  if (g_spmDrawDump && addr < 0x78) {  // dump frame: every position-matrix load and the draw it precedes
+    static int n = 0;
+    if (n++ < 4000) {
+      auto f = [&](u32 i) { return i < len ? std::bit_cast<float>(bigEndian ? __builtin_bswap32(*reinterpret_cast<const u32*>(data + i * 4)) : *reinterpret_cast<const u32*>(data + i * 4)) : 0.f; };
+      Log.warn("[xfmtx] before draw {} addr {:#x} len {} t=({:.2f},{:.2f},{:.2f})", g_spmAudit[0] + 1, addr, len, f(3), f(7), f(11));
+    }
+  }
   if (addr < 0x78) {
     // Position matrices (0x0000 - 0x0077)
     u32 mtxIdx = addr / 12;
@@ -2270,11 +2277,11 @@ static const CachedPipelineState& resolve_pipeline_state(GXPrimitive prim, GXVtx
 static void spm_log_draw_extent(u8 prim, GXVtxFmt fmt, const u8* verts, u32 count, u32 vtxSize, bool be);
 static void spm_dump_draw(const char* path, u8 prim, u32 fmt, u32 count, u32 vtxSize, const u8* v, bool be) {
   static int n = 0;
-  if (!g_spmDrawDump || n++ > 6000) return;
+  if (!g_spmDrawDump || n++ > 30000) return;
   spm_log_draw_extent(prim, static_cast<GXVtxFmt>(fmt), v, count, vtxSize, be);
   float pm[16];
   std::memcpy(pm, &g_gxState.proj, sizeof(pm));
-  const u32 mi = g_gxState.currentPnMtx / 3u;
+  const u32 mi = g_gxState.currentPnMtx;  // already a slot (BP/CP value / 3)
   float mv[12] = {};
   if (mi < MaxPnMtx) std::memcpy(mv, &g_gxState.pnMtx[mi].pos, sizeof(mv));
   const auto& vp = g_gxState.renderViewport;
@@ -2347,7 +2354,7 @@ static void spm_dump_draw(const char* path, u8 prim, u32 fmt, u32 count, u32 vtx
         static int stLogged = 0;
         const auto& rv = g_gxState.renderViewport;
         const auto& rs = g_gxState.renderScissor;
-        if (stLogged++ < 6000)
+        if (stLogged++ < 30000)
           Log.warn("[spmst] {} be {} frz {} {:.4f},{:.4f},{:.4f},{} cu {} au {} zc {} zf {} zu {} blend {} lop {} pn {} vp {:.0f},{:.0f} {:.0f}x{:.0f} z {:.2f}-{:.2f} sc {},{} {}x{} chans {} tg {} tev {} bbox {:.2f},{:.2f}..{:.2f},{:.2f}",
                    path, be, g_gxState.zFreeze, g_gxState.zFreezePlane.x(), g_gxState.zFreezePlane.y(), g_gxState.zFreezePlane.z(), g_gxState.zFreezePlane.w(), g_gxState.colorUpdate, g_gxState.alphaUpdate, g_gxState.depthCompare, (int)g_gxState.depthFunc, g_gxState.depthUpdate, (int)g_gxState.blendMode,
                    (int)g_gxState.blendOp, g_gxState.currentPnMtx, rv.left, rv.top, rv.width, rv.height, rv.znear, rv.zfar, rs.x, rs.y,
@@ -2467,7 +2474,7 @@ static void spm_bbox_accumulate(GXVtxFmt fmt, const u8* verts, u32 count, u32 vt
     const bool cbe = (pd == GX_DIRECT) ? be : !arr.le;
     float pos[3] = {0.f, 0.f, 0.f};
     for (u32 c = 0; c < comps; ++c) pos[c] = spm_bbox_comp(pp + c * compSize, pf.type, pf.frac, cbe);
-    const u32 mi = (hasPnIdx ? v[0] : g_gxState.currentPnMtx) / 3u;
+    const u32 mi = (hasPnIdx ? v[0] / 3u : g_gxState.currentPnMtx);
     if (mi >= MaxPnMtx) continue;
     float m[12];
     std::memcpy(m, &g_gxState.pnMtx[mi].pos, sizeof(m));
@@ -2526,7 +2533,7 @@ static bool spm_draw_ndc_extent(GXVtxFmt fmt, const u8* verts, u32 count, u32 vt
     float pos[3] = {0.f, 0.f, 0.f};
     for (u32 c = 0; c < comps; ++c) pos[c] = spm_bbox_comp(pp + c * compSize, pf.type, pf.frac, cbe);
     for (int c = 0; c < 3; ++c) { mb[c] = std::min(mb[c], pos[c]); mb[c + 3] = std::max(mb[c + 3], pos[c]); }
-    const u32 mi = (hasPnIdx ? v[0] : g_gxState.currentPnMtx) / 3u;
+    const u32 mi = (hasPnIdx ? v[0] / 3u : g_gxState.currentPnMtx);
     if (mi >= MaxPnMtx) continue;
     float m[12];
     std::memcpy(m, &g_gxState.pnMtx[mi].pos, sizeof(m));
@@ -2587,7 +2594,7 @@ static bool gx_vertex_ndc(GXVtxFmt fmt, const u8* v, bool be, float out[3]) {
   const bool cbe = (pd == GX_DIRECT) ? be : !arr.le;
   float pos[3] = {0.f, 0.f, 0.f};
   for (u32 c = 0; c < comps; ++c) pos[c] = spm_bbox_comp(pp + c * compSize, pf.type, pf.frac, cbe);
-  const u32 mi = (g_gxState.vtxDesc[GX_VA_PNMTXIDX] == GX_DIRECT ? v[0] : g_gxState.currentPnMtx) / 3u;
+  const u32 mi = (g_gxState.vtxDesc[GX_VA_PNMTXIDX] == GX_DIRECT ? v[0] / 3u : g_gxState.currentPnMtx);
   if (mi >= MaxPnMtx) return false;
   float m[12];
   std::memcpy(m, &g_gxState.pnMtx[mi].pos, sizeof(m));
@@ -2648,15 +2655,15 @@ static void update_zfreeze_reference(GXPrimitive prim, GXVtxFmt fmt, const u8* v
 static void spm_log_draw_extent(u8 prim, GXVtxFmt fmt, const u8* verts, u32 count, u32 vtxSize, bool be) {
   static int logged = 0;
   float e[7];
-  if (logged++ > 6000 || !spm_draw_ndc_extent(fmt, verts, count, vtxSize, be, e)) return;
+  if (logged++ > 30000 || !spm_draw_ndc_extent(fmt, verts, count, vtxSize, be, e)) return;
   const float x0 = e[0], y0 = e[1], x1 = e[2], y1 = e[3];
   const std::string depth = fmt::format(" z {:.4f} {:.4f} pn {} cur {}", e[4], e[5], (int)e[6], g_gxState.currentPnMtx);
   const auto& to = g_gxState.loadedTextures[0];
   std::string tev;
   for (u32 i = 0; i < g_gxState.numTevStages && i < 4; ++i) {
     const auto& st = g_gxState.tevStages[i];
-    tev += fmt::format(" st{} c {} {} {} {} op {} out {} a {} {} {} {} map {} chan {} k {}", i, (int)st.colorPass.a, (int)st.colorPass.b,
-                       (int)st.colorPass.c, (int)st.colorPass.d, (int)st.colorOp.op, (int)st.colorOp.outReg, (int)st.alphaPass.a,
+    tev += fmt::format(" st{} c {} {} {} {} op {} bs {}/{}/{} out {} a {} {} {} {} map {} chan {} k {}", i, (int)st.colorPass.a, (int)st.colorPass.b,
+                       (int)st.colorPass.c, (int)st.colorPass.d, (int)st.colorOp.op, (int)st.colorOp.bias, (int)st.colorOp.scale, (int)st.colorOp.clamp, (int)st.colorOp.outReg, (int)st.alphaPass.a,
                        (int)st.alphaPass.b, (int)st.alphaPass.c, (int)st.alphaPass.d, (int)st.texMapId, (int)st.channelId, (int)st.kcSel);
   }
   const auto& cc = g_gxState.colorChannelConfig[0];
@@ -2710,12 +2717,19 @@ static void spm_log_draw_extent(u8 prim, GXVtxFmt fmt, const u8* verts, u32 coun
                k[0], k[1], k[2], k[3], c0[0], c0[1], c0[2], c0[3], mat[0], mat[1], mat[2], mat[3]);
     }
   }
-  Log.warn("[spmext] draw {} prim {:#x} fmt {} n {} ndc {:.3f} {:.3f} .. {:.3f} {:.3f}{} proj {} tex {}x{} f{} blend {} src {} dst {} zc {} zu {} zf {} tev {}{} chan0 mat {} amb {} lit {} clr0 desc {} type {} ac {} {} {} {}",
+  Log.warn("[spmext] draw {} prim {:#x} fmt {} n {} ndc {:.3f} {:.3f} .. {:.3f} {:.3f}{} proj {} tex {}x{} f{} blend {} src {} dst {} zc {} zu {} zf {} tev {}{} chan0 mat {} amb {} lit {} clr0 desc {} type {} ac {} {} {} {} | chans {} a0src {} a0lit {} matA0 {:.3f} matA2 {:.3f} kA0 {} c1src {} c1lit {} c1mat {:.2f},{:.2f},{:.2f},{:.2f} a1src {} clr1desc {} cu {} au {} dstA {}",
            g_spmAudit[0], prim, (int)fmt, count, x0, y0, x1, y1, depth, (int)g_gxState.projType, to.width(), to.height(), to.format(),
            (int)g_gxState.blendMode, (int)g_gxState.blendFacSrc, (int)g_gxState.blendFacDst, g_gxState.depthCompare,
            g_gxState.depthUpdate, (int)g_gxState.depthFunc, g_gxState.numTevStages, tev, (int)cc.matSrc, (int)cc.ambSrc, cc.lightingEnabled, (int)g_gxState.vtxDesc[GX_VA_CLR0],
            (int)g_gxState.vtxFmts[fmt].attrs[GX_VA_CLR0].type, (int)g_gxState.alphaCompare.comp0, g_gxState.alphaCompare.ref0,
-           (int)g_gxState.alphaCompare.comp1, g_gxState.alphaCompare.ref1);
+           (int)g_gxState.alphaCompare.comp1, g_gxState.alphaCompare.ref1, g_gxState.numChans,
+           (int)g_gxState.colorChannelConfig[GX_ALPHA0].matSrc, g_gxState.colorChannelConfig[GX_ALPHA0].lightingEnabled,
+           g_gxState.colorChannelState[0].matColor[3], g_gxState.colorChannelState[GX_ALPHA0].matColor[3],
+           (int)g_gxState.tevStages[0].kaSel, (int)g_gxState.colorChannelConfig[GX_COLOR1].matSrc,
+           g_gxState.colorChannelConfig[GX_COLOR1].lightingEnabled, g_gxState.colorChannelState[GX_COLOR1].matColor[0],
+           g_gxState.colorChannelState[GX_COLOR1].matColor[1], g_gxState.colorChannelState[GX_COLOR1].matColor[2],
+           g_gxState.colorChannelState[GX_COLOR1].matColor[3], (int)g_gxState.colorChannelConfig[GX_ALPHA1].matSrc,
+           (int)g_gxState.vtxDesc[GX_VA_CLR1], g_gxState.colorUpdate, g_gxState.alphaUpdate, g_gxState.dstAlpha);
 }
 
 static bool admit_draw(GXPrimitive prim, GXVtxFmt fmt, u16 count, uint32_t vertexBytes, bool merged = false) {
@@ -2953,6 +2967,19 @@ static bool handle_draw(u8 cmd, const u8* data, u32& pos, u32 size, bool bigEndi
       std::fprintf(stderr, "[idxchk] prim=%d n=%u oob=%u badpn=%u maxidx=%u stride=%u size=%u dl=%d\n", (int)prim, (unsigned)vtxCount, oob,
                    badPn, maxIdx, (unsigned)arr.stride, (unsigned)arr.size, (int)g_replayingDisplayList);
   }
+  // Diagnostic (env SKIP_BLEND=<mode><src><dst>, e.g. 111 = additive, 145 = alpha): drop draws with that blend.
+  if (static const int skipBlend = [] { const char* e = std::getenv("SKIP_BLEND"); return e ? std::atoi(e) : -1; }();
+      skipBlend >= 0 && int(g_gxState.blendMode) * 100 + int(g_gxState.blendFacSrc) * 10 + int(g_gxState.blendFacDst) == skipBlend) {
+    pos += totalVtxBytes;
+    return true;
+  }
+  // Diagnostic (env SKIP_COPYQUAD=<texture format>): drop quads that sample an EFB copy of that format.
+  if (static const int skipCq = [] { const char* e = std::getenv("SKIP_COPYQUAD"); return e ? std::atoi(e) : -1; }();
+      skipCq >= 0 && prim == GX_QUADS && int(g_gxState.loadedTextures[0].format()) == skipCq &&
+      find_copy_texture_for_texobj(g_gxState.loadedTextures[0]) != nullptr) {
+    pos += totalVtxBytes;
+    return true;
+  }
   if (!has_complete_primitive(prim, vtxCount)) {
     pos += totalVtxBytes;
     return true;
@@ -3099,8 +3126,44 @@ static void handle_draw_unmerged(GXPrimitive prim, GXVtxFmt fmt, u16 vtxCount,
     st.colorPass = {GX_CC_ZERO, GX_CC_TEXC, GX_CC_RASC, GX_CC_ZERO};
     g_gxState.pipelineStateGeneration = next_gx_state_epoch();
   }
+  // 20 = additive (ONE,ONE) draws output a constant 1/8 grey and everything else black: brightness = additive layer count.
+  if (flatTest == 20) {
+    flatSave = FlatSave{g_gxState.tevStages[0], g_gxState.numTevStages, g_gxState.alphaCompare, g_gxState.blendMode,
+                        g_gxState.depthCompare, g_gxState.depthUpdate, g_gxState.cullMode, g_gxState.proj};
+    const bool additive = g_gxState.blendMode == GX_BM_BLEND && g_gxState.blendFacSrc == GX_BL_ONE && g_gxState.blendFacDst == GX_BL_ONE;
+    auto& st = g_gxState.tevStages[0];
+    st.colorPass = {GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, additive ? GX_CC_KONST : GX_CC_ZERO};
+    st.kcSel = GX_TEV_KCSEL_1_8;
+    st.alphaPass = {GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST};
+    st.kaSel = GX_TEV_KASEL_1;
+    st.colorOp = {};
+    st.alphaOp = {};
+    g_gxState.numTevStages = 1;
+    g_gxState.alphaCompare = {};
+    g_gxState.pipelineStateGeneration = next_gx_state_epoch();
+  }
+  // 21 = every draw opaque in a colour encoding its [spmext] draw number (r = low byte), depth as the game set it:
+  // a screenshot pixel names the draw that last wrote it. Use with NSMBW_NO_MERGE=1.
+  static Vec4<float> flatK0;
+  if (flatTest == 21) {
+    flatSave = FlatSave{g_gxState.tevStages[0], g_gxState.numTevStages, g_gxState.alphaCompare, g_gxState.blendMode,
+                        g_gxState.depthCompare, g_gxState.depthUpdate, g_gxState.cullMode, g_gxState.proj};
+    flatK0 = g_gxState.kcolors[0];
+    const u32 id = g_spmAudit[0];
+    g_gxState.kcolors[0] = {float(id & 0xFF) / 255.f, float((id >> 8) & 0xFF) / 255.f, float((id >> 16) & 0xFF) / 255.f, 1.f};
+    auto& st = g_gxState.tevStages[0];
+    st.colorPass = {GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_KONST};
+    st.kcSel = GX_TEV_KCSEL_K0;
+    st.alphaPass = {GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST};
+    st.kaSel = GX_TEV_KASEL_1;
+    st.colorOp = {};
+    st.alphaOp = {};
+    g_gxState.numTevStages = 1;
+    g_gxState.blendMode = GX_BM_NONE;
+    g_gxState.pipelineStateGeneration = next_gx_state_epoch();
+  }
   if (flatTest == 4 || (flatTest == 5 && prim != GX_QUADS) || (flatTest == 6 && prim == GX_QUADS && g_gxState.depthCompare) ||
-      (flatTest != 0 && prim == GX_TRIANGLESTRIP && fmt == GX_VTXFMT0 && g_gxState.loadedTextures[0].format() == GX_TF_CMPR)) {
+      (flatTest != 0 && flatTest != 20 && prim == GX_TRIANGLESTRIP && fmt == GX_VTXFMT0 && g_gxState.loadedTextures[0].format() == GX_TF_CMPR)) {
     flatSave = FlatSave{g_gxState.tevStages[0], g_gxState.numTevStages, g_gxState.alphaCompare, g_gxState.blendMode,
                         g_gxState.depthCompare, g_gxState.depthUpdate, g_gxState.cullMode, g_gxState.proj};
     auto& st = g_gxState.tevStages[0];
@@ -3211,6 +3274,7 @@ static void handle_draw_unmerged(GXPrimitive prim, GXVtxFmt fmt, u16 vtxCount,
     g_gxState.depthUpdate = flatSave->du;
     g_gxState.cullMode = flatSave->cull;
     g_gxState.proj = flatSave->proj;
+    if (flatTest == 21) g_gxState.kcolors[0] = flatK0;
     g_gxState.pipelineStateGeneration = next_gx_state_epoch();
     g_gxState.stateDirty = true;
   }
