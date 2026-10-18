@@ -1557,7 +1557,9 @@ wgpu::ShaderModule build_shader(const ShaderConfig& config) noexcept {
   // else reversed-Z-aware uses. This was backwards (verified directly against upstream aurora's
   // identical expression in build_shader_source), which fed both fog density and the GX_ZT_ADD
   // z-texture path the wrong distance value.
-  std::string fogDepthExpr = UseReversedZ ? "(1.0 - in.pos.z)" : "in.pos.z";
+  // Diagnostic (env FOG_FLIP=1): the opposite depth convention for fog.
+  static const bool fogFlip = std::getenv("FOG_FLIP") != nullptr;
+  std::string fogDepthExpr = (UseReversedZ != fogFlip) ? "(1.0 - in.pos.z)" : "in.pos.z";
   std::string fogZCoordExpr =
       fmt::format("u32(round(clamp({}, 0.0, 1.0) * 16777216.0))", fogDepthExpr);
   if (usesZTextureDepth) {
@@ -1667,7 +1669,9 @@ wgpu::ShaderModule build_shader(const ShaderConfig& config) noexcept {
           "\n    var fogZ = exp2(-8.0 * fogF * fogF);";
       break;
     }
-    fragmentFn += "\n    prev = vec4f(mix(prev.rgb, ubuf.fog.color.rgb, clamp(fogZ, 0.0, 1.0)), prev.a);";
+    // Diagnostic (env NO_FOG=1): leave fog out entirely.
+    if (static const bool noFog = std::getenv("NO_FOG") != nullptr; !noFog)
+      fragmentFn += "\n    prev = vec4f(mix(prev.rgb, ubuf.fog.color.rgb, clamp(fogZ, 0.0, 1.0)), prev.a);";
   }
   if (info.usedIndTexMtxs.any()) {
     uniBufAttrs += "\n    ind_mtx: array<vec4i, 6>,";
