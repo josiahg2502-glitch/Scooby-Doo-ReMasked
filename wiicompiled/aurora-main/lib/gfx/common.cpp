@@ -1372,8 +1372,9 @@ static void render_impl(std::vector<RenderPass>& renderPasses, wgpu::CommandEnco
                         bool finalize, DebugFrameData& debugFrame, const depth_peek::FrameMapping& depthMapping) {
   ZoneScoped;
   // Palette conversions, MSAA resolves and EFB copies depend on sealed frame state, not on the
-  // interpolation weight, so encode them on the native render and let replay slots sample them.
-  const bool encodeTextureBakes = interpolatedFrame < 0;
+  // interpolation weight. Replay slots are rendered before the native frame, so the first slot encodes
+  // them too: otherwise every slot sampled the previous frame's (HUD text, icons, glow and mask flickered).
+  const bool encodeTextureBakes = interpolatedFrame <= 0;
   {  // SPM diagnostic (env SPM_PASS_LOG): every 300th frame, the render passes with their clears and command counts
     static const bool passLog = std::getenv("SPM_PASS_LOG") != nullptr;
     static u32 calls = 0, logged = 0;

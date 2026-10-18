@@ -27,7 +27,7 @@ def make_worker(base: Path, n: int) -> Path:
     dvd = str(ROOT / "Disc" / "DATA").replace("\\", "\\\\")
     (w / "UserData" / "Config.toml").write_text(
         f"[paths]\ndvd_root = '{dvd}'\n\n[video]\ndisplay_mode = \"windowed\"\nwindow_width = 1280\nwindow_height = 720\n"
-        "resolution_multiplier = 1.5\naspect_mode = 2\nskip_intro = true\n", encoding="utf-8")
+        "resolution_multiplier = 1.5\naspect_mode = 2\nskip_intro = true\nframe_interpolation_fps = 120\n", encoding="utf-8")
     return w
 
 
