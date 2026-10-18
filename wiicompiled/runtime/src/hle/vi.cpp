@@ -26,6 +26,7 @@
 #include <fstream>
 #include <array>
 #include <atomic>
+extern std::atomic<uint32_t> g_axCommandLists;  // ax_mix.cpp
 #include <chrono>
 #include <cmath>
 #include <string>
@@ -416,6 +417,22 @@ void StartStallWatchdogOnce() {
                 }).detach();
             }
         }
+        // Diagnostic (env AUDIO_STALL_DUMP): the game keeps presenting frames but the DSP gets no command list for
+        // 1.5 s -> log it and dump the guest threads once (cutscenes wait on their voice line, so they go black).
+        if (std::getenv("AUDIO_STALL_DUMP")) std::thread([] {
+            uint32_t lists = 0, frames = 0, still = 0;
+            for (;;) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(250));
+                const uint32_t l = g_axCommandLists.load(), f = s_presentedXfbFrames.load(std::memory_order_relaxed);
+                still = (l == lists && l != 0 && f != frames) ? still + 1 : 0;
+                lists = l; frames = f;
+                if (still == 6) {
+                    RT_LOGF(RT_TAG_VI, "[audiostall] no DSP command list for 1.5 s at frame %u (%u lists so far); guest threads:\n", f, l);
+                    Fiber::GuestFiberManager::DumpGuestThreads(std::cerr);
+                    std::cerr.flush();
+                }
+            }
+        }).detach();
         std::thread([] {
             const auto start = std::chrono::steady_clock::now();
             for (const int seconds : {12, 30}) {
@@ -835,6 +852,9 @@ void VI_HLE_PresentFrame(bool presentedXfb, bool paceToRetrace) {
         return;
     }
     GuestProfiler::OnFramePresented();
+    // Busy frames never reach the idle pumps, and the audio pump drops anything past 100 ms between polls: Unmasked
+    // lost ~40% of its audio time (voice lines ran slow, cutscenes held their fade to black). Pump once per frame.
+    Audio_HLE_PollDeferred();
     static FrameTimes times;
     const Clock::time_point presentStart = Clock::now();
     const auto ms = [](Clock::duration d) { return std::chrono::duration<double, std::milli>(d).count(); };

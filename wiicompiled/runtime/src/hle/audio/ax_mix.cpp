@@ -28,6 +28,9 @@
 #include <string>
 #include <thread>
 
+// Command lists the DSP has run (vi.cpp's audio-stall watchdog reads it).
+std::atomic<uint32_t> g_axCommandLists{0};
+
 namespace AxDspHle {
 namespace {
 
@@ -909,6 +912,7 @@ private:
     void ReportGcVoices() {
         m_gcPeakVoices = std::max(m_gcPeakVoices, m_gcVoicesThisList);
         ++m_gcListCount;
+        g_axCommandLists.fetch_add(1, std::memory_order_relaxed);
         if (m_gcListCount != 1 && m_gcListCount != 100 && (m_gcListCount % 1000 != 0 || m_gcListCount > 12000)) {
             return;
         }

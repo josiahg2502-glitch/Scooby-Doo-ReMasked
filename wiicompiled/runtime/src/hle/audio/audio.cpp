@@ -422,6 +422,8 @@ void Audio_HLE_Tick(CpuContext* ctx, uint32_t deltaMicros)
             // retain elapsed time here rather than recursively entering the singleton AI/AX device.
             g_ai.accumulatorSeconds += static_cast<double>(deltaMicros) / 1'000'000.0;
             if (g_ai.tickActive) {
+                if (static const bool diag = std::getenv("AUDIO_STALL_DUMP") != nullptr; diag)
+                    if (static unsigned n = 0; ++n % 500 == 0) RT_LOGF(RT_TAG_AUDIO, "[aicb] %u pumps skipped while a tick was active\n", n);
                 return;
             }
             g_ai.tickActive = true;
@@ -448,6 +450,13 @@ void Audio_HLE_Tick(CpuContext* ctx, uint32_t deltaMicros)
 
     const double bytesPerSecond = static_cast<double>(sampleRate) * kAudioChannels * kBytesPerSample;
     const double blockDuration = static_cast<double>(length) / bytesPerSecond;
+    if (static const bool diag = std::getenv("AUDIO_STALL_DUMP") != nullptr; diag) {
+        static uint32_t lastLen = 0, lastRate = 0;
+        if (length != lastLen || sampleRate != lastRate) {
+            RT_LOGF(RT_TAG_AUDIO, "[aicb] DMA block %u bytes at %u Hz = %.2f ms\n", length, sampleRate, blockDuration * 1000.0);
+            lastLen = length; lastRate = sampleRate;
+        }
+    }
     if (blockDuration <= 0.0) {
         return;
     }
@@ -504,7 +513,14 @@ void Audio_HLE_Tick(CpuContext* ctx, uint32_t deltaMicros)
                 }
             } else {
                 Memory::TryWrite32(kAICallbackBusyAddr, 1);
+                const auto cbStart = std::chrono::steady_clock::now();
                 InvokeIndirectCpu(callback, cpu);
+                // Diagnostic (env AUDIO_STALL_DUMP): an AI callback that suspends in the scheduler holds every later block.
+                if (static const bool diag = std::getenv("AUDIO_STALL_DUMP") != nullptr; diag) {
+                    const double ms = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - cbStart).count();
+                    if (static int n = 0; ms > 20.0 && n++ < 60) RT_LOGF(RT_TAG_AUDIO, "[aicb] callback %08X took %.1f ms\n", callback, ms);
+                    if (static uint32_t calls = 0; ++calls % 1000 == 0) RT_LOGF(RT_TAG_AUDIO, "[aicb] %u AI callbacks\n", calls);
+                }
                 Memory::TryWrite32(kAICallbackBusyAddr, 0);
                 AxDspHle::ServiceDeferredCallbacks();
             }
@@ -559,6 +575,15 @@ int64_t ConsumeAudioPollDeltaMicros()
     // kMaxBlocksPerTick per pass. Never return early on a zero delta: two scheduler passes
     // can land in the same microsecond and the backlog still needs servicing.
     constexpr int64_t kMaxPollDeltaMicros = 100'000;
+    if (static const bool diag = std::getenv("AUDIO_STALL_DUMP") != nullptr; diag) {
+        static int64_t lost = 0, maxGap = 0, reported = 0;
+        maxGap = std::max<int64_t>(maxGap, elapsed);
+        if (elapsed > kMaxPollDeltaMicros) lost += elapsed - kMaxPollDeltaMicros;
+        if (lost - reported >= 1'000'000 || (maxGap > 50'000 && reported == 0 && lost == 0 && (reported = -1))) {
+            RT_LOGF(RT_TAG_AUDIO, "[aicb] poll gaps: %.2f s of audio time dropped, longest gap %.1f ms\n", lost / 1e6, maxGap / 1e3);
+            if (reported >= 0) reported = lost;
+        }
+    }
     // microseconds::rep is long long; int64_t is long on LP64 Linux/Android.
     return std::min<int64_t>(elapsed, kMaxPollDeltaMicros);
 }
@@ -641,7 +666,14 @@ void AudioTickDeterministic(CpuContext* ctx)
             const auto* info = TranslatedFunctionRegistry::FindByAddressPtr(callback);
             if (info && info->rawCpuInvoker) {
                 Memory::TryWrite32(kAICallbackBusyAddr, 1);
+                const auto cbStart = std::chrono::steady_clock::now();
                 InvokeIndirectCpu(callback, cpu);
+                // Diagnostic (env AUDIO_STALL_DUMP): an AI callback that suspends in the scheduler holds every later block.
+                if (static const bool diag = std::getenv("AUDIO_STALL_DUMP") != nullptr; diag) {
+                    const double ms = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - cbStart).count();
+                    if (static int n = 0; ms > 20.0 && n++ < 60) RT_LOGF(RT_TAG_AUDIO, "[aicb] callback %08X took %.1f ms\n", callback, ms);
+                    if (static uint32_t calls = 0; ++calls % 1000 == 0) RT_LOGF(RT_TAG_AUDIO, "[aicb] %u AI callbacks\n", calls);
+                }
                 Memory::TryWrite32(kAICallbackBusyAddr, 0);
                 AxDspHle::ServiceDeferredCallbacks();
             }
