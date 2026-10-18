@@ -1,8 +1,9 @@
 # Scooby-Doo: Re-Masked
 
-A native PC port of **Scooby-Doo! Unmasked** (GameCube, 2005), made by statically recompiling the game's PowerPC
-code to C++ with [WiiCompiled](https://github.com/patchzyy/Wiicompiled). No emulator: the game runs as a Windows
-program, drawn by a modern renderer.
+A statically recompiled PC port of **Scooby-Doo! Unmasked** (GameCube, 2005). The game's PowerPC code is translated
+ahead of time to C++ with [WiiCompiled](https://github.com/patchzyy/Wiicompiled) and compiled into a Windows program,
+so there is no CPU emulator; the console's graphics, audio and system calls are reimplemented underneath, drawn by a
+modern renderer.
 
 ![The aquarium level in widescreen](docs/screenshots/aquarium.jpg)
 
