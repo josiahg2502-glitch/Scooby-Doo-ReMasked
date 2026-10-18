@@ -2869,6 +2869,24 @@ static bool handle_draw(u8 cmd, const u8* data, u32& pos, u32 size, bool bigEndi
   ++g_spmAudit[0];
   spm_dump_draw("fifo", cmd, fmt, vtxCount, vtxSize, data + pos, bigEndian);
   spm_bbox_accumulate(fmt, data + pos, vtxCount, vtxSize, bigEndian);
+  // Dump-frame diagnostic: the first vertex colours of draws with an indexed CLR0 (alpha decides blending here).
+  if (g_spmDrawDump) {
+    const auto isz = [](GXAttrType t) { return t == GX_INDEX8 ? 1u : t == GX_INDEX16 ? 2u : 0u; };
+    const GXAttrType dp = g_gxState.vtxDesc[GX_VA_POS], dn = g_gxState.vtxDesc[GX_VA_NRM], dc = g_gxState.vtxDesc[GX_VA_CLR0];
+    const auto& ca = g_gxState.arrays[GX_VA_CLR0];
+    if (isz(dc) && isz(dp) && (dn == GX_NONE || isz(dn)) && ca.data && ca.stride) {
+      const u32 off = matrix_index_prefix_size(fmt) + isz(dp) + (dn == GX_NONE ? 0 : isz(dn));
+      std::string s;
+      for (u32 i = 0; i < std::min<u32>(vtxCount, 4); ++i) {
+        const u8* v = data + pos + i * vtxSize + off;
+        const u32 idx = dc == GX_INDEX8 ? v[0] : (bigEndian ? u32((v[0] << 8) | v[1]) : u32(v[0] | (v[1] << 8)));
+        if (u64(idx) * ca.stride + 4 > ca.size) break;
+        const u8* c = static_cast<const u8*>(ca.data) + idx * ca.stride;
+        s += fmt::format(" {:02x}{:02x}{:02x}{:02x}", c[0], c[1], c[2], c[3]);
+      }
+      Log.warn("[spmclrv] draw {} n {} clr0{}", g_spmAudit[0], vtxCount, s);
+    }
+  }
   // NO100F diagnostic (env NO100F_IDX_CHECK): position indices past the uploaded array, matrix indices past slot 9.
   if (static const bool idxCheck = std::getenv("NO100F_IDX_CHECK") != nullptr; idxCheck) {
     const GXAttrType pd = g_gxState.vtxDesc[GX_VA_POS];

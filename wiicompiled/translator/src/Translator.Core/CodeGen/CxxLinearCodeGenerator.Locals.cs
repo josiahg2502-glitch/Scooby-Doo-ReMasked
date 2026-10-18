@@ -462,6 +462,42 @@ public sealed partial class CxxLinearCodeGenerator
                                 }
                                 break;
                             }
+                        // The resolved (range-proven) loads must match the emitter's localPaired updates: a scalar
+                        // lfs/lfd lowered to IrResolvedLoad(Pair) leaves a scalar, psq_l leaves a pair. Missing these
+                        // kept a stale "paired" tag across blocks, so a later fdivs read ps0 of a scalar (SPM side-wall
+                        // rays came out 1636x too long and blocked walking left).
+                        case IrResolvedLoad load:
+                            {
+                                var destBit = PairedFloatRegisterBit(load.Destination);
+                                if (destBit >= 0)
+                                {
+                                    newOut &= ~(1u << destBit);
+                                }
+                                break;
+                            }
+                        case IrResolvedLoadPair pair:
+                            {
+                                var firstBit = PairedFloatRegisterBit(pair.FirstDestination);
+                                if (firstBit >= 0)
+                                {
+                                    newOut &= ~(1u << firstBit);
+                                }
+                                var secondBit = PairedFloatRegisterBit(pair.SecondDestination);
+                                if (secondBit >= 0)
+                                {
+                                    newOut &= ~(1u << secondBit);
+                                }
+                                break;
+                            }
+                        case IrResolvedPsqLoad psq:
+                            {
+                                var destBit = PairedFloatRegisterBit(psq.Destination);
+                                if (destBit >= 0)
+                                {
+                                    newOut |= 1u << destBit;
+                                }
+                                break;
+                            }
                     }
                 }
 

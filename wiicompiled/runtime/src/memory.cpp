@@ -545,6 +545,16 @@ Memory::Config Memory::Config::WiiDefaults() {
         .sizeBytes = 0x1800000,
     });
 
+    // Scooby-Doo! Unmasked: main() does VMInit + VMAlloc(0x7E000000, size) and keeps level meshes and display lists
+    // in that ARAM-backed virtual range (MMVMalloc). Without a region there, CPU access still worked (lazily
+    // committed blocks) but GX rejected every list and vertex array at those addresses, so those meshes were never
+    // drawn (aquarium floor and rocks, Chinatown walls). 16 MiB = ARAM, the most VMAlloc can map.
+    config.regions.push_back(RegionConfig{
+        .name = "ARAM_VM",
+        .baseAddress = 0x7E000000,
+        .sizeBytes = 0x1000000,
+    });
+
     // Locked cache (THP decoder fast RAM) is really 16KB at 0xE0000000, but a sub-page mapping can
     // never enter the coarse 1MiB bias tables, forcing every THP load/store through the checked
     // fallback (the dominant cost of THP-heavy screens). Back a full 1MiB page plus the successor
