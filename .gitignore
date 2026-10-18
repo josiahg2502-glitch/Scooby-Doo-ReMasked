@@ -30,3 +30,6 @@
 __pycache__/
 *.pyc
 wiicompiled/buildtools/artifacts/
+
+# notes for development sessions, not part of the project
+AGENTS.md
